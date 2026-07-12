@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stellar Lab</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: #0b0f19;
+            color: #e6e6e6;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background: rgba(10, 10, 30, 0.8);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 10;
+        }
+
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #9bb1ff;
+        }
+
+        .navbar nav a {
+            margin: 0 15px;
+            color: #cdd9ff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .launch-btn {
+            background: #4c5cff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            color: white !important;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            height: 100vh;
+            background: url('assets/images/stellar-lab-bg.jpg') center/cover no-repeat;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+        }
+
+        .hero-content h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .hero-content h2 {
+            font-size: 28px;
+            margin-bottom: 40px;
+            color: #bcd0ff;
+        }
+
+        .lab-title {
+            font-size: 60px;
+            font-weight: 800;
+            margin-top: 20px;
+        }
+
+        .tagline {
+            font-size: 20px;
+            margin-bottom: 40px;
+            color: #9bb1ff;
+        }
+
+        /* FEATURE CARDS */
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .feature-card {
+            background: rgba(20, 20, 40, 0.8);
+            padding: 20px;
+            width: 200px;
+            border-radius: 12px;
+            border: 1px solid #3a3f66;
+        }
+
+        .feature-card h3 {
+            color: #9bb1ff;
+            margin-bottom: 10px;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #11162a;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="logo">Stellar Lab</div>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Exhibits</a>
+            <a href="#">Experiments</a>
+            <a href="#">Atlas</a>
+            <a href="#">Community</a>
+            <a href="#">About</a>
+            <a href="chatbot.html">Chatbot</a>
+            <a href="#" class="launch-btn">Launch Lab</a>
+        </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="overlay"></div>
+
+        <div class="hero-content">
+            <h1>Welcome to Stellar 🧪!!</h1>
+            <h2>Let’s explore space together!! 📡🚀</h2>
+
+            <div class="lab-title">STELLAR LAB</div>
+            <div class="tagline">EXPLORE. EXPERIMENT. DISCOVER LIFE BEYOND.</div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <h3>Learn</h3>
+                    <p>Dive into interactive lessons and cosmic stories.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Experiment</h3>
+                    <p>Run simulations and conduct virtual experiments.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Explore</h3>
+                    <p>Discover planets, stars, and the search for life.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Discover Life</h3>
+                    <p>Understand the building blocks of life and where it might exist.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Stellar Lab</p>
+    </footer>
+
+</body>
+</html>
