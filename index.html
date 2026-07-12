@@ -71,91 +71,69 @@
     /* SCENE CONTAINER */
     .scene {
         margin-top: 120px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 40px;
         position: relative;
-        height: 600px;
-    }
-
-    /* STAR GLOW */
-    .star {
-        position: absolute;
-        top: 40px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 400px;
-        height: 400px;
-        background: radial-gradient(circle, #ffffffaa, #ffffff33, transparent);
-        filter: blur(40px);
-        opacity: 0.8;
-    }
-
-    /* MOON */
-    .moon {
-        position: absolute;
-        top: 120px;
-        right: 10%;
-        width: 140px;
-        height: 140px;
-        background: radial-gradient(circle, #dcdcdc, #8a8a8a);
-        border-radius: 50%;
-        box-shadow: 0 0 40px #fff;
-    }
-
-    .moon::after {
-        content: "";
-        position: absolute;
-        top: 40px;
-        left: 50px;
-        width: 40px;
-        height: 40px;
-        background: #bfbfbf;
-        border-radius: 50%;
-        opacity: 0.4;
+        height: 500px;
     }
 
     /* PLANET HORIZON */
     .planet {
         position: absolute;
-        bottom: -200px;
+        bottom: -300px;
         left: 50%;
         transform: translateX(-50%);
-        width: 1400px;
-        height: 1400px;
+        width: 1200px;
+        height: 1200px;
         background: radial-gradient(circle at 50% 30%, #2f3f7a, #0a0f2a);
         border-radius: 50%;
         box-shadow: 0 -80px 160px #000 inset;
+        z-index: -1;
+    }
+
+    /* MOON */
+    .moon {
+        position: absolute;
+        top: 40px;
+        right: 20%;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, #dcdcdc, #8a8a8a);
+        border-radius: 50%;
+        box-shadow: 0 0 40px #fff;
     }
 
     /* ROCKET */
     .rocket {
         position: absolute;
-        top: 180px;
-        left: 5%;
-        width: 80px;
-        height: 200px;
+        top: 140px;
+        left: 15%;
+        width: 60px;
+        height: 160px;
         background: linear-gradient(#f5f5f5, #bfbfbf);
         border-radius: 40px;
         box-shadow: 0 0 20px #ffffffaa;
     }
 
-    .rocket::before {
+    .rocket::after {
         content: "";
         position: absolute;
-        bottom: -20px;
+        bottom: -18px;
         left: 50%;
         transform: translateX(-50%);
-        width: 30px;
-        height: 30px;
+        width: 26px;
+        height: 26px;
         background: radial-gradient(circle at top, #ffb347, #ff6b6b, transparent);
         filter: blur(4px);
     }
 
     /* ASTRONAUT */
     .astronaut {
-        position: absolute;
-        bottom: 260px;
-        left: 18%;
-        width: 140px;
+        width: 160px;
         height: 260px;
+        position: relative;
     }
 
     .helmet {
@@ -163,7 +141,7 @@
         height: 120px;
         background: radial-gradient(circle at 30% 30%, #fff, #bfbfbf);
         border-radius: 50%;
-        margin-left: 10px;
+        margin: 0 auto;
         box-shadow: 0 0 20px #ffffffaa;
     }
 
@@ -180,7 +158,7 @@
         height: 140px;
         background: linear-gradient(#d9d9d9, #8a8a8a);
         border-radius: 20px;
-        margin-top: -10px;
+        margin: -10px auto 0;
         box-shadow: 0 0 20px #ffffff55;
     }
 
@@ -195,29 +173,15 @@
         transform: rotate(-20deg);
     }
 
-    .speech {
-        position: absolute;
-        top: -80px;
-        left: -40px;
-        width: 320px;
-        background: rgba(5, 8, 20, 0.85);
-        padding: 12px;
-        border-radius: 12px;
-        border: 1px solid #4c5cff;
-        font-size: 15px;
-    }
-
     /* LAB */
     .lab {
-        position: absolute;
-        bottom: 260px;
-        right: 18%;
-        width: 300px;
+        width: 260px;
         height: 200px;
         background: radial-gradient(circle at top, #3b4b7f, #151a33);
         border-radius: 200px 200px 40px 40px;
         box-shadow: 0 0 30px #4c5cff55;
         border: 1px solid #4c5cff55;
+        position: relative;
         overflow: hidden;
     }
 
@@ -236,31 +200,27 @@
 
     /* TITLE */
     .title {
-        position: absolute;
-        top: 140px;
-        right: 12%;
-        font-size: 70px;
+        text-align: center;
+        margin-top: 20px;
+        font-size: 60px;
         font-weight: 800;
         color: #9bb1ff;
         text-shadow: 0 0 20px #4c5cff, 0 0 40px #4c5cff;
     }
 
     .tagline {
-        position: absolute;
-        top: 220px;
-        right: 12%;
+        text-align: center;
         font-size: 20px;
         color: #cdd9ff;
+        margin-bottom: 40px;
     }
 
     /* BUTTONS */
     .menu {
-        position: absolute;
-        bottom: 40px;
-        left: 50%;
-        transform: translateX(-50%);
         display: flex;
+        justify-content: center;
         gap: 20px;
+        margin-bottom: 40px;
     }
 
     .menu a {
@@ -307,9 +267,8 @@
 </header>
 
 <div class="scene">
-    <div class="star"></div>
-    <div class="moon"></div>
     <div class="planet"></div>
+    <div class="moon"></div>
     <div class="rocket"></div>
 
     <div class="astronaut">
@@ -318,28 +277,24 @@
         </div>
         <div class="body"></div>
         <div class="arm"></div>
-        <div class="speech">
-            Welcome to Stellar Lab!! 🧪<br>
-            Let’s explore space together!! 📡🚀
-        </div>
     </div>
 
     <div class="lab">
         <div class="lab-inner">🧪 🔬 🧫 ⚗️</div>
     </div>
+</div>
 
-    <div class="title">Stellar Lab</div>
-    <div class="tagline">Explore. Experiment. Discover Life Beyond.</div>
+<div class="title">Stellar Lab</div>
+<div class="tagline">Explore. Experiment. Discover Life Beyond.</div>
 
-    <div class="menu">
-        <a href="learn.html">Learn</a>
-        <a href="explore.html">Explore</a>
-        <a href="experiment.html">Experiment</a>
-        <a href="discover.html">Discover Life</a>
-        <a href="chatbot.html" class="chatbot">Chatbot: Starlight</a>
-    </div>
+<div class="menu">
+    <a href="learn.html">Learn</a>
+    <a href="explore.html">Explore</a>
+    <a href="experiment.html">Experiment</a>
+    <a href="discover.html">Discover Life</a>
+    <a href="chatbot.html" class="chatbot">Chatbot: Starlight</a>
 </div>
 
 </body>
 </html>
-    
+                        
