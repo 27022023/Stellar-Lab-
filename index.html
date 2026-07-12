@@ -9,8 +9,8 @@
     body {
         margin: 0;
         font-family: system-ui, sans-serif;
-        background: radial-gradient(circle at top, #1b2355, #050814);
-        color: #ffffff;
+        background: radial-gradient(circle at top, #0a0f1f, #000);
+        color: #fff;
         overflow-x: hidden;
     }
 
@@ -53,47 +53,46 @@
     .hero {
         padding-top: 120px;
         text-align: center;
+        position: relative;
+    }
+
+    /* STARS */
+    .stars {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background-image:
+            radial-gradient(#ffffff 1px, transparent 1px),
+            radial-gradient(#ffffff 1px, transparent 1px),
+            radial-gradient(#ffffff 1px, transparent 1px);
+        background-size: 200px 200px, 300px 300px, 250px 250px;
+        background-position: 0 0, 50px 80px, 120px 200px;
+        opacity: 0.7;
     }
 
     /* EMOJI SCENE */
     .scene {
+        margin-top: 40px;
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 60px;
-        margin-top: 40px;
         flex-wrap: wrap;
     }
 
     .emoji {
-        font-size: 120px;
+        font-size: 140px;
         text-align: center;
     }
 
-    .astronaut {
-        font-size: 140px;
-    }
-
-    .lab {
-        font-size: 100px;
-        line-height: 1.2;
-    }
-
-    .rocket {
-        font-size: 130px;
-    }
-
-    .planet {
-        font-size: 150px;
-    }
-
-    .moon {
-        font-size: 130px;
-    }
+    .planet { font-size: 180px; }
+    .moon { font-size: 150px; }
+    .rocket { font-size: 160px; }
+    .lab { font-size: 120px; }
 
     /* TITLE */
     .hero-title {
-        font-size: 60px;
+        font-size: 70px;
         font-weight: 800;
         color: #9bb1ff;
         text-shadow: 0 0 20px #4c5cff, 0 0 40px #4c5cff;
@@ -101,7 +100,7 @@
     }
 
     .hero-tagline {
-        font-size: 20px;
+        font-size: 22px;
         color: #cdd9ff;
         margin-bottom: 40px;
     }
@@ -187,23 +186,14 @@
 <!-- HERO -->
 <section class="hero">
 
+    <div class="stars"></div>
+
     <!-- EMOJI SCENE -->
     <div class="scene">
-
-        <div class="emoji astronaut">🧑‍🚀</div>
-
-        <div class="emoji lab">
-            🧪<br>
-            🔬<br>
-            ⚗️
-        </div>
-
-        <div class="emoji rocket">🚀</div>
-
         <div class="emoji planet">🪐</div>
-
+        <div class="emoji rocket">🚀</div>
         <div class="emoji moon">🌕</div>
-
+        <div class="emoji lab">🧪🔬⚗️</div>
     </div>
 
     <!-- TITLE -->
@@ -243,5 +233,4 @@
 
 </body>
 </html>
-                                
-                    
+    
