@@ -8,9 +8,10 @@
 <style>
     body {
         margin: 0;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: radial-gradient(circle at top, #141b3f, #050814);
+        font-family: system-ui, sans-serif;
+        background: radial-gradient(circle at top, #0a0f1f, #000);
         color: #e6e6e6;
+        overflow-x: hidden;
     }
 
     /* NAVBAR */
@@ -19,46 +20,36 @@
         top: 0;
         left: 0;
         right: 0;
-        padding: 16px 40px;
+        padding: 14px 40px;
         display: flex;
         justify-content: space-between;
-        align-items: center;
         background: rgba(5, 8, 20, 0.9);
         backdrop-filter: blur(10px);
         z-index: 10;
     }
 
-    .navbar-left {
+    .nav-left {
         display: flex;
-        align-items: center;
         gap: 20px;
+        align-items: center;
     }
 
     .logo {
-        font-weight: 700;
         font-size: 22px;
+        font-weight: 700;
         color: #9bb1ff;
     }
 
-    .nav-links {
-        display: flex;
-        gap: 18px;
-        font-size: 15px;
-    }
-
     .nav-links span {
+        margin-right: 18px;
         cursor: pointer;
         color: #cdd9ff;
     }
 
-    .nav-links span:hover {
-        color: #ffffff;
-    }
-
-    .navbar-right {
+    .nav-right {
         display: flex;
+        gap: 20px;
         align-items: center;
-        gap: 16px;
     }
 
     .launch-btn {
@@ -67,172 +58,134 @@
         background: linear-gradient(90deg, #4c5cff, #7b8bff);
         color: white;
         font-weight: 600;
-        font-size: 14px;
-        cursor: pointer;
         border: none;
-    }
-
-    .chatbot-link {
-        font-size: 14px;
-        color: #cdd9ff;
         cursor: pointer;
     }
 
-    /* HERO SECTION */
+    /* HERO */
     .hero {
-        padding-top: 90px; /* space for navbar */
+        padding-top: 90px;
         min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
         position: relative;
         overflow: hidden;
     }
 
-    /* BACKGROUND ELEMENTS */
-    .planet-bg {
+    /* STAR */
+    .star {
         position: absolute;
-        bottom: -260px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 1200px;
-        height: 1200px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 50% 30%, #2f3f7a, #050814);
-        box-shadow: 0 -80px 160px #000 inset;
+        top: 40px;
+        left: 55%;
+        width: 350px;
+        height: 350px;
+        background: radial-gradient(circle, #fff, #ffffff55, transparent);
+        filter: blur(40px);
         opacity: 0.9;
     }
 
+    /* MOON */
     .moon {
         position: absolute;
         top: 120px;
-        right: 12%;
-        width: 140px;
-        height: 140px;
-        border-radius: 50%;
+        right: 10%;
+        width: 160px;
+        height: 160px;
         background: radial-gradient(circle, #dcdcdc, #8a8a8a);
-        box-shadow: 0 0 40px #ffffffaa;
+        border-radius: 50%;
+        box-shadow: 0 0 40px #fff;
     }
 
-    .star-glow {
+    .moon::after {
+        content: "";
         position: absolute;
         top: 40px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 420px;
-        height: 420px;
-        background: radial-gradient(circle, #ffffffaa, #ffffff33, transparent);
-        filter: blur(40px);
-        opacity: 0.8;
+        left: 50px;
+        width: 40px;
+        height: 40px;
+        background: #bfbfbf;
+        border-radius: 50%;
+        opacity: 0.4;
     }
 
-    .rocket {
+    /* PLANET */
+    .planet {
         position: absolute;
-        top: 180px;
-        left: 12%;
-        width: 70px;
-        height: 160px;
-        border-radius: 40px;
-        background: linear-gradient(#f5f5f5, #bfbfbf);
+        bottom: -200px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 1400px;
+        height: 1400px;
+        background: radial-gradient(circle at 50% 30%, #2f3f7a, #0a0f2a);
+        border-radius: 50%;
+        box-shadow: 0 -80px 160px #000 inset;
+    }
+
+    /* ASTRONAUT */
+    .astronaut {
+        position: absolute;
+        bottom: 260px;
+        left: 18%;
+        width: 140px;
+        height: 260px;
+    }
+
+    .helmet {
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle at 30% 30%, #fff, #bfbfbf);
+        border-radius: 50%;
+        margin-left: 10px;
         box-shadow: 0 0 20px #ffffffaa;
     }
 
-    .rocket::after {
-        content: "";
-        position: absolute;
-        bottom: -40px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 20px;
-        height: 40px;
-        background: radial-gradient(circle at top, #ffb347, #ff6b6b, transparent);
-        filter: blur(4px);
+    .visor {
+        width: 80px;
+        height: 50px;
+        background: radial-gradient(circle, #1a1a1a, #000);
+        border-radius: 20px;
+        margin: 35px auto 0;
     }
 
-    /* MAIN CONTENT LAYOUT */
-    .hero-inner {
-        position: relative;
-        z-index: 2;
-        max-width: 1100px;
-        margin-top: 80px;
-        display: grid;
-        grid-template-columns: 1.1fr 1.1fr;
-        gap: 40px;
-        align-items: center;
-    }
-
-    /* LEFT: ASTRONAUT + LAB */
-    .scene-left {
-        position: relative;
-        height: 380px;
-    }
-
-    .ground {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 120px;
-        background: linear-gradient(#1b213f, #0b0f24);
-        border-radius: 40px 40px 0 0;
-        box-shadow: 0 -10px 30px #000;
-    }
-
-    .astronaut {
-        position: absolute;
-        bottom: 80px;
-        left: 40px;
-        width: 110px;
-        height: 200px;
-        border-radius: 24px;
+    .body {
+        width: 140px;
+        height: 140px;
         background: linear-gradient(#d9d9d9, #8a8a8a);
+        border-radius: 20px;
+        margin-top: -10px;
         box-shadow: 0 0 20px #ffffff55;
     }
 
-    .astronaut-head {
+    .arm {
+        width: 40px;
+        height: 100px;
+        background: linear-gradient(#d9d9d9, #8a8a8a);
+        border-radius: 20px;
         position: absolute;
-        top: -40px;
-        left: 20px;
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 30% 30%, #ffffff, #bfbfbf);
-        box-shadow: 0 0 20px #ffffffaa;
+        top: 140px;
+        left: -20px;
+        transform: rotate(-20deg);
     }
 
-    .speech-bubble {
+    .speech {
         position: absolute;
         top: -80px;
         left: -40px;
         width: 320px;
-        font-size: 15px;
         background: rgba(5, 8, 20, 0.85);
-        padding: 10px 14px;
+        padding: 12px;
         border-radius: 12px;
         border: 1px solid #4c5cff;
+        font-size: 15px;
     }
 
-    .speech-bubble::after {
-        content: "";
+    /* LAB */
+    .lab {
         position: absolute;
-        bottom: -10px;
-        left: 60px;
-        width: 18px;
-        height: 18px;
-        background: rgba(5, 8, 20, 0.85);
-        border-left: 1px solid #4c5cff;
-        border-bottom: 1px solid #4c5cff;
-        transform: rotate(45deg);
-    }
-
-    .lab-dome {
-        position: absolute;
-        bottom: 80px;
-        right: 40px;
-        width: 260px;
-        height: 180px;
-        border-radius: 260px 260px 40px 40px;
-        background: radial-gradient(circle at 50% 0%, #3b4b7f, #151a33);
+        bottom: 260px;
+        right: 18%;
+        width: 300px;
+        height: 200px;
+        background: radial-gradient(circle at top, #3b4b7f, #151a33);
+        border-radius: 200px 200px 40px 40px;
         box-shadow: 0 0 30px #4c5cff55;
         border: 1px solid #4c5cff55;
         overflow: hidden;
@@ -241,123 +194,90 @@
     .lab-inner {
         position: absolute;
         inset: 20px;
-        border-radius: 20px;
         background: rgba(5, 8, 20, 0.8);
+        border-radius: 20px;
         border: 1px solid #4c5cff33;
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
         gap: 10px;
-        font-size: 26px;
+        font-size: 30px;
     }
 
-    /* RIGHT: TITLE + TAGLINE + CARDS */
-    .hero-right {
-        text-align: left;
+    /* ROCKET */
+    .rocket {
+        position: absolute;
+        top: 180px;
+        left: 5%;
+        width: 80px;
+        height: 200px;
+        background: linear-gradient(#f5f5f5, #bfbfbf);
+        border-radius: 40px;
+        box-shadow: 0 0 20px #ffffffaa;
     }
 
-    .hero-title {
-        font-size: 46px;
+    .rocket::before {
+        content: "";
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 30px;
+        height: 30px;
+        background: radial-gradient(circle at top, #ffb347, #ff6b6b, transparent);
+        filter: blur(4px);
+    }
+
+    /* TITLE */
+    .title {
+        position: absolute;
+        top: 140px;
+        right: 12%;
+        font-size: 70px;
         font-weight: 800;
         color: #9bb1ff;
-        text-shadow: 0 0 18px #4c5cff, 0 0 36px #4c5cff;
-        letter-spacing: 1px;
+        text-shadow: 0 0 20px #4c5cff, 0 0 40px #4c5cff;
     }
 
-    .hero-tagline {
-        margin-top: 8px;
-        font-size: 18px;
+    .tagline {
+        position: absolute;
+        top: 220px;
+        right: 12%;
+        font-size: 20px;
         color: #cdd9ff;
     }
 
-    .hero-subtext {
-        margin-top: 16px;
-        font-size: 14px;
-        color: #9fa8d8;
-    }
-
-    .feature-grid {
-        margin-top: 26px;
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 16px;
-    }
-
-    .feature-card {
-        background: rgba(10, 14, 32, 0.9);
-        border-radius: 14px;
-        padding: 14px 16px;
-        border: 1px solid #3a3f66;
-        box-shadow: 0 0 16px #00000066;
-    }
-
-    .feature-title {
-        font-size: 15px;
-        font-weight: 600;
-        color: #9bb1ff;
-        margin-bottom: 6px;
-    }
-
-    .feature-desc {
-        font-size: 13px;
-        color: #cdd9ff;
-    }
-
-    /* BOTTOM MENU BAR */
-    .bottom-menu {
-        margin-top: 60px;
-        margin-bottom: 40px;
+    /* BOTTOM MENU */
+    .menu {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
         display: flex;
-        justify-content: center;
-        gap: 24px;
-        font-size: 15px;
+        gap: 20px;
     }
 
-    .bottom-item {
-        padding: 10px 18px;
-        border-radius: 999px;
+    .menu div {
+        padding: 10px 20px;
         background: rgba(10, 14, 32, 0.9);
+        border-radius: 999px;
         border: 1px solid #3a3f66;
-        color: #cdd9ff;
         cursor: pointer;
+        font-size: 16px;
     }
 
-    .bottom-item:hover {
+    .menu div:hover {
         border-color: #4c5cff;
         color: #ffffff;
     }
 
-    .bottom-item.chatbot {
-        border-color: #4c5cff;
-        color: #9bb1ff;
-        font-weight: 600;
-    }
-
-    @media (max-width: 900px) {
-        .hero-inner {
-            grid-template-columns: 1fr;
-            margin: 40px 20px 0;
-        }
-        .scene-left {
-            order: 2;
-        }
-        .hero-right {
-            order: 1;
-        }
-        .planet-bg {
-            width: 900px;
-            height: 900px;
-            bottom: -220px;
-        }
-    }
 </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
 <header class="navbar">
-    <div class="navbar-left">
+    <div class="nav-left">
         <div class="logo">Stellar Lab</div>
         <div class="nav-links">
             <span>Home</span>
@@ -368,89 +288,51 @@
             <span>About</span>
         </div>
     </div>
-    <div class="navbar-right">
-        <span class="chatbot-link">Chatbot: Starlight</span>
+    <div class="nav-right">
+        <span>Chatbot: Starlight</span>
         <button class="launch-btn">Launch Lab</button>
     </div>
 </header>
 
-<!-- HERO -->
 <section class="hero">
-    <!-- Background elements -->
-    <div class="star-glow"></div>
-    <div class="planet-bg"></div>
+
+    <div class="star"></div>
     <div class="moon"></div>
+    <div class="planet"></div>
+
     <div class="rocket"></div>
 
-    <div class="hero-inner">
-        <!-- Left: Astronaut + Lab -->
-        <div class="scene-left">
-            <div class="ground"></div>
-
-            <div class="astronaut">
-                <div class="astronaut-head"></div>
-                <div class="speech-bubble">
-                    Hello!! Welcome to Stellar Lab!! 🧪<br>
-                    Let’s explore space together!! 🌌🚀
-                </div>
-            </div>
-
-            <div class="lab-dome">
-                <div class="lab-inner">
-                    <span>🧪</span>
-                    <span>🔬</span>
-                    <span>🧫</span>
-                    <span>⚗️</span>
-                </div>
-            </div>
+    <div class="astronaut">
+        <div class="helmet">
+            <div class="visor"></div>
         </div>
-
-        <!-- Right: Title + Tagline + Cards -->
-        <div class="hero-right">
-            <div class="hero-title">Stellar Lab</div>
-            <div class="hero-tagline">Explore. Experiment. Discover Life Beyond.</div>
-            <div class="hero-subtext">
-                A cosmic lab where biology meets the stars—learn, simulate, and imagine life beyond Earth.
-            </div>
-
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <div class="feature-title">Learn</div>
-                    <div class="feature-desc">
-                        Dive into interactive lessons and cosmic stories.
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-title">Experiment</div>
-                    <div class="feature-desc">
-                        Run simulations and conduct virtual experiments.
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-title">Explore</div>
-                    <div class="feature-desc">
-                        Discover planets, stars, and the search for life.
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-title">Discover Life</div>
-                    <div class="feature-desc">
-                        Understand the building blocks of life and where it might exist.
-                    </div>
-                </div>
-            </div>
-
-            <div class="bottom-menu">
-                <div class="bottom-item">Learn</div>
-                <div class="bottom-item">Explore</div>
-                <div class="bottom-item">Experiment</div>
-                <div class="bottom-item">Discover Life</div>
-                <div class="bottom-item chatbot">Chatbot: Starlight</div>
-            </div>
+        <div class="body"></div>
+        <div class="arm"></div>
+        <div class="speech">
+            Hello!! Welcome to Stellar Lab!! 🧪<br>
+            Let’s explore space together!! 🌌🚀
         </div>
     </div>
+
+    <div class="lab">
+        <div class="lab-inner">
+            🧪 🔬 🧫 ⚗️
+        </div>
+    </div>
+
+    <div class="title">Stellar Lab</div>
+    <div class="tagline">Explore. Experiment. Discover Life Beyond.</div>
+
+    <div class="menu">
+        <div>Learn</div>
+        <div>Explore</div>
+        <div>Experiment</div>
+        <div>Discover Life</div>
+        <div>Chatbot: Starlight</div>
+    </div>
+
 </section>
 
 </body>
 </html>
-    
+                        
