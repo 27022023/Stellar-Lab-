@@ -9,64 +9,35 @@
   body {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
     background-color: black;
-    color: white;
+    font-family: Arial, sans-serif;
   }
 
-  /* FULLSCREEN HERO WITH FULL IMAGE */
+  /* FULLSCREEN IMAGE */
   .hero {
     width: 100%;
-    height: 100vh; /* FULL PHONE SCREEN */
-    background: url('https://github.com/user-attachments/assets/ca2f24b6-9330-4e7d-b49d-aa6add7dc405') center/cover no-repeat;
+    height: 160vh; /* shows full image vertically */
+    background: url('https://github.com/user-attachments/assets/ca2f24b6-9330-4e7d-b49d-aa6add7dc405') center/contain no-repeat;
     position: relative;
   }
 
-  /* NAVIGATION */
-  nav {
+  /* INVISIBLE CLICK AREAS */
+  .hotspot {
     position: absolute;
-    top: 20px;
-    left: 20px;
-    right: 20px;
-    display: flex;
-    justify-content: space-between;
-    font-size: 18px;
-    font-weight: bold;
+    width: 40%;
+    height: 12%;
+    left: 10%;
+    background: rgba(255,255,255,0); /* fully invisible */
   }
 
-  nav a {
-    color: white;
-    text-decoration: none;
-    margin-right: 20px;
+  /* Experiment hotspot */
+  #experiment {
+    bottom: 22%; /* adjust if needed */
   }
 
-  /* BUTTON GRID ON IMAGE */
-  .buttons {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-
-  .btn {
-    background: rgba(0,0,0,0.6);
-    padding: 20px;
-    border-radius: 12px;
-    text-align: center;
-    font-size: 18px;
-    border: 2px solid white;
-    cursor: pointer;
-    text-decoration: none;
-    color: white;
-    display: block;
-  }
-
-  .btn:hover {
-    background: rgba(255,255,255,0.2);
+  /* Explore hotspot */
+  #explore {
+    bottom: 8%; /* adjust if needed */
   }
 </style>
 </head>
@@ -75,24 +46,9 @@
 
 <div class="hero">
 
-  <nav>
-    <div>
-      <a href="exhibits.html">Exhibits</a>
-      <a href="experiments.html">Experiments</a>
-      <a href="atlas.html">Atlas</a>
-      <a href="community.html">Community</a>
-    </div>
-  </nav>
-
-  <div class="buttons">
-    <a class="btn" href="experiment.html">
-      Experiment<br><small>Run simulations and conduct virtual experiments.</small>
-    </a>
-
-    <a class="btn" href="explore.html">
-      Explore<br><small>Discover planets, stars, and the search for life.</small>
-    </a>
-  </div>
+  <!-- CLICKABLE AREAS ON THE IMAGE -->
+  <a id="experiment" class="hotspot" href="experiment.html"></a>
+  <a id="explore" class="hotspot" href="explore.html"></a>
 
 </div>
 
