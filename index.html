@@ -6,205 +6,76 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* GLOBAL */
 body {
   margin: 0;
-  font-family: 'Arial', sans-serif;
-  background: #000814;
-  color: #e0e6ff;
+  font-family: Arial, sans-serif;
+  background: #000;
   overflow-x: hidden;
 }
 
-/* STARFIELD */
-.stars {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  z-index: -5;
-  background: radial-gradient(circle at center, #001233, #000814);
-}
-
-.stars::before {
-  content: "";
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  background: repeating-radial-gradient(circle, white 0 2px, transparent 3px 40px);
-  opacity: 0.12;
-  animation: spin 160s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* SOLAR SYSTEM TOP */
-.solar-system {
+/* FULLSCREEN HERO IMAGE */
+.hero {
   position: relative;
   width: 100%;
-  height: 400px;
-  margin-top: 40px;
+  height: 100vh;
+  background: url('stellar-lab.jpg') center/cover no-repeat;
 }
 
-/* ORBITS */
-.orbit {
+/* CLICKABLE AREAS (INVISIBLE BUTTONS) */
+.click-zone {
   position: absolute;
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 50%;
-  animation: rotate 50s linear infinite;
-}
-
-.orbit.one { width: 250px; height: 250px; top: 80px; left: calc(50% - 125px); }
-.orbit.two { width: 350px; height: 350px; top: 30px; left: calc(50% - 175px); animation-duration: 70s; }
-.orbit.three { width: 500px; height: 500px; top: -40px; left: calc(50% - 250px); animation-duration: 100s; }
-
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* PLANETS */
-.planet {
-  position: absolute;
-  border-radius: 50%;
-  animation: float 6s ease-in-out infinite alternate;
-}
-
-.sun {
-  width: 120px;
-  height: 120px;
-  background: radial-gradient(circle, #ffdd55, #ff8800);
-  top: 140px;
-  left: calc(50% - 60px);
-  animation: pulse 4s ease-in-out infinite alternate;
-}
-
-.blue {
-  width: 40px;
-  height: 40px;
-  background: radial-gradient(circle, #7abfff, #1b3b5f);
-  top: 100px;
-  left: calc(50% - 160px);
-}
-
-.pink {
-  width: 60px;
-  height: 60px;
-  background: radial-gradient(circle, #ff9dfc, #5f1b5f);
-  top: 260px;
-  left: calc(50% + 140px);
-}
-
-@keyframes float {
-  from { transform: translateY(0px); }
-  to { transform: translateY(20px); }
-}
-
-@keyframes pulse {
-  from { transform: scale(1); }
-  to { transform: scale(1.15); }
-}
-
-/* TITLE */
-.hero {
-  text-align: center;
-  margin-top: -20px;
-}
-
-.hero h1 {
-  font-size: 4rem;
-  color: #7abfff;
-  text-shadow: 0 0 30px #7abfff;
-  animation: glow 3s ease-in-out infinite alternate;
-}
-
-@keyframes glow {
-  from { text-shadow: 0 0 20px #7abfff; }
-  to { text-shadow: 0 0 40px #7abfff; }
-}
-
-/* CARDS */
-.cards {
-  width: 80%;
-  max-width: 900px;
-  margin: 40px auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 25px;
-}
-
-.card {
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.15);
-  padding: 25px;
-  border-radius: 12px;
-  text-align: left;
-  box-shadow: 0 0 25px rgba(122,191,255,0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 0 40px rgba(122,191,255,0.3);
-}
-
-.card:active {
+/* TAP SHINE EFFECT */
+.click-zone:active {
   transform: scale(0.97);
-  box-shadow: 0 0 60px rgba(122,191,255,0.5);
+  box-shadow: 0 0 25px rgba(255,255,255,0.4);
 }
 
-.card h3 {
-  color: #7abfff;
-  margin-bottom: 12px;
+/* POSITIONING THE FOUR MODULE BUTTONS */
+#learn {
+  top: 72%;
+  left: 12%;
+  width: 18%;
+  height: 10%;
+}
+
+#experiment {
+  top: 72%;
+  left: 32%;
+  width: 18%;
+  height: 10%;
+}
+
+#explore {
+  top: 72%;
+  left: 52%;
+  width: 18%;
+  height: 10%;
+}
+
+#discover {
+  top: 72%;
+  left: 72%;
+  width: 18%;
+  height: 10%;
 }
 </style>
 </head>
 
 <body>
 
-<div class="stars"></div>
+<div class="hero">
 
-<!-- SOLAR SYSTEM ON TOP -->
-<div class="solar-system">
-  <div class="orbit one"></div>
-  <div class="orbit two"></div>
-  <div class="orbit three"></div>
+  <!-- INVISIBLE CLICKABLE BUTTONS -->
+  <div id="learn" class="click-zone" onclick="location.href='learn.html'"></div>
+  <div id="experiment" class="click-zone" onclick="location.href='experiment.html'"></div>
+  <div id="explore" class="click-zone" onclick="location.href='explore.html'"></div>
+  <div id="discover" class="click-zone" onclick="location.href='discover.html'"></div>
 
-  <div class="planet sun"></div>
-  <div class="planet blue"></div>
-  <div class="planet pink"></div>
-</div>
-
-<!-- TITLE IN THE MIDDLE -->
-<section class="hero">
-  <h1>Stellar Lab</h1>
-</section>
-
-<!-- CARDS BELOW -->
-<div class="cards">
-  <div class="card" onclick="location.href='learn.html'">
-    <h3>Learn</h3>
-    <p>Dive into interactive lessons and cosmic stories.</p>
-  </div>
-
-  <div class="card" onclick="location.href='experiment.html'">
-    <h3>Experiment</h3>
-    <p>Run simulations and conduct virtual experiments.</p>
-  </div>
-
-  <div class="card" onclick="location.href='explore.html'">
-    <h3>Explore</h3>
-    <p>Discover planets, stars, and the search for life.</p>
-  </div>
-
-  <div class="card" onclick="location.href='discover.html'">
-    <h3>Discover Life</h3>
-    <p>Understand the building blocks of life and where it might exist.</p>
-  </div>
 </div>
 
 </body>
 </html>
-  
