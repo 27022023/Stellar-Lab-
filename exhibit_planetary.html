@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planetary Systems • Stellar Lab</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background: black;
+    color: white;
+    overflow-x: hidden;
+  }
+
+  /* STAR BACKGROUND */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://github.com/user-attachments/assets/ca2f24b6-9330-4e7d-b49d-aa6add7dc405') center/cover no-repeat;
+    opacity: 0.25;
+    z-index: -1;
+  }
+
+  /* MOON HOME BUTTON */
+  .moon-home {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    width: 60px;
+    height: 60px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 10px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+    transition: 0.3s;
+    z-index: 10;
+  }
+
+  .moon-home:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255,255,255,0.6);
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    padding: 60px 20px 20px;
+  }
+
+  .header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin: 0;
+  }
+
+  .header p {
+    font-size: 16px;
+    opacity: 0.85;
+    margin-top: 8px;
+  }
+
+  /* IMAGE GALLERY */
+  .gallery {
+    margin: 30px 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .gallery {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .gallery img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  /* CONTENT BOX */
+  .content {
+    margin: 30px 20px;
+    padding: 20px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 14px;
+    backdrop-filter: blur(10px);
+  }
+
+  .content h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .content p {
+    margin-top: 12px;
+    font-size: 15px;
+    opacity: 0.9;
+    line-height: 1.6;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- MOON HOME BUTTON -->
+<a class="moon-home" href="exhibits.html">Back</a>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>Planetary Systems</h1>
+  <p>How planets form, evolve, and shape the architecture of their cosmic neighborhoods.</p>
+</div>
+
+<!-- IMAGE GALLERY -->
+<div class="gallery">
+  <img src="https://images.unsplash.com/photo-1447433819943-74a20887a81e?auto=format&fit=crop&w=800&q=80">
+  <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=80">
+  <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80">
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+  <h2>How Planetary Systems Form</h2>
+  <p>
+    Planetary systems begin inside vast clouds of gas and dust. When gravity causes these clouds to collapse, they form a rotating disk called a <strong>protoplanetary disk</strong>. Within this disk, dust grains collide and stick together, slowly growing into larger bodies called planetesimals.
+  </p>
+
+  <p>
+    Over millions of years, these planetesimals merge into full-sized planets. Their final arrangement depends on many factors: the mass of the star, the temperature of the disk, and the chaotic gravitational interactions between forming worlds.
+  </p>
+
+  <h2>Types of Planets</h2>
+  <p>
+    Planetary systems often contain a mix of rocky planets, gas giants, ice giants, and exotic worlds unlike anything in our Solar System. Many exoplanets orbit extremely close to their stars, forming “hot Jupiters,” while others orbit in wide, cold regions far from stellar warmth.
+  </p>
+
+  <h2>Habitability</h2>
+  <p>
+    Astrobiology focuses on the <strong>habitable zone</strong> — the region around a star where liquid water can exist. But habitability is more complex than distance alone. Planetary atmospheres, magnetic fields, geology, and chemistry all play crucial roles in determining whether a world can support life.
+  </p>
+</div>
+
+</body>
+</html>
