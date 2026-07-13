@@ -15,71 +15,74 @@ body {
   overflow-x: hidden;
 }
 
-/* STARFIELD BACKGROUND */
-.stars {
+/* SOLAR SYSTEM BACKGROUND */
+.solar-system {
   position: fixed;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at center, #001233, #000814);
+  z-index: -5;
   overflow: hidden;
-  z-index: -3;
 }
 
-.stars::before, .stars::after {
-  content: "";
+/* ORBIT LINES */
+.orbit {
   position: absolute;
-  width: 200%;
-  height: 200%;
-  background: repeating-radial-gradient(circle, white 0 2px, transparent 3px 40px);
-  opacity: 0.15;
-  animation: spin 120s linear infinite;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50%;
+  animation: rotate 40s linear infinite;
 }
 
-.stars::after {
-  opacity: 0.08;
-  animation-duration: 200s;
-}
+.orbit.one { width: 400px; height: 400px; top: 10%; left: 10%; }
+.orbit.two { width: 600px; height: 600px; top: 5%; left: 20%; animation-duration: 60s; }
+.orbit.three { width: 800px; height: 800px; top: -5%; left: 10%; animation-duration: 90s; }
 
-@keyframes spin {
+@keyframes rotate {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
-}
-
-/* HERO */
-.hero {
-  text-align: center;
-  padding: 120px 20px 60px;
-  position: relative;
 }
 
 /* PLANETS */
 .planet {
   position: absolute;
   border-radius: 50%;
-  filter: blur(20px);
-  opacity: 0.6;
-  animation: float 10s ease-in-out infinite alternate;
+  filter: blur(10px);
+  animation: float 6s ease-in-out infinite alternate;
 }
 
-.planet.one {
-  top: 40px;
-  left: 10%;
-  width: 180px;
-  height: 180px;
-  background: radial-gradient(circle, #7abfff, transparent 70%);
+.planet.sun {
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, #ffdd55, #ff8800);
+  top: 40%;
+  left: 45%;
+  filter: blur(0px);
 }
 
-.planet.two {
-  top: 120px;
-  right: 15%;
-  width: 140px;
-  height: 140px;
-  background: radial-gradient(circle, #ff9dfc, transparent 70%);
+.planet.blue {
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, #7abfff, #1b3b5f);
+  top: 25%;
+  left: 20%;
+}
+
+.planet.pink {
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, #ff9dfc, #5f1b5f);
+  top: 60%;
+  left: 70%;
 }
 
 @keyframes float {
   from { transform: translateY(0px); }
-  to { transform: translateY(30px); }
+  to { transform: translateY(20px); }
+}
+
+/* HERO */
+.hero {
+  text-align: center;
+  padding: 120px 20px 60px;
 }
 
 .hero h1 {
@@ -110,7 +113,6 @@ body {
   padding: 40px;
   box-shadow: 0 0 50px rgba(122,191,255,0.25);
   backdrop-filter: blur(12px);
-  position: relative;
 }
 
 /* HOLOGRAM SCREEN */
@@ -152,6 +154,7 @@ body {
   gap: 25px;
 }
 
+/* CLICKABLE CARDS */
 .card {
   background: rgba(255,255,255,0.07);
   border: 1px solid rgba(255,255,255,0.15);
@@ -160,6 +163,7 @@ body {
   text-align: center;
   box-shadow: 0 0 25px rgba(122,191,255,0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
 }
 
 .card:hover {
@@ -167,86 +171,64 @@ body {
   box-shadow: 0 0 40px rgba(122,191,255,0.3);
 }
 
+.card:active {
+  box-shadow: 0 0 60px rgba(122,191,255,0.5);
+  transform: scale(0.97);
+}
+
 .card h3 {
   color: #7abfff;
   margin-bottom: 12px;
-}
-
-/* BOTTOM NAV */
-.bottom-nav {
-  margin-top: 60px;
-  background: rgba(255,255,255,0.05);
-  border-top: 1px solid rgba(255,255,255,0.15);
-  display: flex;
-  justify-content: space-around;
-  padding: 20px 0;
-  position: sticky;
-  bottom: 0;
-}
-
-.bottom-nav a {
-  color: #e0e6ff;
-  text-decoration: none;
-  font-size: 1.1rem;
-  opacity: 0.9;
-  transition: color 0.3s ease, text-shadow 0.3s ease;
-}
-
-.bottom-nav a:hover {
-  color: #7abfff;
-  text-shadow: 0 0 15px #7abfff;
 }
 </style>
 </head>
 
 <body>
 
-<div class="stars"></div>
+<!-- SOLAR SYSTEM -->
+<div class="solar-system">
+  <div class="orbit one"></div>
+  <div class="orbit two"></div>
+  <div class="orbit three"></div>
 
+  <div class="planet sun"></div>
+  <div class="planet blue"></div>
+  <div class="planet pink"></div>
+</div>
+
+<!-- HERO -->
 <section class="hero">
-  <div class="planet one"></div>
-  <div class="planet two"></div>
-
   <h1>Stellar Lab</h1>
   <p>Explore. Experiment. Discover Life Beyond.</p>
 </section>
 
+<!-- LAB PANEL -->
 <div class="lab-panel">
   <div class="lab-screen"></div>
 
   <div class="features">
-    <div class="card">
+    <div class="card" onclick="location.href='learn.html'">
       <h3>Learn</h3>
       <p>Dive into interactive lessons and cosmic stories.</p>
     </div>
 
-    <div class="card">
+    <div class="card" onclick="location.href='experiment.html'">
       <h3>Experiment</h3>
       <p>Run simulations and conduct virtual experiments.</p>
     </div>
 
-    <div class="card">
+    <div class="card" onclick="location.href='explore.html'">
       <h3>Explore</h3>
       <p>Discover planets, stars, and the search for life.</p>
     </div>
 
-    <div class="card">
+    <div class="card" onclick="location.href='discover.html'">
       <h3>Discover Life</h3>
       <p>Understand the building blocks of life and where it might exist.</p>
     </div>
   </div>
 </div>
 
-<nav class="bottom-nav">
-  <a href="index.html">Home</a>
-  <a href="exhibits.html">Exhibits</a>
-  <a href="experiments.html">Experiments</a>
-  <a href="atlas.html">Atlas</a>
-  <a href="community.html">Community</a>
-  <a href="about.html">About</a>
-</nav>
-
 </body>
 </html>
-
-        
+  
