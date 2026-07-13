@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Black Holes • Stellar Lab</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background: black;
+    color: white;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://github.com/user-attachments/assets/ca2f24b6-9330-4e7d-b49d-aa6add7dc405') center/cover no-repeat;
+    opacity: 0.25;
+    z-index: -1;
+  }
+
+  .moon-home {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    width: 60px;
+    height: 60px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 10px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+    transition: 0.3s;
+    z-index: 10;
+  }
+
+  .moon-home:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255,255,255,0.6);
+  }
+
+  .header {
+    text-align: center;
+    padding: 60px 20px 20px;
+  }
+
+  .header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .header p {
+    font-size: 16px;
+    opacity: 0.85;
+    margin-top: 8px;
+  }
+
+  .gallery {
+    margin: 30px 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .gallery {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .gallery img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .content {
+    margin: 30px 20px;
+    padding: 20px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 14px;
+    backdrop-filter: blur(10px);
+  }
+
+  .content h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .content p {
+    margin-top: 12px;
+    font-size: 15px;
+    opacity: 0.9;
+    line-height: 1.6;
+  }
+</style>
+</head>
+
+<body>
+
+<a class="moon-home" href="exhibits.html">Back</a>
+
+<div class="header">
+  <h1>Black Holes</h1>
+  <p>The most extreme objects in the universe — where gravity becomes unstoppable.</p>
+</div>
+
+<div class="gallery">
+  <img src="black_holes_infographic_notext.jpg">
+  <img src="hero-image.fit_lim.v1698063843.jpg">
+  <img src="sub-warped-gaia-000000-14x5-1.webp">
+</div>
+
+<div class="content">
+  <h2>What Is a Black Hole?</h2>
+  <p>
+    A black hole is a region of spacetime where gravity is so strong that nothing can escape — not even light. They form when massive stars collapse under their own gravity.
+  </p>
+
+  <h2>The Event Horizon</h2>
+  <p>
+    The event horizon marks the boundary of no return. Once anything crosses it, escape becomes physically impossible.
+  </p>
+
+  <h2>Accretion Disks</h2>
+  <p>
+    Matter spiraling into a black hole forms a glowing disk of superheated gas. This is what telescopes actually observe — not the black hole itself.
+  </p>
+
+  <h2>Gravitational Lensing</h2>
+  <p>
+    Black holes warp spacetime, bending light and distorting the appearance of nearby stars and gas. This creates the iconic ring-like structures seen in many images.
+  </p>
+
+  <h2>Famous Black Holes</h2>
+  <p>
+    Sagittarius A* sits at the center of the Milky Way, while M87* became the first black hole ever imaged. These giants anchor galaxies and shape cosmic evolution.
+  </p>
+</div>
+
+</body>
+</html>
