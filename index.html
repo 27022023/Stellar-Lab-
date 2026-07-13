@@ -9,8 +9,8 @@
     body {
         margin: 0;
         font-family: system-ui, sans-serif;
-        background: radial-gradient(circle at top, #0a0f1f, #000);
-        color: #fff;
+        background: radial-gradient(circle at top, #141b3f, #050814);
+        color: #e6e6e6;
         overflow-x: hidden;
     }
 
@@ -27,33 +27,42 @@
         z-index: 10;
     }
     .logo {
-        font-size: 22px;
         font-weight: 700;
+        font-size: 22px;
         color: #9bb1ff;
     }
+    .nav-links {
+        display: flex;
+        gap: 18px;
+        font-size: 15px;
+    }
     .nav-links span {
-        margin-right: 18px;
-        color: #cdd9ff;
         cursor: pointer;
+        color: #cdd9ff;
     }
     .nav-links span:hover {
-        color: #fff;
+        color: #ffffff;
     }
     .launch-btn {
         padding: 8px 18px;
         border-radius: 999px;
-        background: linear-gradient(90deg, #ff7ac4, #ffb86c);
+        background: linear-gradient(90deg, #4c5cff, #7b8bff);
         color: white;
         font-weight: 600;
-        border: none;
+        font-size: 14px;
         cursor: pointer;
+        border: none;
     }
 
-    /* HERO */
+    /* HERO SECTION */
     .hero {
-        padding-top: 120px;
-        text-align: center;
+        padding-top: 90px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         position: relative;
+        overflow: hidden;
     }
 
     /* STARS */
@@ -70,88 +79,137 @@
         opacity: 0.7;
     }
 
-    /* EMOJI SCENE */
-    .scene {
-        margin-top: 40px;
-        display: flex;
-        justify-content: center;
+    /* BACKGROUND ELEMENTS */
+    .planet-bg {
+        position: absolute;
+        bottom: -260px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 1200px;
+        height: 1200px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 50% 30%, #2f3f7a, #050814);
+        box-shadow: 0 -80px 160px #000 inset;
+        opacity: 0.9;
+    }
+
+    .moon {
+        position: absolute;
+        top: 120px;
+        right: 12%;
+        font-size: 150px;
+    }
+
+    .rocket {
+        position: absolute;
+        top: 180px;
+        left: 12%;
+        font-size: 160px;
+    }
+
+    /* MAIN CONTENT LAYOUT */
+    .hero-inner {
+        position: relative;
+        z-index: 2;
+        max-width: 1100px;
+        margin-top: 80px;
+        display: grid;
+        grid-template-columns: 1.1fr 1.1fr;
+        gap: 40px;
         align-items: center;
-        gap: 60px;
-        flex-wrap: wrap;
+    }
+
+    /* LEFT: EMOJI CLUSTER */
+    .scene-left {
+        position: relative;
+        height: 380px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        text-align: center;
     }
 
     .emoji {
         font-size: 140px;
-        text-align: center;
     }
 
-    .planet { font-size: 180px; }
-    .moon { font-size: 150px; }
-    .rocket { font-size: 160px; }
-    .lab { font-size: 120px; }
-
-    /* TITLE */
-    .hero-title {
-        font-size: 70px;
-        font-weight: 800;
-        color: #9bb1ff;
-        text-shadow: 0 0 20px #4c5cff, 0 0 40px #4c5cff;
-        margin-top: 40px;
-    }
-
-    .hero-tagline {
-        font-size: 22px;
-        color: #cdd9ff;
-        margin-bottom: 40px;
-    }
-
-    /* FEATURE GRID */
-    .feature-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .cluster-row {
+        display: flex;
         gap: 20px;
-        max-width: 700px;
-        margin: 0 auto;
+        justify-content: center;
     }
 
-    .feature-card {
-        background: rgba(10, 14, 32, 0.95);
-        border-radius: 14px;
-        padding: 16px;
-        border: 1px solid #3a3f66;
-        box-shadow: 0 0 16px #00000066;
+    /* RIGHT: TITLE + TAGLINE + CARDS */
+    .hero-right {
         text-align: left;
     }
 
-    .feature-title {
+    .hero-title {
+        font-size: 46px;
+        font-weight: 800;
+        color: #9bb1ff;
+        text-shadow: 0 0 18px #4c5cff, 0 0 36px #4c5cff;
+        letter-spacing: 1px;
+    }
+
+    .hero-tagline {
+        margin-top: 8px;
         font-size: 18px;
+        color: #cdd9ff;
+    }
+
+    .hero-subtext {
+        margin-top: 16px;
+        font-size: 14px;
+        color: #9fa8d8;
+    }
+
+    .feature-grid {
+        margin-top: 26px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .feature-card {
+        background: rgba(10, 14, 32, 0.9);
+        border-radius: 14px;
+        padding: 14px 16px;
+        border: 1px solid #3a3f66;
+        box-shadow: 0 0 16px #00000066;
+    }
+
+    .feature-title {
+        font-size: 15px;
         font-weight: 600;
-        color: #ffb86c;
+        color: #9bb1ff;
         margin-bottom: 6px;
     }
 
     .feature-desc {
-        font-size: 14px;
+        font-size: 13px;
         color: #cdd9ff;
     }
 
-    /* BOTTOM MENU */
+    /* BOTTOM MENU BAR */
     .bottom-menu {
-        margin-top: 50px;
+        margin-top: 60px;
         margin-bottom: 40px;
         display: flex;
         justify-content: center;
         gap: 24px;
+        font-size: 15px;
     }
 
     .bottom-item {
         padding: 10px 18px;
         border-radius: 999px;
-        background: rgba(10, 14, 32, 0.95);
+        background: rgba(10, 14, 32, 0.9);
         border: 1px solid #3a3f66;
         color: #cdd9ff;
         cursor: pointer;
-        font-size: 15px;
     }
 
     .bottom-item:hover {
@@ -159,10 +217,23 @@
         color: #ffffff;
     }
 
-    .chatbot {
-        border-color: #ffb86c;
-        color: #ffb86c;
+    .bottom-item.chatbot {
+        border-color: #4c5cff;
+        color: #9bb1ff;
         font-weight: 600;
+    }
+
+    @media (max-width: 900px) {
+        .hero-inner {
+            grid-template-columns: 1fr;
+            margin: 40px 20px 0;
+        }
+        .scene-left {
+            order: 2;
+        }
+        .hero-right {
+            order: 1;
+        }
     }
 </style>
 </head>
@@ -171,14 +242,16 @@
 
 <!-- NAVBAR -->
 <header class="navbar">
-    <div class="logo">Stellar Lab</div>
-    <div class="nav-links">
-        <span>Home</span>
-        <span>Exhibits</span>
-        <span>Experiments</span>
-        <span>Atlas</span>
-        <span>Community</span>
-        <span>About</span>
+    <div class="navbar-left">
+        <div class="logo">Stellar Lab</div>
+        <div class="nav-links">
+            <span>Home</span>
+            <span>Exhibits</span>
+            <span>Experiments</span>
+            <span>Atlas</span>
+            <span>Community</span>
+            <span>About</span>
+        </div>
     </div>
     <button class="launch-btn">Launch Lab</button>
 </header>
@@ -187,50 +260,64 @@
 <section class="hero">
 
     <div class="stars"></div>
+    <div class="planet-bg"></div>
+    <div class="moon">🌕</div>
+    <div class="rocket">🚀</div>
 
-    <!-- EMOJI SCENE -->
-    <div class="scene">
-        <div class="emoji planet">🪐</div>
-        <div class="emoji rocket">🚀</div>
-        <div class="emoji moon">🌕</div>
-        <div class="emoji lab">🧪🔬⚗️</div>
+    <div class="hero-inner">
+
+        <!-- LEFT: EMOJI CLUSTER -->
+        <div class="scene-left">
+
+            <div class="emoji">🪐</div>
+
+            <div class="cluster-row">
+                <div class="emoji">🚀</div>
+                <div class="emoji">🌕</div>
+            </div>
+
+            <div class="emoji">🧪🔬⚗️</div>
+
+        </div>
+
+        <!-- RIGHT SIDE (unchanged) -->
+        <div class="hero-right">
+            <div class="hero-title">Stellar Lab</div>
+            <div class="hero-tagline">Explore. Experiment. Discover Life Beyond.</div>
+            <div class="hero-subtext">
+                A cosmic lab where biology meets the stars—learn, simulate, and imagine life beyond Earth.
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-title">Learn</div>
+                    <div class="feature-desc">Dive into interactive lessons and cosmic stories.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-title">Experiment</div>
+                    <div class="feature-desc">Run simulations and conduct virtual experiments.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-title">Explore</div>
+                    <div class="feature-desc">Discover planets, stars, and the search for life.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-title">Discover Life</div>
+                    <div class="feature-desc">Understand the building blocks of life and where it might exist.</div>
+                </div>
+            </div>
+
+            <div class="bottom-menu">
+                <div class="bottom-item">Learn</div>
+                <div class="bottom-item">Explore</div>
+                <div class="bottom-item">Experiment</div>
+                <div class="bottom-item">Discover Life</div>
+                <div class="bottom-item chatbot">Chatbot: Starlight</div>
+            </div>
+        </div>
     </div>
-
-    <!-- TITLE -->
-    <div class="hero-title">Stellar Lab</div>
-    <div class="hero-tagline">Explore. Experiment. Discover Life Beyond.</div>
-
-    <!-- FEATURE GRID -->
-    <div class="feature-grid">
-        <div class="feature-card">
-            <div class="feature-title">Learn</div>
-            <div class="feature-desc">Dive into interactive lessons and cosmic stories.</div>
-        </div>
-        <div class="feature-card">
-            <div class="feature-title">Experiment</div>
-            <div class="feature-desc">Run simulations and conduct virtual experiments.</div>
-        </div>
-        <div class="feature-card">
-            <div class="feature-title">Explore</div>
-            <div class="feature-desc">Discover planets, stars, and the search for life.</div>
-        </div>
-        <div class="feature-card">
-            <div class="feature-title">Discover Life</div>
-            <div class="feature-desc">Understand the building blocks of life and where it might exist.</div>
-        </div>
-    </div>
-
-    <!-- BOTTOM MENU -->
-    <div class="bottom-menu">
-        <div class="bottom-item">Learn</div>
-        <div class="bottom-item">Explore</div>
-        <div class="bottom-item">Experiment</div>
-        <div class="bottom-item">Discover Life</div>
-        <div class="bottom-item chatbot">Chatbot: Starlight</div>
-    </div>
-
 </section>
 
 </body>
 </html>
-    
+            
