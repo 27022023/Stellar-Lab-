@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn • Astrobiology Classroom</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    overflow-x: hidden;
+    background: #050316;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+
+  .overlay {
+    background: radial-gradient(circle at top, rgba(150, 90, 255, 0.45), transparent 55%),
+                radial-gradient(circle at bottom, rgba(40, 10, 80, 0.8), #050316);
+    min-height: 100vh;
+  }
+
+  .moon-home {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    width: 60px;
+    height: 60px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 10px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+    transition: 0.3s;
+    z-index: 10;
+  }
+
+  .moon-home:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255,255,255,0.6);
+  }
+
+  .hero {
+    text-align: center;
+    padding: 80px 20px 40px;
+  }
+
+  .hero h1 {
+    font-size: 38px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .hero p {
+    font-size: 16px;
+    opacity: 0.9;
+    margin-top: 10px;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr);
+    gap: 24px;
+    padding: 0 20px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 900px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .panel {
+    background: rgba(10, 5, 30, 0.8);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    padding: 20px;
+    backdrop-filter: blur(12px);
+  }
+
+  .panel h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .panel p, .panel ul {
+    margin-top: 10px;
+    font-size: 15px;
+    opacity: 0.92;
+    line-height: 1.6;
+  }
+
+  .lesson {
+    margin-top: 18px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .lesson h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .lesson p {
+    margin-top: 6px;
+  }
+
+  .lesson-img {
+    width: 100%;
+    border-radius: 12px;
+    margin-top: 12px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .quiz-tag {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(150, 90, 255, 0.25);
+    font-size: 12px;
+    letter-spacing: 0.03em;
+  }
+
+  .quiz-card {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .quiz-question {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .quiz-options button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 6px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(5, 5, 20, 0.9);
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .quiz-options button:hover {
+    background: rgba(150, 90, 255, 0.35);
+  }
+
+  .quiz-result {
+    margin-top: 6px;
+    font-size: 13px;
+    opacity: 0.9;
+  }
+
+  /* Starlight chatbot */
+
+  .starlight-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .starlight-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffe9ff, #9c7bff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+  }
+
+  .starlight-name {
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .starlight-role {
+    font-size: 12px;
+    opacity: 0.8;
+  }
+
+  .chat-window {
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    max-height: 260px;
+    overflow-y: auto;
+    font-size: 14px;
+  }
+
+  .chat-message {
+    margin-bottom: 10px;
+  }
+
+  .chat-message.starlight {
+    color: #f4e9ff;
+  }
+
+  .chat-message.user {
+    color: #cfe9ff;
+    text-align: right;
+  }
+
+  .chat-input {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .chat-input input {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(5, 5, 20, 0.9);
+    color: white;
+    font-size: 14px;
+  }
+
+  .chat-input button {
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(135deg, #9c7bff, #5a3cff);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .chat-input button:hover {
+    filter: brightness(1.1);
+  }
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<a class="moon-home" href="index.html">Home</a>
+
+<div class="hero">
+  <h1>🌌 Learn • Astrobiology Classroom</h1>
+  <p>Explore how life might arise, survive, and be discovered among the stars.</p>
+</div>
+
+<div class="layout">
+
+  <!-- LEFT: 10 lessons with quizzes -->
+  <div class="panel">
+    <h2>📚 Welcome to Astrobiology</h2>
+    <p>
+      Astrobiology is the study of life in the universe — how it begins, how it evolves,
+      and where it might exist beyond Earth. Here you’ll explore molecules, habitable
+      zones, exoplanets, biosignatures, extremophiles, planetary systems, stars, moons,
+      constellations, and the search for life beyond Earth.
+    </p>
+
+    <!-- Lesson 1 -->
+    <div class="lesson">
+      <h3>Lesson 1 — What Is Life?</h3>
+      <img src="Facts-About-Molecules-Learn-Important-Terms-and-Concepts-870x437.jpg"
+           alt="Molecules and chemical structures" class="lesson-img">
+      <p>
+        Life, as we know it, is built from molecules that store and process information,
+        use energy, and maintain order. Astrobiologists look at how simple chemical
+        building blocks — like water, carbon-based molecules, and energy sources —
+        can assemble into complex systems capable of metabolism, growth, and reproduction.
+        On early Earth, environments such as oceans, volcanic regions, and hydrothermal
+        vents may have provided the right conditions for chemistry to become biology.
+      </p>
+      <span class="quiz-tag">Quiz available</span>
+
+      <div class="quiz-card" id="quiz1">
+        <div class="quiz-question">
+          Which feature is most essential for something to be considered “alive” in astrobiology?
+        </div>
+        <div class="quiz-options">
+          <button data-option="A" onclick="checkQuiz(event,'quiz1','C')">A. Being made of metal</button>
+          <button data-option="B" onclick="checkQuiz(event,'quiz1','C')">B. Glowing in the dark</button>
+          <button data-option="C" onclick="checkQuiz(event,'quiz1','C')">C. Using energy to grow and reproduce</button>
+          <button data-option="D" onclick="checkQuiz(event,'quiz1','C')">D. Living only on Earth</button>
+        </div>
+        <div class="quiz-result" id="quiz1-result"></div>
+      </div>
+    </div>
+
+    <!-- Lesson 2 -->
+    <div class="lesson">
+      <h3>Lesson 2 — Habitable Zones</h3>
+      <img src="Galactic_Habitable_Zone.jpg"
+           alt="Galactic habitable zone illustration" class="lesson-img">
+      <p>
+        A habitable zone around a star is the region where temperatures allow liquid
+        water to exist on a planet’s surface — not too hot, not too cold. There are
+        also ideas of a “galactic habitable zone,” regions in a galaxy where conditions
+        such as radiation levels, heavy element abundance, and stellar density may be
+        more favorable for life. Astrobiologists study how distance from a star, type
+        of star, and planetary atmosphere all work together to create environments where
+        water can remain liquid and chemistry can flourish.
+      </p>
+      <span class="quiz-tag">Quiz available</span>
+
+      <div class="quiz-card" id="quiz2">
+        <div class="quiz-question">
+          What defines a star’s habitable zone?
+        </div>
+        <div class="quiz-options">
+          <button data-option="A" onclick="checkQuiz(event,'quiz2','B')">A. Planets must be Earth-sized</button>
+          <button data-option="B" onclick="checkQuiz(event,'quiz2','B')">B. Temperatures allow liquid water on the surface</button>
+          <button data-option="C" onclick="checkQuiz(event,'quiz2','B')">C. Planets must have rings</button>
+          <button data-option="D" onclick="checkQuiz(event,'quiz2','B')">D. Planets must be closest to the star</button>
+        </div>
+        <div class="quiz-result" id="quiz2-result"></div>
+      </div>
+    </div>
+
+    <!-- Lesson 3 -->
+    <div class="lesson">
+      <h3>Lesson 3 — Exoplanets & Detection</h3>
+      <img src="exoplanet-with-moon.jpg"
+           alt="Exoplanet with moon in space" class="lesson-img">
+      <p>
+        Exoplanets are planets orbiting stars beyond our Sun. Scientists detect them
+        using several methods. The transit method measures tiny dips in a star’s brightness
+        when a planet passes in front of it. The radial velocity method looks at how
+        a star “wobbles” due to a planet’s gravity. Direct imaging uses powerful telescopes
+        to capture faint light from planets themselves. By combining these techniques,
+        astronomers can estimate a planet’s size, orbit, temperature, and sometimes
+        even hints of its atmosphere.
+      </p>
+      <span class="quiz-tag">Quiz available</span>
+
+      <div class="quiz-card" id="quiz3">
+        <div class="quiz-question">
+          In the transit method, what do scientists measure to find exoplanets?
+        </div>
+        <div class="quiz-options">
+          <button data-option="A" onclick="checkQuiz(event,'quiz3','C')">A. The color of the planet’s surface</button>
+          <button data-option="B" onclick="checkQuiz(event,'quiz3','C')">B. The sound waves from the star</button>
+          <button data-option="C" onclick="checkQuiz(event,'quiz3','C')">C. Small dips in the star’s brightness</button>
+          <button data-option="D" onclick="checkQuiz(event,'quiz3','C')">D. The number of moons around the planet</button>
+        </div>
+        <div class="quiz-result" id="quiz3-result"></div>
+      </div>
+    </div>
+
+    <!-- Lesson 4 -->
+    <div class="lesson">
+      <h3>Lesson 4 — Biosignatures</h3>
+      <img src="13752_2025_503_Fig1_HTML.png"
+           alt="Diagram of types of biosignatures" class="lesson-img">
+      <p>
+        Biosignatures are signs that might indicate life, such as specific gases in
+        an atmosphere (like oxygen and methane together), unusual chemical patterns,
+        or structures like fossils and biomats. Astrobiologists study how living systems
+        change their environment — for example, by producing gases, altering minerals,
+        or leaving behind complex organic molecules. When we analyze light from distant
+        planets, we look for spectral fingerprints that suggest chemistry that is hard
+        to explain without biology.
+      </p>
+      <span class="quiz-tag">Quiz available</span>
+
+      <div class="quiz-card" id="quiz4">
+        <div class="quiz-question">
+          What is a biosignature?
+        </div>
+        <div class="quiz-options">
+          <button data-option="A" onclick="checkQuiz(event,'quiz4','D')">A. A type of telescope</button>
+          <button data-option="B" onclick="checkQuiz(event,'quiz4','D')">B. A planet’s orbit shape</button>
+          <button data-option="C" onclick="checkQuiz(event,'quiz4','D')">C. A star’s temperature</button>
+          <button data-option="D" onclick="checkQuiz(event,'quiz4','D')">D. A sign or pattern that might indicate life</button>
+        </div>
+        <div class="quiz-result" id="quiz4-result"></div>
+      </div>
+    </div>
+
+    <!-- Lesson 5 -->
+    <div class="lesson">
+      <h3>Lesson 5 — Extremophiles</h3>
+      <img src="JR-8-Interesting-Extremophiles-tartigrade.jpg"
+           alt="Tardigrade extremophile" class="lesson-img">
+      <p>
+        Extremophiles are organisms that thrive in extreme environments: boiling hot
+        springs, deep ocean pressure, intense radiation, strong acidity, or freezing
+        ice. Tardigrades, for example, can survive dehydration, radiation, and even
+        exposure to space. These organisms show that life is far more adaptable than
+        we once thought. For astrobiology, extremophiles expand the range of environments
+        where we might expect life to exist — including underground, under ice, or
+        in harsh alien conditions.
+      </p>
+      <span class="quiz-tag">Quiz available</span>
+
+      <div class="quiz-card" id="quiz5">
+        <div class="quiz-question">
+          Why are extremophiles important for astrobiology?
+        </div>
+        <div class="quiz-options">
+          <button data-option="A" onclick="checkQuiz(event,'quiz5','C')">A. They only live in mild climates</button>
+          <button data-option="B" onclick="checkQuiz(event,'quiz5','C')">B. They cannot survive harsh conditions</button>
+          <button data-option="C" onclick="checkQuiz(event,'quiz5','C')">C. They show life can survive extreme environments</button>
+          <button data-option="D" onclick="checkQuiz(event,'quiz5','C')">D. They are all large animals</button>
+        </div>
+        <div class="quiz-result" id="quiz5-result"></div>
+      </div>
+    </div>
+
+    <!-- Lesson 6 -->
+    <div class="lesson">
+      <h3>Lesson 6 — Planetary Systems</h3>
+      <img src="compact-system_rev01.jpg"
+           alt="Compact planetary system around a star" class="lesson-img">
+      <p>
+        Planetary systems form from rotating disks of gas and dust around young stars.
+        Over millions of years, particles collide and stick together, growing into
+        planetesimals and then planets. Some systems are compact, with many planets
+        close to their star; others have wide orbits and massive gas giants. Astrobiologists
+        study how different system architectures affect the chances for habitable worlds,
+        stable climates, and long-term conditions where life could emerge and persist.
+      </p>
+      <span class="quiz-tag">Quiz available</span>
+
+      <div class="quiz-card" id="quiz6">
+        <div class="quiz-question">
+          Where do planetary systems originally form?
+        </div>
+        <div class="quiz-options">
+          <button data-option="A" onclick="checkQuiz(event,'quiz6','B')">A. Inside black holes</button>
+          <button data-option="B" onclick="checkQuiz(event,'quiz6','B')">B. In rotating disks of gas and dust around young stars</button>
+          <button data-option="C" onclick="checkQuiz(event,'quiz6','B')">C. Only in the centers of galaxies</button>
+          <button data-option="D" onclick="checkQuiz(event,'quiz6','B')">D. On the surfaces of old planets</button>
+        </div>
+        <div class="quiz-result" id="quiz6-result"></div>
+      </div>
+    </div>
+
+    <!-- Lesson 7 -->
+    <div class="lesson">
+      <h3>Lesson 7 — Stars & Their Life Cycles</h3>
+      <img src="1000_F_81556974_8sF8cKszJaRfBGd5sDt1RXE2QbzDtQqs.jpg"
+           alt="Milky Way star field" class="lesson-img">
+      <p>
+        Stars are born in giant clouds of gas and dust called nebulae. Gravity pulls
+        material together until nuclear fusion ignites in the core, producing light
+        and heat. Most of a star’s life is spent on the main sequence, steadily fusing
+        hydrogen. Later, stars evolve into red giants or supergiants, and some end
+        their lives in spectacular supernova explosions. The remnants — white dwarfs,
+        neutron stars, or black holes — enrich space with heavy elements that can later
+        form planets and, potentially, life.
+      </p>
+      <span class="quiz-tag">Quiz available</span>
+
+      <div class="quiz-card" id="quiz7">
+        <div class="quiz-question">
+          Where are stars born?
+        </div>
+        <div class="quiz-options">
+          <button data-option="A" onclick="checkQuiz(event,'quiz7','A')">A. In giant clouds of gas and dust (nebulae)</button>
+          <button data-option="B" onclick="checkQuiz(event,'quiz7','A')">B. Inside planets</button>
+          <button data-option="C" onclick="checkQuiz(event,'quiz7','A')">C. Only at the edge of galaxies</button>
+          <button data-option="D" onclick="checkQuiz(event,'quiz7','A')">D. In empty space with no matter</button>
+        </div>
+        <div class="quiz-result" id="quiz7-result"></div>
+      </div>
+    </div>
+
+    <!-- Lesson 8 -->
+    <div class="lesson">
+      <h3>Lesson 8 — Moons & Ocean Worlds</h3>
+      <img src="Kg6b5u6UZZVp48yU4MxSxa.jpg"
+           alt="Phases of the Moon" class="lesson-img">
+      <p>
+        Moons can be more than just companions to planets — some may hide global oceans
+        beneath ice. In our solar system, worlds like Europa and Enceladus are prime
+        candidates for subsurface oceans, warmed by tidal forces. Studying our own
+        Moon’s phases helps us understand orbits, illumination, and how moons interact
+        with their planets. Ocean worlds are especially exciting for astrobiology because
+        liquid water, energy sources, and protective ice shells could create stable
+        environments for life.
+      </p>
+      <span class="quiz-tag">Quiz available</span>
+
+      <div class="quiz-card" id="quiz8">
+        <div class="quiz-question">
+          Why are icy moons and ocean worlds interesting for astrobiology?
+        </div>
+        <div class="quiz-options">
+          <button data-option="A" onclick="checkQuiz(event,'quiz8','C')">A. They never contain water</button>
+          <button data-option="B" onclick="checkQuiz(event,'quiz8','C')">B. They are too small to matter</button>
+          <button data-option="C" onclick="checkQuiz(event,'quiz8','C')">C. They may hide liquid oceans where life could exist</button>
+          <button data-option="D" onclick="checkQuiz(event,'quiz8','C')">D. They are made entirely of metal</button>
+        </div>
+        <div class="quiz-result" id="quiz8-result"></div>
+      </div>
+    </div>
+
+    <!-- Lesson 9 -->
+    <div class="lesson">
+      <h3>Lesson 9 — Constellations & Star Mapping</h3>
+      <img src="constellations.jpg"
+           alt="Constellation star chart" class="lesson-img">
+      <p>
+        Constellations are patterns that humans use to organize the night sky. Different
+        cultures created their own constellations and stories. Modern astronomy uses
+        precise coordinate systems — right ascension and declination — to map the positions
+        of stars, planets, and galaxies. Star charts and sky maps help observers find
+        objects and understand how the sky changes with time, location, and season.
+      </p>
+      <span class="quiz-tag">Quiz available</span>
+
+      <div class="quiz-card" id="quiz9">
+        <div class="quiz-question">
+          What do modern astronomers use to precisely locate objects in the sky?
+        </div>
+        <div class="quiz-options">
+          <button data-option="A" onclick="checkQuiz(event,'quiz9','D')">A. Only constellation names</button>
+          <button data-option="B" onclick="checkQuiz(event,'quiz9','D')">B. The color of the stars</button>
+          <button data-option="C" onclick="checkQuiz(event,'quiz9','D')">C. The shape of the Moon</button>
+          <button data-option="D" onclick="checkQuiz(event,'quiz9','D')">D. Coordinate systems like right ascension and declination</button>
+        </div>
+        <div class="quiz-result" id="quiz9-result"></div>
+      </div>
+    </div>
+
+    <!-- Lesson 10 -->
+   div class="lesson">
+      <h3>Lesson 10 — Life Beyond Earth</h3>
+      <img src="Screen-Shot-2020-12-15-at-6.32.57-PM.png"
+           alt="Life beyond Earth concept" class="lesson-img">
+      <p>
+        Life beyond Earth could exist in many forms — from simple microbes under ice
+        to complex ecosystems on distant exoplanets. Astrobiologists combine data from
+        telescopes, spacecraft, and laboratory experiments to search for biosignatures,
+        study planetary environments, and understand how life might adapt to alien
+        conditions. Worlds like Mars, Europa, Enceladus, and thousands of exoplanets
+        are all part of this grand investigation into whether the universe is home
+        to many forms of life, not just ours.
+      </p>
+      <span class="quiz-tag">Quiz available</span>
+
+      <div class="quiz-card" id="quiz10">
+        <div class="quiz-question">
+          What is the main goal of astrobiology when studying life beyond Earth?
+        </div>
+        <div class="quiz-options">
+          <button data-option="A" onclick="checkQuiz(event,'quiz10','B')">A. To prove that only Earth can have life</button>
+          <button data-option="B" onclick="checkQuiz(event,'quiz10','B')">B. To understand where life might exist and how to detect it</button>
+          <button data-option="C" onclick="checkQuiz(event,'quiz10','B')">C. To remove all water from planets</button>
+          <button data-option="D" onclick="checkQuiz(event,'quiz10','B')">D. To stop planets from forming</button>
+        </div>
+        <div class="quiz-result" id="quiz10-result"></div>
+      </div>
+    </div> 
+     </div>
+
+  <!-- RIGHT: Starlight expert panel -->
+  <div class="panel">
+    <div class="starlight-header">
+      <div class="starlight-avatar">✦</div>
+      <div>
+        <div class="starlight-name">Starlight</div>
+        <div class="starlight-role">Calm, friendly, scientific space expert</div>
+      </div>
+    </div>
+
+    <div class="chat-window">
+      <div class="chat-message starlight">
+        Hello, I’m Starlight. I specialize in astrobiology, exoplanets, stars, and the
+        structure of the universe. Ask me about habitable zones, biosignatures, planetary
+        systems, or anything else you’re curious about, and I’ll explain it clearly
+        and scientifically. ✨
+      </div>
+<div class="chat-message user">
+        How do we know if a distant planet could support life?
+      </div>
+      <div class="chat-message starlight">
+        We look at several clues: its distance from its star (the habitable zone), the
+        type of star it orbits, the planet’s size and density, and any signs of an atmosphere.
+        If we can study the planet’s light, we search for atmospheric gases and chemical
+        patterns that might be biosignatures. Together, these pieces help us estimate
+        whether conditions could allow liquid water and stable environments where life
+        might exist.
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <input type="text" placeholder="Type your question for Starlight... (UI only for now)">
+      <button>Ask</button>
+    </div>
+
+    <p style="margin-top:16px;font-size:13px;opacity:0.85;">
+      Starlight is your virtual space expert — guiding you through the science behind
+      every lesson in this classroom.
+    </p>
+  </div>
+
+</div>
+
+</div>
+</div>
+
+<script>
+function checkQuiz(event, quizId, correctOption) {
+  const result = document.getElementById(quizId + "-result");
+  const buttons = document.querySelectorAll("#" + quizId + " button");
+
+  buttons.forEach(btn => {
+    btn.style.background = "rgba(5,5,20,0.9)";
+  });
+
+  const selected = event.target;
+  if (selected.dataset.option === correctOption) {
+    selected.style.background = "rgba(0,200,120,0.5)";
+    result.innerHTML = "Correct! 🌟";
+  } else {
+    selected.style.background = "rgba(200,0,80,0.5)";
+    result.innerHTML = "Not quite — try again!";
+  }
+}
+</script>
+
+</body>
+</html>
