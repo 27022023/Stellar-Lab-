@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crater Formation Lab</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    background-color: #020617;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(255,255,255,0.8) 1px, transparent 3px),
+      radial-gradient(circle at 80% 30%, rgba(255,255,255,0.7) 1px, transparent 3px),
+      radial-gradient(circle at 50% 80%, rgba(255,255,255,0.6) 1px, transparent 3px),
+      radial-gradient(circle at 20% 70%, rgba(255,255,255,0.5) 1px, transparent 3px),
+      radial-gradient(circle at 90% 10%, rgba(255,255,255,0.9) 1px, transparent 3px);
+    background-attachment: fixed;
+  }
+
+  .overlay {
+    padding: 40px 20px 80px;
+    max-width: 900px;
+    margin: auto;
+  }
+
+  .moon-home {
+    position: fixed;
+    left: 15px;
+    top: 15px;
+    width: 50px;
+    height: 50px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 11px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.6);
+    box-shadow: 0 0 10px rgba(0,0,0,0.7);
+    transition: 0.3s;
+    z-index: 10;
+  }
+
+  h1, p {
+    text-align: center;
+  }
+
+  .sim-container {
+    background: rgba(15,23,42,0.9);
+    border: 1px solid rgba(148,163,184,0.6);
+    border-radius: 18px;
+    padding: 20px;
+    backdrop-filter: blur(12px);
+    text-align: center;
+  }
+
+  canvas {
+    display: block;
+    margin: 0 auto;
+    background: transparent;
+    border-radius: 12px;
+  }
+
+  details {
+    background: rgba(15,23,42,0.95);
+    border: 1px solid rgba(148,163,184,0.7);
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 20px;
+    color: white;
+    text-align: left;
+  }
+
+  summary {
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+
+  .control-box {
+    margin-top: 10px;
+  }
+
+  .control-box label {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .control-box input,
+  .control-box select {
+    width: 100%;
+    margin-top: 6px;
+  }
+
+  .controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: center;
+  }
+
+  .controls-row button {
+    background: rgba(30,64,175,0.9);
+    border: 1px solid rgba(148,163,184,0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .controls-row button:hover {
+    background: rgba(59,130,246,0.9);
+  }
+
+  .notebook {
+    margin-top: 30px;
+    background: repeating-linear-gradient(
+      rgba(15,23,42,0.95),
+      rgba(15,23,42,0.95) 28px,
+      rgba(148,163,184,0.6) 29px
+    );
+    border-radius: 12px;
+    border: 1px solid rgba(148,163,184,0.8);
+    padding: 20px;
+    min-height: 200px;
+    font-size: 16px;
+    line-height: 28px;
+    outline: none;
+    resize: vertical;
+    color: white;
+  }
+
+  .readout {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #e5e7eb;
+    text-align: left;
+  }
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<a class="moon-home" href="../experiment.html">Lab</a>
+
+<h1>🪨 Crater Formation Lab</h1>
+<p>Simulate impact craters — size, speed, angle, and surface type.</p>
+
+<div class="sim-container">
+
+  <canvas id="craterCanvas" width="350" height="350"></canvas>
+
+  <div class="controls-row">
+    <button id="impactBtn">Run Impact</button>
+    <button id="resetSurfaceBtn">Reset Surface</button>
+  </div>
+
+  <details>
+    <summary>Impactor Controls</summary>
+    <div class="control-box">
+      <label>Impactor Size</label>
+      <input type="range" id="sizeSlider" min="5" max="40" value="15">
+    </div>
+    <div class="control-box">
+      <label>Impact Speed</label>
+      <input type="range" id="speedSlider" min="10" max="80" value="40">
+    </div>
+    <div class="control-box">
+      <label>Impact Angle (degrees)</label>
+      <input type="range" id="angleSlider" min="0" max="80" value="30">
+    </div>
+    <div class="control-box">
+      <label>Impactor Density</label>
+      <select id="densitySelect">
+        <option value="1">Ice (low density)</option>
+        <option value="2">Rock (medium)</option>
+        <option value="3">Metal (high)</option>
+      </select>
+    </div>
+  </details>
+
+  <details>
+    <summary>Surface Controls</summary>
+    <div class="control-box">
+      <label>Surface Type</label>
+      <select id="surfaceSelect">
+        <option value="regolith">Lunar regolith</option>
+        <option value="rock">Rocky crust</option>
+        <option value="ice">Icy surface</option>
+      </select>
+    </div>
+    <div class="control-box">
+      <label>Gravity (relative)</label>
+      <input type="range" id="gravitySlider" min="0.2" max="2" step="0.1" value="1">
+    </div>
+  </details>
+
+  <div class="readout" id="readout">
+    Crater diameter: —  
+    Ejecta extent: —  
+    Impact energy: —
+  </div>
+
+  <textarea class="notebook" id="notes" placeholder="Write your crater formation notes here..."></textarea>
+
+</div>
+
+</div>
+
+<script>
+window.onload = function() {
+  const canvas = document.getElementById("craterCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const impactBtn = document.getElementById("impactBtn");
+  const resetSurfaceBtn = document.getElementById("resetSurfaceBtn");
+
+  const sizeSlider = document.getElementById("sizeSlider");
+  const speedSlider = document.getElementById("speedSlider");
+  const angleSlider = document.getElementById("angleSlider");
+  const densitySelect = document.getElementById("densitySelect");
+  const surfaceSelect = document.getElementById("surfaceSelect");
+  const gravitySlider = document.getElementById("gravitySlider");
+  const readout = document.getElementById("readout");
+
+  const notes = document.getElementById("notes");
+  notes.value = localStorage.getItem("craterLabNotes") || "";
+  notes.addEventListener("input", () => {
+    localStorage.setItem("craterLabNotes", notes.value);
+  });
+
+  function drawSurface() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const surfaceType = surfaceSelect.value;
+
+    let baseColor;
+    if (surfaceType === "regolith") {
+      baseColor = "#4b5563";
+    } else if (surfaceType === "rock") {
+      baseColor = "#374151";
+    } else {
+      baseColor = "#6b7280";
+    }
+
+    const grad = ctx.createLinearGradient(0, canvas.height * 0.4, 0, canvas.height);
+    grad.addColorStop(0, baseColor);
+    grad.addColorStop(1, "#111827");
+
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, canvas.height * 0.4, canvas.width, canvas.height * 0.6);
+
+    ctx.fillStyle = "rgba(17,24,39,0.9)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height * 0.4);
+
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    for (let i = 0; i < 60; i++) {
+      const sx = Math.random() * canvas.width;
+      const sy = Math.random() * canvas.height * 0.4;
+      ctx.fillRect(sx, sy, 1, 1);
+    }
+  }
+
+  drawSurface();
+
+  function runImpact() {
+    drawSurface();
+
+    const size = Number(sizeSlider.value);
+    const speed = Number(speedSlider.value);
+    const angleDeg = Number(angleSlider.value);
+    const densityFactor = Number(densitySelect.value);
+    const gravityFactor = Number(gravitySlider.value);
+    const surfaceType = surfaceSelect.value;
+
+    const angleRad = angleDeg * Math.PI / 180;
+
+    const mass = densityFactor * Math.pow(size, 3);
+    const energy = 0.5 * mass * Math.pow(speed, 2);
+
+    let surfaceStrength;
+    if (surfaceType === "regolith") surfaceStrength = 0.6;
+    else if (surfaceType === "rock") surfaceStrength = 1.0;
+    else surfaceStrength = 0.4;
+
+    const craterRadius =
+      (Math.pow(energy, 0.25) / 6) *
+      (1 / Math.sqrt(surfaceStrength)) *
+      (1 / Math.sqrt(gravityFactor)) *
+      (1 + Math.cos(angleRad));
+
+    const ejectaRadius = craterRadius * (1.8 + 0.4 * (densityFactor - 1));
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height * 0.55;
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, craterRadius, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(17,24,39,1)";
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, craterRadius * 0.6, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(75,85,99,0.9)";
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, craterRadius * 0.3, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(156,163,175,0.9)";
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, ejectaRadius, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(229,231,235,0.4)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    for (let i = 0; i < 80; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const r = craterRadius + Math.random() * (ejectaRadius - craterRadius);
+      const px = cx + Math.cos(a) * r;
+      const py = cy + Math.sin(a) * r;
+      ctx.beginPath();
+      ctx.arc(px, py, Math.random() * 2, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(229,231,235,0.7)";
+      ctx.fill();
+    }
+
+    const impactStartX = cx - Math.cos(angleRad) * 120;
+    const impactStartY = cy - Math.sin(angleRad) * 120;
+
+    ctx.beginPath();
+    ctx.moveTo(impactStartX, impactStartY);
+    ctx.lineTo(cx, cy);
+    ctx.strokeStyle = "rgba(248,250,252,0.8)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(impactStartX, impactStartY, size / 2, 0, Math.PI * 2);
+    const impactGrad = ctx.createRadialGradient(
+      impactStartX - size/4, impactStartY - size/4, size/6,
+      impactStartX, impactStartY, size/2
+    );
+    impactGrad.addColorStop(0, "#e5e7eb");
+    impactGrad.addColorStop(1, "#9ca3af");
+    ctx.fillStyle = impactGrad;
+    ctx.fill();
+
+    const craterDiameterKm = (craterRadius / 3).toFixed(1);
+    const ejectaExtentKm = (ejectaRadius / 3).toFixed(1);
+    const energyRelative = (energy / 100000).toFixed(1);
+
+    readout.innerHTML =
+      `Crater diameter: ~${craterDiameterKm} km<br>` +
+      `Ejecta extent: ~${ejectaExtentKm} km<br>` +
+      `Impact energy (relative): ${energyRelative}`;
+  }
+
+  impactBtn.addEventListener("click", runImpact);
+  resetSurfaceBtn.addEventListener("click", () => {
+    drawSurface();
+    readout.innerHTML = "Crater diameter: —<br>Ejecta extent: —<br>Impact energy: —";
+  });
+};
+</script>
+
+</body>
+</html>
