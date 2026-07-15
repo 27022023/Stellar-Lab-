@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spectroscopy Lab</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #020617;
+    --panel: rgba(15,23,42,0.9);
+    --border: rgba(148,163,184,0.7);
+    --text: #e5e7eb;
+    --accent: #38bdf8;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(255,255,255,0.8) 1px, transparent 3px),
+      radial-gradient(circle at 80% 30%, rgba(255,255,255,0.7) 1px, transparent 3px),
+      radial-gradient(circle at 50% 80%, rgba(255,255,255,0.6) 1px, transparent 3px),
+      radial-gradient(circle at 20% 70%, rgba(255,255,255,0.5) 1px, transparent 3px),
+      radial-gradient(circle at 90% 10%, rgba(255,255,255,0.9) 1px, transparent 3px);
+    background-attachment: fixed;
+  }
+
+  .overlay {
+    padding: 40px 20px 80px;
+    max-width: 1100px;
+    margin: auto;
+  }
+
+  .moon-home {
+    position: fixed;
+    left: 15px;
+    top: 15px;
+    width: 50px;
+    height: 50px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 11px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.6);
+    box-shadow: 0 0 10px rgba(0,0,0,0.7);
+    z-index: 10;
+  }
+
+  h1, p {
+    text-align: center;
+  }
+
+  .lab-layout {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .visual-panel, .control-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    backdrop-filter: blur(12px);
+  }
+
+  .visual-panel {
+    flex: 1 1 340px;
+    min-width: 320px;
+  }
+
+  .control-panel {
+    flex: 1 1 280px;
+    min-width: 280px;
+  }
+
+  canvas {
+    display: block;
+    margin: 0 auto 10px;
+    background: transparent;
+    border-radius: 12px;
+  }
+
+  .mode-buttons, .view-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .mode-buttons button,
+  .view-buttons button {
+    background: rgba(30,64,175,0.9);
+    border: 1px solid var(--border);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .mode-buttons button.active,
+  .view-buttons button.active {
+    background: var(--accent);
+  }
+
+  .mode-buttons button:hover,
+  .view-buttons button:hover {
+    background: rgba(59,130,246,0.9);
+  }
+
+  .explanation {
+    font-size: 13px;
+    margin-top: 6px;
+    color: #cbd5f5;
+  }
+
+  details {
+    background: rgba(15,23,42,0.95);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin-top: 10px;
+  }
+
+  summary {
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .control-box {
+    margin-top: 8px;
+  }
+
+  .control-box label {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .control-box input,
+  .control-box select {
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .readout {
+    margin-top: 8px;
+    font-size: 13px;
+  }
+
+  .notebook {
+    margin-top: 16px;
+    background: repeating-linear-gradient(
+      rgba(15,23,42,0.95),
+      rgba(15,23,42,0.95) 28px,
+      rgba(148,163,184,0.6) 29px
+    );
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 14px;
+    min-height: 160px;
+    font-size: 15px;
+    line-height: 26px;
+    outline: none;
+    resize: vertical;
+    color: white;
+  }
+
+  @media (max-width: 800px) {
+    .lab-layout {
+      flex-direction: column;
+    }
+  }
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<a class="moon-home" href="../experiment.html">Lab</a>
+
+<h1>🌈 Spectroscopy Lab</h1>
+<p>Hybrid graph + rainbow view. Simple explanations, real physics.</p>
+
+<div class="lab-layout">
+
+  <div class="visual-panel">
+    <div class="view-buttons">
+      <button id="graphViewBtn" class="active">Graph View</button>
+      <button id="rainbowViewBtn">Rainbow View</button>
+    </div>
+
+    <canvas id="graphCanvas" width="480" height="220"></canvas>
+    <canvas id="rainbowCanvas" width="480" height="60" style="display:none;"></canvas>
+
+    <div class="explanation" id="explanation">
+      Hot stars peak in blue, cool stars peak in red.
+    </div>
+  </div>
+
+  <div class="control-panel">
+    <div class="mode-buttons">
+      <button id="starModeBtn" class="active">Star Spectrum</button>
+      <button id="gasModeBtn">Gas Emission</button>
+      <button id="absModeBtn">Absorption</button>
+      <button id="galaxyModeBtn">Galaxy Redshift</button>
+      <button id="exoModeBtn">Exoplanet Atmosphere</button>
+      <button id="fingerModeBtn">Element Fingerprints</button>
+    </div>
+
+    <details open>
+      <summary>Controls</summary>
+
+      <div class="control-box">
+        <label>Star Temperature (K)</label>
+        <input type="range" id="tempSlider" min="3000" max="30000" value="6000">
+      </div>
+
+      <div class="control-box">
+        <label>Redshift / Blueshift</label>
+        <input type="range" id="shiftSlider" min="-0.02" max="0.1" step="0.005" value="0">
+      </div>
+
+      <div class="control-box">
+        <label>Gas / Element Type</label>
+        <select id="elementSelect">
+          <option value="H">Hydrogen</option>
+          <option value="He">Helium</option>
+          <option value="Na">Sodium</option>
+          <option value="O">Oxygen</option>
+          <option value="Ca">Calcium</option>
+        </select>
+      </div>
+
+      <div class="control-box">
+        <label>Exoplanet Atmosphere</label>
+        <select id="exoSelect">
+          <option value="none">None</option>
+          <option value="water">Water (H₂O)</option>
+          <option value="methane">Methane (CH₄)</option>
+          <option value="co2">Carbon Dioxide (CO₂)</option>
+        </select>
+      </div>
+    </details>
+
+    <div class="readout" id="readout">
+      Mode: Star Spectrum<br>
+      Temperature: 6000 K<br>
+      Shift: 0.000<br>
+      Element: Hydrogen<br>
+      Atmosphere: None
+    </div>
+
+    <textarea class="notebook" id="notes" placeholder="Write your spectroscopy notes here..."></textarea>
+  </div>
+
+</div>
+
+<script>
+window.onload = function() {
+  const graphCanvas = document.getElementById("graphCanvas");
+  const rainbowCanvas = document.getElementById("rainbowCanvas");
+  const gctx = graphCanvas.getContext("2d");
+  const rctx = rainbowCanvas.getContext("2d");
+
+  const graphViewBtn = document.getElementById("graphViewBtn");
+  const rainbowViewBtn = document.getElementById("rainbowViewBtn");
+
+  const starModeBtn = document.getElementById("starModeBtn");
+  const gasModeBtn = document.getElementById("gasModeBtn");
+  const absModeBtn = document.getElementById("absModeBtn");
+  const galaxyModeBtn = document.getElementById("galaxyModeBtn");
+  const exoModeBtn = document.getElementById("exoModeBtn");
+  const fingerModeBtn = document.getElementById("fingerModeBtn");
+
+  const tempSlider = document.getElementById("tempSlider");
+  const shiftSlider = document.getElementById("shiftSlider");
+  const elementSelect = document.getElementById("elementSelect");
+  const exoSelect = document.getElementById("exoSelect");
+
+  const explanation = document.getElementById("explanation");
+  const readout = document.getElementById("readout");
+  const notes = document.getElementById("notes");
+
+  notes.value = localStorage.getItem("spectroscopyNotes") || "";
+  notes.addEventListener("input", () => {
+    localStorage.setItem("spectroscopyNotes", notes.value);
+  });
+
+  let mode = "star"; // star, gas, abs, galaxy, exo, finger
+  let view = "graph"; // graph, rainbow
+
+  function setMode(newMode) {
+    mode = newMode;
+    [starModeBtn, gasModeBtn, absModeBtn, galaxyModeBtn, exoModeBtn, fingerModeBtn].forEach(btn => btn.classList.remove("active"));
+    if (mode === "star") starModeBtn.classList.add("active");
+    if (mode === "gas") gasModeBtn.classList.add("active");
+    if (mode === "abs") absModeBtn.classList.add("active");
+    if (mode === "galaxy") galaxyModeBtn.classList.add("active");
+    if (mode === "exo") exoModeBtn.classList.add("active");
+    if (mode === "finger") fingerModeBtn.classList.add("active");
+    updateExplanation();
+    updateReadout();
+    render();
+  }
+
+  function setView(newView) {
+    view = newView;
+    graphViewBtn.classList.remove("active");
+    rainbowViewBtn.classList.remove("active");
+    if (view === "graph") {
+      graphViewBtn.classList.add("active");
+      graphCanvas.style.display = "block";
+      rainbowCanvas.style.display = "none";
+    } else {
+      rainbowViewBtn.classList.add("active");
+      graphCanvas.style.display = "none";
+      rainbowCanvas.style.display = "block";
+    }
+    render();
+  }
+
+  function updateExplanation() {
+    if (mode === "star") {
+      explanation.textContent = "Hot stars peak in blue, cool stars peak in red.";
+    } else if (mode === "gas") {
+      explanation.textContent = "Gas emission shows bright colored lines where atoms glow at specific wavelengths.";
+    } else if (mode === "abs") {
+      explanation.textContent = "Absorption lines are dark gaps where atoms steal specific colors of light.";
+    } else if (mode === "galaxy") {
+      explanation.textContent = "Redshift stretches the spectrum toward red when galaxies move away; blueshift squeezes it toward blue.";
+    } else if (mode === "exo") {
+      explanation.textContent = "Exoplanet atmospheres leave tiny dips in the spectrum that reveal gases like water or methane.";
+    } else if (mode === "finger") {
+      explanation.textContent = "Each element has a unique pattern of spectral lines—its fingerprint in light.";
+    }
+  }
+
+  function updateReadout() {
+    const temp = tempSlider.value;
+    const shift = Number(shiftSlider.value).toFixed(3);
+    const element = elementSelect.value;
+    const exo = exoSelect.value;
+
+    let modeLabel = "Star Spectrum";
+    if (mode === "gas") modeLabel = "Gas Emission";
+    if (mode === "abs") modeLabel = "Absorption Spectrum";
+    if (mode === "galaxy") modeLabel = "Galaxy Redshift";
+    if (mode === "exo") modeLabel = "Exoplanet Atmosphere";
+    if (mode === "finger") modeLabel = "Element Fingerprints";
+
+    let exoLabel = "None";
+    if (exo === "water") exoLabel = "Water (H₂O)";
+    if (exo === "methane") exoLabel = "Methane (CH₄)";
+    if (exo === "co2") exoLabel = "Carbon Dioxide (CO₂)";
+
+    readout.innerHTML =
+      `Mode: ${modeLabel}<br>` +
+      `Temperature: ${temp} K<br>` +
+      `Shift: ${shift}<br>` +
+      `Element: ${element}<br>` +
+      `Atmosphere: ${exoLabel}`;
+  }
+
+  function wavelengthToX(lambda) {
+    const min = 380;
+    const max = 700;
+    const clamped = Math.max(min, Math.min(max, lambda));
+    return (clamped - min) / (max - min) * graphCanvas.width;
+  }
+
+  function wavelengthToColor(lambda) {
+    const min = 380;
+    const max = 700;
+    let t = (lambda - min) / (max - min);
+    t = Math.max(0, Math.min(1, t));
+    const r = Math.round(255 * Math.max(0, Math.min(1, 1.5 * t)));
+    const g = Math.round(255 * Math.max(0, Math.min(1, 1.5 * (1 - Math.abs(t - 0.5)))));
+    const b = Math.round(255 * Math.max(0, Math.min(1, 1.5 * (1 - t))));
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function drawBlackbodyCurve() {
+    gctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+    gctx.fillStyle = "rgba(15,23,42,0.95)";
+    gctx.fillRect(0, 0, graphCanvas.width, graphCanvas.height);
+
+    const temp = Number(tempSlider.value);
+    const shift = Number(shiftSlider.value);
+
+    gctx.beginPath();
+    for (let i = 0; i <= graphCanvas.width; i++) {
+      const lambda = 380 + (700 - 380) * (i / graphCanvas.width);
+      const shiftedLambda = lambda * (1 + shift);
+      const x = wavelengthToX(shiftedLambda);
+
+      const l = shiftedLambda * 1e-9;
+      const c1 = 3.741e-16;
+      const c2 = 1.4388e-2;
+      const intensity = c1 / (Math.pow(l, 5) * (Math.exp(c2 / (l * temp)) - 1));
+      const scaled = Math.log10(intensity + 1e-20);
+
+      const y = graphCanvas.height - (scaled + 20) * 8;
+      if (i === 0) gctx.moveTo(x, y);
+      else gctx.lineTo(x, y);
+    }
+    gctx.strokeStyle = "rgba(56,189,248,0.9)";
+    gctx.lineWidth = 2;
+    gctx.stroke();
+  }
+
+  function drawRainbowBase() {
+    rctx.clearRect(0, 0, rainbowCanvas.width, rainbowCanvas.height);
+    const grad = rctx.createLinearGradient(0, 0, rainbowCanvas.width, 0);
+    grad.addColorStop(0, "#4b0082");
+    grad.addColorStop(0.15, "#0000ff");
+    grad.addColorStop(0.35, "#00ffff");
+    grad.addColorStop(0.5, "#00ff00");
+    grad.addColorStop(0.7, "#ffff00");
+    grad.addColorStop(0.85, "#ff7f00");
+    grad.addColorStop(1, "#ff0000");
+    rctx.fillStyle = grad;
+    rctx.fillRect(0, 0, rainbowCanvas.width, rainbowCanvas.height);
+  }
+
+  function drawLinesOnRainbow(lines, type) {
+    const shift = Number(shiftSlider.value);
+    lines.forEach(lambda => {
+      const shiftedLambda = lambda * (1 + shift);
+      const x = wavelengthToX(shiftedLambda);
+      rctx.beginPath();
+      rctx.moveTo(x, 0);
+      rctx.lineTo(x, rainbowCanvas.height);
+      if (type === "emission") {
+        rctx.strokeStyle = "rgba(248,250,252,0.9)";
+        rctx.lineWidth = 2;
+      } else {
+        rctx.strokeStyle = "rgba(15,23,42,0.9)";
+        rctx.lineWidth = 3;
+      }
+      rctx.stroke();
+    });
+  }
+
+  function getElementLines(element) {
+    if (element === "H") return [410, 434, 486, 656];
+    if (element === "He") return [447, 468, 492, 587];
+    if (element === "Na") return [589, 589.6];
+    if (element === "O") return [495, 500, 630, 636];
+    if (element === "Ca") return [393, 397];
+    return [];
+  }
+
+  function getExoplanetBands(type) {
+    if (type === "water") return [720, 820, 940];
+    if (type === "methane") return [890, 1000];
+    if (type === "co2") return [1400, 1600];
+    return [];
+  }
+
+  function renderGraph() {
+    if (mode === "star" || mode === "galaxy" || mode === "exo") {
+      drawBlackbodyCurve();
+
+      if (mode === "abs" || mode === "exo") {
+        const lines = getElementLines(elementSelect.value);
+        const shift = Number(shiftSlider.value);
+        gctx.strokeStyle = "rgba(15,23,42,0.9)";
+        gctx.lineWidth = 2;
+        lines.forEach(lambda => {
+          const shiftedLambda = lambda * (1 + shift);
+          const x = wavelengthToX(shiftedLambda);
+          gctx.beginPath();
+          gctx.moveTo(x, 0);
+          gctx.lineTo(x, graphCanvas.height);
+          gctx.stroke();
+        });
+      }
+
+      if (mode === "exo") {
+        const bands = getExoplanetBands(exoSelect.value);
+        const shift = Number(shiftSlider.value);
+        gctx.fillStyle = "rgba(15,23,42,0.7)";
+        bands.forEach(lambda => {
+          const shiftedLambda = lambda * (1 + shift);
+          const x = wavelengthToX(shiftedLambda);
+          gctx.fillRect(x - 4, 0, 8, graphCanvas.height);
+        });
+      }
+    } else if (mode === "gas" || mode === "abs" || mode === "finger") {
+      gctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+      gctx.fillStyle = "rgba(15,23,42,0.95)";
+      gctx.fillRect(0, 0, graphCanvas.width, graphCanvas.height);
+
+      const lines = getElementLines(elementSelect.value);
+      const shift = Number(shiftSlider.value);
+      lines.forEach(lambda => {
+        const shiftedLambda = lambda * (1 + shift);
+        const x = wavelengthToX(shiftedLambda);
+        const color = wavelengthToColor(shiftedLambda);
+        gctx.beginPath();
+        gctx.moveTo(x, graphCanvas.height);
+        gctx.lineTo(x, graphCanvas.height * 0.2);
+        gctx.strokeStyle = color;
+        gctx.lineWidth = 3;
+        gctx.stroke();
+      });
+    }
+  }
+
+  function renderRainbow() {
+    drawRainbowBase();
+
+    if (mode === "gas" || mode === "finger") {
+      const lines = getElementLines(elementSelect.value);
+      drawLinesOnRainbow(lines, "emission");
+    }
+
+    if (mode === "abs" || mode === "star" || mode === "galaxy") {
+      const lines = getElementLines(elementSelect.value);
+      drawLinesOnRainbow(lines, "absorption");
+    }
+
+    if (mode === "exo") {
+      const bands = getExoplanetBands(exoSelect.value);
+      const shift = Number(shiftSlider.value);
+      bands.forEach(lambda => {
+        const shiftedLambda = lambda * (1 + shift);
+        const x = wavelengthToX(shiftedLambda);
+        rctx.fillStyle = "rgba(15,23,42,0.8)";
+        rctx.fillRect(x - 6, 0, 12, rainbowCanvas.height);
+      });
+    }
+  }
+
+  function render() {
+    if (view === "graph") renderGraph();
+    else renderRainbow();
+  }
+
+  starModeBtn.onclick = () => setMode("star");
+  gasModeBtn.onclick = () => setMode("gas");
+  absModeBtn.onclick = () => setMode("abs");
+  galaxyModeBtn.onclick = () => setMode("galaxy");
+  exoModeBtn.onclick = () => setMode("exo");
+  fingerModeBtn.onclick = () => setMode("finger");
+
+  graphViewBtn.onclick = () => setView("graph");
+  rainbowViewBtn.onclick = () => setView("rainbow");
+
+  [tempSlider, shiftSlider, elementSelect, exoSelect].forEach(ctrl => {
+    ctrl.addEventListener("input", () => {
+      updateReadout();
+      render();
+    });
+  });
+
+  updateExplanation();
+  updateReadout();
+  render();
+};
+</script>
+
+</body>
+</html>
