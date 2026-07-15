@@ -40,7 +40,7 @@
     align-items: center;
     font-weight: 700;
     font-size: 11px;
-    color: white; /* FIXED */
+    color: white;
     text-decoration: none;
     border: 2px solid rgba(255,255,255,0.6);
     box-shadow: 0 0 10px rgba(0,0,0,0.4);
@@ -69,9 +69,11 @@
 
   #graph {
     margin-top: 30px;
-    width: 100%;
+    width: 350px;
     height: 200px;
-    background: transparent;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   details {
@@ -191,19 +193,27 @@
     </div>
   </details>
 
-  <canvas id="graph"></canvas>
+  <canvas id="graph" width="350" height="200"></canvas>
 
-  <textarea class="notebook" placeholder="Write your experiment notes here..."></textarea>
+  <textarea class="notebook" id="notes" placeholder="Write your experiment notes here..."></textarea>
 
 </div>
 
 </div>
 
 <script>
+/* NOTEBOOK MEMORY */
+const notes = document.getElementById("notes");
+notes.value = localStorage.getItem("labNotes") || "";
+notes.addEventListener("input", () => {
+  localStorage.setItem("labNotes", notes.value);
+});
+
+/* CANVAS SETUP */
 const canvas = document.getElementById("sim");
 const ctx = canvas.getContext("2d");
 
-/* SLIDER ELEMENTS */
+/* SLIDERS */
 const p1Size = document.getElementById("p1Size");
 const p2Size = document.getElementById("p2Size");
 const p3Size = document.getElementById("p3Size");
@@ -342,5 +352,4 @@ function drawGraph() {
 
 </body>
 </html>
-        
-  
+          
