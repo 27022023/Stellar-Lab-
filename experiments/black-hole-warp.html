@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Black Hole Warp Lab</title>
+<title>Black Hole Warp Lab v2</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -187,8 +187,8 @@
 
 <a class="moon-home" href="../experiment.html">Lab</a>
 
-<h1>🕳️ Black Hole Warp Lab</h1>
-<p>Accretion warp, spacetime grid, starfield lensing, photon ring. All the colours.</p>
+<h1>🕳️ Black Hole Warp Lab v2</h1>
+<p>Accretion, grid, starfield, photon ring, wormhole, time dilation.</p>
 
 <div class="lab-layout">
 
@@ -205,13 +205,15 @@
       <button id="gridBtn">Spacetime Grid</button>
       <button id="starsBtn">Starfield Lensing</button>
       <button id="photonBtn">Photon Ring</button>
+      <button id="wormholeBtn">Wormhole Tunnel</button>
+      <button id="timeBtn">Time Dilation</button>
     </div>
 
     <details open>
       <summary>Controls</summary>
 
       <div class="control-box">
-        <label>Warp Strength</label>
+        <label>Warp / Distortion Strength</label>
         <input type="range" id="warpSlider" min="0" max="1" step="0.01" value="0.6">
       </div>
 
@@ -241,6 +243,8 @@ window.onload = function() {
   const gridBtn = document.getElementById("gridBtn");
   const starsBtn = document.getElementById("starsBtn");
   const photonBtn = document.getElementById("photonBtn");
+  const wormholeBtn = document.getElementById("wormholeBtn");
+  const timeBtn = document.getElementById("timeBtn");
 
   const warpSlider = document.getElementById("warpSlider");
   const speedSlider = document.getElementById("speedSlider");
@@ -259,11 +263,13 @@ window.onload = function() {
 
   function setMode(newMode) {
     mode = newMode;
-    [accretionBtn, gridBtn, starsBtn, photonBtn].forEach(btn => btn.classList.remove("active"));
+    [accretionBtn, gridBtn, starsBtn, photonBtn, wormholeBtn, timeBtn].forEach(btn => btn.classList.remove("active"));
     if (mode === "accretion") accretionBtn.classList.add("active");
     if (mode === "grid") gridBtn.classList.add("active");
     if (mode === "stars") starsBtn.classList.add("active");
     if (mode === "photon") photonBtn.classList.add("active");
+    if (mode === "wormhole") wormholeBtn.classList.add("active");
+    if (mode === "time") timeBtn.classList.add("active");
     updateExplanation();
     updateReadout();
   }
@@ -277,6 +283,10 @@ window.onload = function() {
       explanation.textContent = "Starfield lensing: background stars stretch and arc around the black hole, forming Einstein rings.";
     } else if (mode === "photon") {
       explanation.textContent = "Photon ring: a thin glowing ring of light orbiting the event horizon, with a hybrid cinematic glow.";
+    } else if (mode === "wormhole") {
+      explanation.textContent = "Wormhole tunnel: a swirling funnel of spacetime, stars stretching into a central throat.";
+    } else if (mode === "time") {
+      explanation.textContent = "Time dilation: clocks near the black hole slow down compared to those farther away.";
     }
   }
 
@@ -287,6 +297,8 @@ window.onload = function() {
     if (mode === "grid") modeLabel = "Spacetime Grid";
     if (mode === "stars") modeLabel = "Starfield Lensing";
     if (mode === "photon") modeLabel = "Photon Ring";
+    if (mode === "wormhole") modeLabel = "Wormhole Tunnel";
+    if (mode === "time") modeLabel = "Time Dilation";
     readout.innerHTML =
       `Mode: ${modeLabel}<br>` +
       `Warp Strength: ${warp}<br>` +
@@ -325,10 +337,10 @@ window.onload = function() {
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
     const grad = ctx.createLinearGradient(cx - r, cy, cx + r, cy);
-    grad.addColorStop(0, "#f97316");   // orange
-    grad.addColorStop(0.3, "#22c55e"); // green
-    grad.addColorStop(0.6, "#38bdf8"); // cyan
-    grad.addColorStop(1, "#a855f7");   // purple
+    grad.addColorStop(0, "#f97316");
+    grad.addColorStop(0.3, "#22c55e");
+    grad.addColorStop(0.6, "#38bdf8");
+    grad.addColorStop(1, "#a855f7");
     ctx.strokeStyle = grad;
     ctx.lineWidth = hybrid ? 5 : 3;
     ctx.shadowColor = "rgba(56,189,248,0.8)";
@@ -347,11 +359,11 @@ window.onload = function() {
     ctx.rotate(0.1 * Math.sin(t * 0.5));
 
     const grad = ctx.createLinearGradient(-200, 0, 200, 0);
-    grad.addColorStop(0, "#f97316");   // orange
-    grad.addColorStop(0.3, "#facc15"); // yellow
-    grad.addColorStop(0.5, "#38bdf8"); // cyan
-    grad.addColorStop(0.7, "#6366f1"); // indigo
-    grad.addColorStop(1, "#ec4899");   // pink
+    grad.addColorStop(0, "#f97316");
+    grad.addColorStop(0.3, "#facc15");
+    grad.addColorStop(0.5, "#38bdf8");
+    grad.addColorStop(0.7, "#6366f1");
+    grad.addColorStop(1, "#ec4899");
 
     ctx.fillStyle = grad;
     ctx.beginPath();
@@ -438,6 +450,72 @@ window.onload = function() {
     ctx.restore();
   }
 
+  function drawWormhole() {
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const warp = Number(warpSlider.value);
+
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    for (let i = 0; i < 80; i++) {
+      const r = 20 + i * 3;
+      const wobble = Math.sin(t * 0.4 + i * 0.2) * warp * 10;
+      ctx.beginPath();
+      ctx.arc(0, wobble, r, 0, Math.PI * 2);
+      const alpha = 0.05 + (80 - i) / 160;
+      ctx.strokeStyle = `rgba(${148 + i},${163 - i},${184},${alpha})`;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, 40);
+    grad.addColorStop(0, "#000000");
+    grad.addColorStop(0.6, "#0f172a");
+    grad.addColorStop(1, "rgba(56,189,248,0.6)");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(0, 0, 40, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawTimeDilation() {
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const warp = Number(warpSlider.value);
+
+    ctx.save();
+    for (let i = 0; i < 6; i++) {
+      const r = 40 + i * 25;
+      const localFactor = 1 - warp * (1 / (i + 1));
+      const angle = t * 0.8 * localFactor;
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(angle);
+
+      ctx.beginPath();
+      ctx.arc(0, 0, r, 0, Math.PI * 2);
+      const alpha = 0.2 + (6 - i) / 12;
+      ctx.strokeStyle = `rgba(148,163,184,${alpha})`;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(r, 0);
+      ctx.lineTo(r - 10, 0);
+      ctx.strokeStyle = "#38bdf8";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    ctx.restore();
+  }
+
   function render() {
     const speed = Number(speedSlider.value);
     t += 0.02 + speed * 0.04;
@@ -461,6 +539,12 @@ window.onload = function() {
       drawAccretionDisk();
       drawBlackHoleBase();
       drawPhotonRing(true);
+    } else if (mode === "wormhole") {
+      drawWormhole();
+    } else if (mode === "time") {
+      drawTimeDilation();
+      drawBlackHoleBase();
+      drawPhotonRing(false);
     }
 
     requestAnimationFrame(render);
@@ -470,6 +554,8 @@ window.onload = function() {
   gridBtn.onclick = () => setMode("grid");
   starsBtn.onclick = () => setMode("stars");
   photonBtn.onclick = () => setMode("photon");
+  wormholeBtn.onclick = () => setMode("wormhole");
+  timeBtn.onclick = () => setMode("time");
 
   [warpSlider, speedSlider].forEach(ctrl => {
     ctrl.addEventListener("input", () => {
@@ -485,3 +571,6 @@ window.onload = function() {
 
 </body>
 </html>
+
+      
+          
