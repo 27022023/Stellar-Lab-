@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spectroscopy Lab</title>
+<title>Spectroscopy Lab (Extended)</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -191,8 +191,8 @@
 
 <a class="moon-home" href="../experiment.html">Lab</a>
 
-<h1>🌈 Spectroscopy Lab</h1>
-<p>Hybrid graph + rainbow view. Simple explanations, real physics.</p>
+<h1>🌈 Spectroscopy Lab (Extended)</h1>
+<p>Graph + rainbow, molecules, multi-band (UV, visible, IR, radio, X‑ray).</p>
 
 <div class="lab-layout">
 
@@ -218,6 +218,7 @@
       <button id="galaxyModeBtn">Galaxy Redshift</button>
       <button id="exoModeBtn">Exoplanet Atmosphere</button>
       <button id="fingerModeBtn">Element Fingerprints</button>
+      <button id="dbModeBtn">Spectral Database</button>
     </div>
 
     <details open>
@@ -234,13 +235,28 @@
       </div>
 
       <div class="control-box">
-        <label>Gas / Element Type</label>
+        <label>Spectrum Range</label>
+        <select id="rangeSelect">
+          <option value="visible">Visible (380–700 nm)</option>
+          <option value="uv">Ultraviolet</option>
+          <option value="ir">Infrared</option>
+          <option value="radio">Radio</option>
+          <option value="xray">X‑ray</option>
+        </select>
+      </div>
+
+      <div class="control-box">
+        <label>Gas / Element / Molecule</label>
         <select id="elementSelect">
           <option value="H">Hydrogen</option>
           <option value="He">Helium</option>
           <option value="Na">Sodium</option>
           <option value="O">Oxygen</option>
           <option value="Ca">Calcium</option>
+          <option value="NH3">Ammonia (NH₃)</option>
+          <option value="O3">Ozone (O₃)</option>
+          <option value="CO">Carbon Monoxide (CO)</option>
+          <option value="HCN">Hydrogen Cyanide (HCN)</option>
         </select>
       </div>
 
@@ -259,7 +275,8 @@
       Mode: Star Spectrum<br>
       Temperature: 6000 K<br>
       Shift: 0.000<br>
-      Element: Hydrogen<br>
+      Range: Visible<br>
+      Species: Hydrogen<br>
       Atmosphere: None
     </div>
 
@@ -284,9 +301,11 @@ window.onload = function() {
   const galaxyModeBtn = document.getElementById("galaxyModeBtn");
   const exoModeBtn = document.getElementById("exoModeBtn");
   const fingerModeBtn = document.getElementById("fingerModeBtn");
+  const dbModeBtn = document.getElementById("dbModeBtn");
 
   const tempSlider = document.getElementById("tempSlider");
   const shiftSlider = document.getElementById("shiftSlider");
+  const rangeSelect = document.getElementById("rangeSelect");
   const elementSelect = document.getElementById("elementSelect");
   const exoSelect = document.getElementById("exoSelect");
 
@@ -299,18 +318,19 @@ window.onload = function() {
     localStorage.setItem("spectroscopyNotes", notes.value);
   });
 
-  let mode = "star"; // star, gas, abs, galaxy, exo, finger
-  let view = "graph"; // graph, rainbow
+  let mode = "star";
+  let view = "graph";
 
   function setMode(newMode) {
     mode = newMode;
-    [starModeBtn, gasModeBtn, absModeBtn, galaxyModeBtn, exoModeBtn, fingerModeBtn].forEach(btn => btn.classList.remove("active"));
+    [starModeBtn, gasModeBtn, absModeBtn, galaxyModeBtn, exoModeBtn, fingerModeBtn, dbModeBtn].forEach(btn => btn.classList.remove("active"));
     if (mode === "star") starModeBtn.classList.add("active");
     if (mode === "gas") gasModeBtn.classList.add("active");
     if (mode === "abs") absModeBtn.classList.add("active");
     if (mode === "galaxy") galaxyModeBtn.classList.add("active");
     if (mode === "exo") exoModeBtn.classList.add("active");
     if (mode === "finger") fingerModeBtn.classList.add("active");
+    if (mode === "db") dbModeBtn.classList.add("active");
     updateExplanation();
     updateReadout();
     render();
@@ -336,16 +356,28 @@ window.onload = function() {
     if (mode === "star") {
       explanation.textContent = "Hot stars peak in blue, cool stars peak in red.";
     } else if (mode === "gas") {
-      explanation.textContent = "Gas emission shows bright colored lines where atoms glow at specific wavelengths.";
+      explanation.textContent = "Gas emission shows bright colored lines where atoms or molecules glow at specific wavelengths.";
     } else if (mode === "abs") {
-      explanation.textContent = "Absorption lines are dark gaps where atoms steal specific colors of light.";
+      explanation.textContent = "Absorption lines are dark gaps where atoms or molecules steal specific colors of light.";
     } else if (mode === "galaxy") {
       explanation.textContent = "Redshift stretches the spectrum toward red when galaxies move away; blueshift squeezes it toward blue.";
     } else if (mode === "exo") {
       explanation.textContent = "Exoplanet atmospheres leave tiny dips in the spectrum that reveal gases like water or methane.";
     } else if (mode === "finger") {
-      explanation.textContent = "Each element has a unique pattern of spectral lines—its fingerprint in light.";
+      explanation.textContent = "Each element or molecule has a unique pattern of spectral lines—its fingerprint in light.";
+    } else if (mode === "db") {
+      explanation.textContent = "Spectral database mode: quickly preview fingerprints of different species across bands.";
     }
+  }
+
+  function rangeLimits() {
+    const range = rangeSelect.value;
+    if (range === "visible") return {min: 380, max: 700};
+    if (range === "uv") return {min: 100, max: 400};
+    if (range === "ir") return {min: 700, max: 2500};
+    if (range === "radio") return {min: 1e6, max: 1e9};   // fake scaling for display
+    if (range === "xray") return {min: 0.01, max: 10};    // nm-ish
+    return {min: 380, max: 700};
   }
 
   function updateReadout() {
@@ -353,37 +385,44 @@ window.onload = function() {
     const shift = Number(shiftSlider.value).toFixed(3);
     const element = elementSelect.value;
     const exo = exoSelect.value;
+    const range = rangeSelect.value;
 
     let modeLabel = "Star Spectrum";
     if (mode === "gas") modeLabel = "Gas Emission";
     if (mode === "abs") modeLabel = "Absorption Spectrum";
     if (mode === "galaxy") modeLabel = "Galaxy Redshift";
     if (mode === "exo") modeLabel = "Exoplanet Atmosphere";
-    if (mode === "finger") modeLabel = "Element Fingerprints";
+    if (mode === "finger") modeLabel = "Element/Molecule Fingerprints";
+    if (mode === "db") modeLabel = "Spectral Database";
 
     let exoLabel = "None";
     if (exo === "water") exoLabel = "Water (H₂O)";
     if (exo === "methane") exoLabel = "Methane (CH₄)";
     if (exo === "co2") exoLabel = "Carbon Dioxide (CO₂)";
 
+    let rangeLabel = "Visible";
+    if (range === "uv") rangeLabel = "Ultraviolet";
+    if (range === "ir") rangeLabel = "Infrared";
+    if (range === "radio") rangeLabel = "Radio";
+    if (range === "xray") rangeLabel = "X‑ray";
+
     readout.innerHTML =
       `Mode: ${modeLabel}<br>` +
       `Temperature: ${temp} K<br>` +
       `Shift: ${shift}<br>` +
-      `Element: ${element}<br>` +
+      `Range: ${rangeLabel}<br>` +
+      `Species: ${element}<br>` +
       `Atmosphere: ${exoLabel}`;
   }
 
   function wavelengthToX(lambda) {
-    const min = 380;
-    const max = 700;
+    const {min, max} = rangeLimits();
     const clamped = Math.max(min, Math.min(max, lambda));
     return (clamped - min) / (max - min) * graphCanvas.width;
   }
 
   function wavelengthToColor(lambda) {
-    const min = 380;
-    const max = 700;
+    const {min, max} = rangeLimits();
     let t = (lambda - min) / (max - min);
     t = Math.max(0, Math.min(1, t));
     const r = Math.round(255 * Math.max(0, Math.min(1, 1.5 * t)));
@@ -399,23 +438,29 @@ window.onload = function() {
 
     const temp = Number(tempSlider.value);
     const shift = Number(shiftSlider.value);
+    const {min, max} = rangeLimits();
 
     gctx.beginPath();
     for (let i = 0; i <= graphCanvas.width; i++) {
-      const lambda = 380 + (700 - 380) * (i / graphCanvas.width);
+      const lambda = min + (max - min) * (i / graphCanvas.width);
       const shiftedLambda = lambda * (1 + shift);
       const x = wavelengthToX(shiftedLambda);
 
-      const l = shiftedLambda * 1e-9;
+      let l = shiftedLambda;
+      if (rangeSelect.value === "radio") {
+        l = 0.1; // fake constant to avoid insane values
+      }
+      l = l * 1e-9;
       const c1 = 3.741e-16;
       const c2 = 1.4388e-2;
-      const intensity = c1 / (Math.pow(l, 5) * (Math.exp(c2 / (l * temp)) - 1));
-      const scaled = Math.log10(intensity + 1e-20);
 
-      const y = graphCanvas.height - (scaled + 20) * 8;
+      const intensity = c1 / (Math.pow(l, 5) * (Math.exp(c2 / (l * temp)) - 1));
+      const scaled = Math.log10(intensity + 1e-20) * 40 + 180;
+      const y = graphCanvas.height - scaled;
       if (i === 0) gctx.moveTo(x, y);
       else gctx.lineTo(x, y);
     }
+
     gctx.strokeStyle = "rgba(56,189,248,0.9)";
     gctx.lineWidth = 2;
     gctx.stroke();
@@ -423,14 +468,31 @@ window.onload = function() {
 
   function drawRainbowBase() {
     rctx.clearRect(0, 0, rainbowCanvas.width, rainbowCanvas.height);
-    const grad = rctx.createLinearGradient(0, 0, rainbowCanvas.width, 0);
-    grad.addColorStop(0, "#4b0082");
-    grad.addColorStop(0.15, "#0000ff");
-    grad.addColorStop(0.35, "#00ffff");
-    grad.addColorStop(0.5, "#00ff00");
-    grad.addColorStop(0.7, "#ffff00");
-    grad.addColorStop(0.85, "#ff7f00");
-    grad.addColorStop(1, "#ff0000");
+    const range = rangeSelect.value;
+    let grad = rctx.createLinearGradient(0, 0, rainbowCanvas.width, 0);
+
+    if (range === "visible") {
+      grad.addColorStop(0, "#4b0082");
+      grad.addColorStop(0.15, "#0000ff");
+      grad.addColorStop(0.35, "#00ffff");
+      grad.addColorStop(0.5, "#00ff00");
+      grad.addColorStop(0.7, "#ffff00");
+      grad.addColorStop(0.85, "#ff7f00");
+      grad.addColorStop(1, "#ff0000");
+    } else if (range === "uv") {
+      grad.addColorStop(0, "#8b5cf6");
+      grad.addColorStop(1, "#1d4ed8");
+    } else if (range === "ir") {
+      grad.addColorStop(0, "#7f1d1d");
+      grad.addColorStop(1, "#f97316");
+    } else if (range === "radio") {
+      grad.addColorStop(0, "#0f172a");
+      grad.addColorStop(1, "#22c55e");
+    } else if (range === "xray") {
+      grad.addColorStop(0, "#0f172a");
+      grad.addColorStop(1, "#38bdf8");
+    }
+
     rctx.fillStyle = grad;
     rctx.fillRect(0, 0, rainbowCanvas.width, rainbowCanvas.height);
   }
@@ -455,11 +517,16 @@ window.onload = function() {
   }
 
   function getElementLines(element) {
+    // nm-ish positions; molecules are approximate bands
     if (element === "H") return [410, 434, 486, 656];
     if (element === "He") return [447, 468, 492, 587];
     if (element === "Na") return [589, 589.6];
     if (element === "O") return [495, 500, 630, 636];
     if (element === "Ca") return [393, 397];
+    if (element === "NH3") return [1500, 2000];   // IR bands
+    if (element === "O3") return [250, 300];      // UV
+    if (element === "CO") return [2100, 2300];    // IR
+    if (element === "HCN") return [1400, 1600];   // IR
     return [];
   }
 
@@ -499,7 +566,7 @@ window.onload = function() {
           gctx.fillRect(x - 4, 0, 8, graphCanvas.height);
         });
       }
-    } else if (mode === "gas" || mode === "abs" || mode === "finger") {
+    } else if (mode === "gas" || mode === "abs" || mode === "finger" || mode === "db") {
       gctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
       gctx.fillStyle = "rgba(15,23,42,0.95)";
       gctx.fillRect(0, 0, graphCanvas.width, graphCanvas.height);
@@ -523,7 +590,7 @@ window.onload = function() {
   function renderRainbow() {
     drawRainbowBase();
 
-    if (mode === "gas" || mode === "finger") {
+    if (mode === "gas" || mode === "finger" || mode === "db") {
       const lines = getElementLines(elementSelect.value);
       drawLinesOnRainbow(lines, "emission");
     }
@@ -556,11 +623,12 @@ window.onload = function() {
   galaxyModeBtn.onclick = () => setMode("galaxy");
   exoModeBtn.onclick = () => setMode("exo");
   fingerModeBtn.onclick = () => setMode("finger");
+  dbModeBtn.onclick = () => setMode("db");
 
   graphViewBtn.onclick = () => setView("graph");
   rainbowViewBtn.onclick = () => setView("rainbow");
 
-  [tempSlider, shiftSlider, elementSelect, exoSelect].forEach(ctrl => {
+  [tempSlider, shiftSlider, rangeSelect, elementSelect, exoSelect].forEach(ctrl => {
     ctrl.addEventListener("input", () => {
       updateReadout();
       render();
@@ -574,4 +642,6 @@ window.onload = function() {
 </script>
 
 </body>
-</html>
+</html> 
+
+                  
