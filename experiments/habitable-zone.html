@@ -603,7 +603,7 @@ window.onload = function() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const cx = canvas.width / 2;
-    const cy = canvas.height / 2;
+    const cy = canvas.height / 2 + 40; // ✅ centered lower
 
     // Star
     ctx.save();
@@ -756,4 +756,4 @@ window.onload = function() {
 </script>
 
 </body>
-</html>
+</html>  
