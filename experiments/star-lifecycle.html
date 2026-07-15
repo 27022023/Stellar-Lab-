@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Star Life Cycle Lab</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    background-color: #020617;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(255,255,255,0.8) 1px, transparent 3px),
+      radial-gradient(circle at 80% 30%, rgba(255,255,255,0.7) 1px, transparent 3px),
+      radial-gradient(circle at 50% 80%, rgba(255,255,255,0.6) 1px, transparent 3px),
+      radial-gradient(circle at 20% 70%, rgba(255,255,255,0.5) 1px, transparent 3px),
+      radial-gradient(circle at 90% 10%, rgba(255,255,255,0.9) 1px, transparent 3px);
+    background-attachment: fixed;
+  }
+
+  .overlay {
+    padding: 40px 20px 80px;
+    max-width: 900px;
+    margin: auto;
+  }
+
+  .moon-home {
+    position: fixed;
+    left: 15px;
+    top: 15px;
+    width: 50px;
+    height: 50px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 11px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.6);
+    box-shadow: 0 0 10px rgba(0,0,0,0.7);
+    transition: 0.3s;
+    z-index: 10;
+  }
+
+  h1, p {
+    text-align: center;
+  }
+
+  .sim-container {
+    background: rgba(15,23,42,0.9);
+    border: 1px solid rgba(148,163,184,0.6);
+    border-radius: 18px;
+    padding: 20px;
+    backdrop-filter: blur(12px);
+    text-align: center;
+  }
+
+  canvas {
+    display: block;
+    margin: 0 auto;
+    background: transparent;
+    border-radius: 12px;
+  }
+
+  details {
+    background: rgba(15,23,42,0.95);
+    border: 1px solid rgba(148,163,184,0.7);
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 20px;
+    color: white;
+    text-align: left;
+  }
+
+  summary {
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+
+  .control-box {
+    margin-top: 10px;
+  }
+
+  .control-box label {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .control-box input,
+  .control-box select {
+    width: 100%;
+    margin-top: 6px;
+  }
+
+  .controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: center;
+  }
+
+  .controls-row button {
+    background: rgba(30,64,175,0.9);
+    border: 1px solid rgba(148,163,184,0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .controls-row button:hover {
+    background: rgba(59,130,246,0.9);
+  }
+
+  .notebook {
+    margin-top: 30px;
+    background: repeating-linear-gradient(
+      rgba(15,23,42,0.95),
+      rgba(15,23,42,0.95) 28px,
+      rgba(148,163,184,0.6) 29px
+    );
+    border-radius: 12px;
+    border: 1px solid rgba(148,163,184,0.8);
+    padding: 20px;
+    min-height: 200px;
+    font-size: 16px;
+    line-height: 28px;
+    outline: none;
+    resize: vertical;
+    color: white;
+  }
+
+  .readout {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #e5e7eb;
+    text-align: left;
+  }
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<a class="moon-home" href="../experiment.html">Lab</a>
+
+<h1>⭐ Star Life Cycle Lab</h1>
+<p>Hybrid smooth + dramatic transitions. Full stellar evolution.</p>
+
+<div class="sim-container">
+
+  <canvas id="starCanvas" width="350" height="350"></canvas>
+
+  <div class="controls-row">
+    <button id="nebulaBtn">Nebula</button>
+    <button id="protostarBtn">Protostar</button>
+    <button id="mainSequenceBtn">Main Sequence</button>
+    <button id="redGiantBtn">Red Giant</button>
+    <button id="supernovaBtn">Supernova</button>
+    <button id="collapseBtn">Collapse</button>
+    <button id="autoBtn">Auto Evolution</button>
+  </div>
+
+  <details>
+    <summary>Star Controls</summary>
+    <div class="control-box">
+      <label>Star Mass</label>
+      <input type="range" id="massSlider" min="1" max="50" value="10">
+    </div>
+    <div class="control-box">
+      <label>Temperature</label>
+      <input type="range" id="tempSlider" min="3000" max="30000" value="6000">
+    </div>
+    <div class="control-box">
+      <label>Metallicity</label>
+      <input type="range" id="metalSlider" min="0" max="1" step="0.1" value="0.3">
+    </div>
+    <div class="control-box">
+      <label>Rotation</label>
+      <input type="range" id="rotationSlider" min="0" max="5" step="0.1" value="1">
+    </div>
+    <div class="control-box">
+      <label>Age</label>
+      <input type="range" id="ageSlider" min="0" max="10" value="0">
+    </div>
+  </details>
+
+  <div class="readout" id="readout">
+    Stage: Nebula  
+    Mass: —  
+    Temperature: —  
+    Metallicity: —  
+    Rotation: —  
+    Age: —
+  </div>
+
+  <textarea class="notebook" id="notes" placeholder="Write your star evolution notes here..."></textarea>
+
+</div>
+
+</div>
+
+<script>
+window.onload = function() {
+  const canvas = document.getElementById("starCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const nebulaBtn = document.getElementById("nebulaBtn");
+  const protostarBtn = document.getElementById("protostarBtn");
+  const mainSequenceBtn = document.getElementById("mainSequenceBtn");
+  const redGiantBtn = document.getElementById("redGiantBtn");
+  const supernovaBtn = document.getElementById("supernovaBtn");
+  const collapseBtn = document.getElementById("collapseBtn");
+  const autoBtn = document.getElementById("autoBtn");
+
+  const massSlider = document.getElementById("massSlider");
+  const tempSlider = document.getElementById("tempSlider");
+  const metalSlider = document.getElementById("metalSlider");
+  const rotationSlider = document.getElementById("rotationSlider");
+  const ageSlider = document.getElementById("ageSlider");
+
+  const readout = document.getElementById("readout");
+
+  const notes = document.getElementById("notes");
+  notes.value = localStorage.getItem("starLabNotes") || "";
+  notes.addEventListener("input", () => {
+    localStorage.setItem("starLabNotes", notes.value);
+  });
+
+  let stage = "nebula";
+  let autoMode = false;
+  let particles = [];
+
+  function updateReadout() {
+    readout.innerHTML =
+      `Stage: ${stage}<br>` +
+      `Mass: ${massSlider.value} M☉<br>` +
+      `Temperature: ${tempSlider.value} K<br>` +
+      `Metallicity: ${metalSlider.value}<br>` +
+      `Rotation: ${rotationSlider.value}<br>` +
+      `Age: ${ageSlider.value}`;
+  }
+
+  function drawNebula() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let i = 0; i < 80; i++) {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      const r = Math.random() * 20;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(147,197,253,${Math.random() * 0.4})`;
+      ctx.fill();
+    }
+  }
+
+  function drawProtostar() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    const radius = 40 + massSlider.value * 0.8;
+
+    const grad = ctx.createRadialGradient(cx, cy, radius * 0.2, cx, cy, radius);
+    grad.addColorStop(0, "#ffffff");
+    grad.addColorStop(1, "#fcd34d");
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.shadowColor = "#fcd34d";
+    ctx.shadowBlur = 25;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  function drawMainSequence() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    const radius = 30 + massSlider.value;
+
+    const temp = tempSlider.value;
+    let color;
+
+    if (temp < 5000) color = "#f87171";
+    else if (temp < 7000) color = "#facc15";
+    else if (temp < 12000) color = "#60a5fa";
+    else color = "#93c5fd";
+
+    const grad = ctx.createRadialGradient(cx, cy, radius * 0.2, cx, cy, radius);
+    grad.addColorStop(0, "#ffffff");
+    grad.addColorStop(1, color);
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 25;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  function drawRedGiant() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    const radius = 40 + massSlider.value * 2;
+
+    const grad = ctx.createRadialGradient(cx, cy, radius * 0.2, cx, cy, radius);
+    grad.addColorStop(0, "#ffffff");
+    grad.addColorStop(1, "#fb7185");
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.shadowColor = "#fb7185";
+    ctx.shadowBlur = 30;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  function drawSupernova() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    for (let i = 0; i < 150; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.random() * 150;
+      const x = cx + Math.cos(angle) * dist;
+      const y = cy + Math.sin(angle) * dist;
+
+      ctx.beginPath();
+      ctx.arc(x, y, Math.random() * 6, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${Math.random()})`;
+      ctx.fill();
+    }
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, 20, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.shadowColor = "#ffffff";
+    ctx.shadowBlur = 40;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  function drawCollapse() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    const mass = massSlider.value;
+
+    if (mass < 15) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, 15, 0, Math.PI * 2);
+      ctx.fillStyle = "#e5e7eb";
+      ctx.shadowColor = "#e5e7eb";
+      ctx.shadowBlur = 20;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    } else {
+      ctx.beginPath();
+      ctx.arc(cx, cy, 10, 0, Math.PI * 2);
+      ctx.fillStyle = "#000000";
+      ctx.shadowColor = "#000000";
+      ctx.shadowBlur = 30;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  function render() {
+    updateReadout();
+
+    if (stage === "nebula") drawNebula();
+    if (stage === "protostar") drawProtostar();
+    if (stage === "main") drawMainSequence();
+    if (stage === "giant") drawRedGiant();
+    if (stage === "supernova") drawSupernova();
+    if (stage === "collapse") drawCollapse();
+
+    requestAnimationFrame(render);
+  }
+
+  nebulaBtn.onclick = () => stage = "nebula";
+  protostarBtn.onclick = () => stage = "protostar";
+  mainSequenceBtn.onclick = () => stage = "main";
+  redGiantBtn.onclick = () => stage = "giant";
+  supernovaBtn.onclick = () => stage = "supernova";
+  collapseBtn.onclick = () => stage = "collapse";
+
+  autoBtn.onclick = () => {
+    autoMode = !autoMode;
+    if (autoMode) {
+      let t = 0;
+      const seq = ["nebula", "protostar", "main", "giant", "supernova", "collapse"];
+      const interval = setInterval(() => {
+        stage = seq[t];
+        t++;
+        if (t >= seq.length || !autoMode) clearInterval(interval);
+      }, 2000);
+    }
+  };
+
+  render();
+};
+</script>
+
+</body>
+</html>
