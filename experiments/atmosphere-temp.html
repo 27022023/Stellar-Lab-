@@ -6,56 +6,60 @@
 <style>
 body {
     background: #020617;
-    color: #f8fafc;
+    color: #e5e7eb;
     font-family: Inter, sans-serif;
     padding: 40px;
     text-align: center;
 }
 
 h1 {
-    font-size: 48px;
-    margin-bottom: 10px;
+    font-size: 46px;
+    margin-bottom: 8px;
+    color: #f9fafb;
 }
 
 p {
-    font-size: 22px;
+    font-size: 20px;
     opacity: 0.9;
+    margin-bottom: 10px;
 }
 
 canvas {
     background: #020617;
     border-radius: 20px;
-    margin-top: 40px;
+    margin-top: 30px;
     box-shadow: 0 0 40px rgba(15,23,42,0.9);
 }
 
 label {
     display: block;
-    margin-top: 25px;
-    font-size: 22px;
+    margin-top: 20px;
+    font-size: 20px;
 }
 
 input[type=range] {
-    width: 500px;
-    height: 30px;
+    width: 480px;
+    height: 26px;
 }
 
 #readout {
-    margin-top: 40px;
-    padding: 25px;
+    margin-top: 30px;
+    padding: 22px;
     background: #0f172a;
     border-radius: 12px;
-    font-size: 24px;
+    font-size: 22px;
     line-height: 1.6;
+    border: 1px solid #1f2937;
 }
 
 #tempBar {
-    height: 40px;
-    width: 500px;
+    height: 32px;
+    width: 480px;
     background: #1e293b;
     border-radius: 20px;
-    margin: 30px auto;
+    margin: 24px auto 10px auto;
     overflow: hidden;
+    border: 1px solid #334155;
 }
 
 #tempFill {
@@ -63,13 +67,56 @@ input[type=range] {
     width: 0%;
     background: linear-gradient(90deg, #38bdf8, #22c55e, #facc15, #ef4444);
 }
+
+#lifeBar {
+    height: 24px;
+    width: 320px;
+    background: #111827;
+    border-radius: 16px;
+    margin: 10px auto;
+    overflow: hidden;
+    border: 1px solid #374151;
+}
+
+#lifeFill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #22c55e, #facc15, #ef4444);
+}
+
+#soundToggle {
+    margin-top: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #9ca3af;
+}
+#soundToggle span {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid #4b5563;
+}
+#soundToggle span.active {
+    color: #f9fafb;
+    border-color: #22c55e;
+}
 </style>
 </head>
 
 <body>
 
+<!-- Moon Home Button -->
+<a class="moon-home" href="experiment.html">
+    <img src="https://raw.githubusercontent.com/7022023/7022023.github.io/main/moon.png" 
+         alt="Home" 
+         style="width:70px; height:70px; border-radius:50%; position:absolute; top:20px; right:20px;">
+</a>
+
 <h1>Atmosphere & Temperature</h1>
 <p>Adjust greenhouse gases and see climate, habitability, and visuals change.</p>
+
+<div id="soundToggle">
+    <span id="soundBtn">🔊 Ambient sound: OFF</span>
+</div>
 
 <label>Star Luminosity (Sun = 1)</label>
 <input type="range" id="lumSlider" min="0.01" max="10" step="0.01" value="1">
@@ -90,12 +137,33 @@ input[type=range] {
 
 <div id="tempBar"><div id="tempFill"></div></div>
 
+<div id="lifeBar"><div id="lifeFill"></div></div>
+
 <div id="readout">Temperature will appear here.</div>
 
 <script>
-// ---------------------------
-// TEMPERATURE MODEL
-// ---------------------------
+// Ambient sound (simple loop using Audio API, you can replace src with your own file)
+let ambientAudio = null;
+let soundOn = false;
+const soundBtn = document.getElementById("soundBtn");
+soundBtn.addEventListener("click", () => {
+    if (!ambientAudio) {
+        ambientAudio = new Audio("https://upload.wikimedia.org/wikipedia/commons/4/4e/Space_ambience.ogg");
+        ambientAudio.loop = true;
+    }
+    soundOn = !soundOn;
+    if (soundOn) {
+        ambientAudio.play();
+        soundBtn.textContent = "🔊 Ambient sound: ON";
+        soundBtn.classList.add("active");
+    } else {
+        ambientAudio.pause();
+        soundBtn.textContent = "🔊 Ambient sound: OFF";
+        soundBtn.classList.remove("active");
+    }
+});
+
+// Temperature model
 function computeTemperature(L, d, albedo, atm, gh) {
     const Tbase = 278 * Math.sqrt(L / (d * d)) * Math.pow(1 - albedo, 0.25);
     const Tatm = Tbase * (1 + 0.25 * atm);
@@ -103,9 +171,7 @@ function computeTemperature(L, d, albedo, atm, gh) {
     return Tgh - 273.15;
 }
 
-// ---------------------------
-// CLIMATE CLASSIFICATION
-// ---------------------------
+// Climate classification
 function classifyClimate(Tc) {
     if (Tc < -20) return "Snowball";
     if (Tc < 5) return "Cold but habitable";
@@ -114,30 +180,26 @@ function classifyClimate(Tc) {
     return "Runaway greenhouse";
 }
 
-// ---------------------------
-// PLANET COLOR BASED ON TEMP
-// ---------------------------
+// Planet color
 function planetColor(temp) {
-    if (temp < -20) return "#93c5fd"; // icy blue
-    if (temp < 5) return "#60a5fa";   // cold blue
-    if (temp < 35) return "#4ade80";  // green Earth-like
-    if (temp < 60) return "#facc15";  // warm yellow
-    return "#ef4444";                 // hot red
+    if (temp < -20) return "#93c5fd";
+    if (temp < 5) return "#60a5fa";
+    if (temp < 35) return "#4ade80";
+    if (temp < 60) return "#facc15";
+    return "#ef4444";
 }
 
-// ---------------------------
-// SETUP CANVAS
-// ---------------------------
+// Canvas setup
 const canvas = document.getElementById("planetCanvas");
 const ctx = canvas.getContext("2d");
 let t = 0;
 
-// Simple noise for texture
+// Simple noise
 function noise(x, y) {
     return (Math.sin(x * 12.9898 + y * 78.233 + 43758.5453) * 43758.5453) % 1;
 }
 
-// Draw star background
+// Star background with pulsing star
 function drawStars() {
     ctx.fillStyle = "#020617";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -154,23 +216,22 @@ function drawStars() {
     }
     ctx.restore();
 
-    // Central star
+    // Pulsing central star
     const sx = canvas.width * 0.15;
     const sy = canvas.height * 0.25;
-    const starR = 40;
-    const starGrad = ctx.createRadialGradient(sx, sy, 0, sx, sy, starR * 3);
+    const baseR = 40;
+    const pulse = 1 + Math.sin(t * 1.5) * 0.2;
+    const starGrad = ctx.createRadialGradient(sx, sy, 0, sx, sy, baseR * 3 * pulse);
     starGrad.addColorStop(0, "#ffffff");
     starGrad.addColorStop(0.3, "#fde68a");
     starGrad.addColorStop(1, "rgba(251,191,36,0)");
     ctx.fillStyle = starGrad;
     ctx.beginPath();
-    ctx.arc(sx, sy, starR * 3, 0, Math.PI * 2);
+    ctx.arc(sx, sy, baseR * 3 * pulse, 0, Math.PI * 2);
     ctx.fill();
 }
 
-// ---------------------------
-// DRAW PLANET + ORBIT
-// ---------------------------
+// Draw planet + orbit + effects
 function drawPlanet(temp, atm, d) {
     drawStars();
 
@@ -178,7 +239,7 @@ function drawPlanet(temp, atm, d) {
     const cy = canvas.height * 0.55;
     const radius = 150;
 
-    // Orbit wobble
+    // Orbit ring
     const orbitR = 80 + d * 30;
     ctx.save();
     ctx.strokeStyle = "rgba(148,163,184,0.4)";
@@ -233,7 +294,7 @@ function drawPlanet(temp, atm, d) {
     ctx.putImageData(imgData, cx - radius, cy - radius);
     ctx.restore();
 
-    // Clouds (depend on atmosphere)
+    // Clouds
     ctx.save();
     ctx.globalAlpha = 0.2 + atm * 0.6;
     ctx.fillStyle = "#e5f4ff";
@@ -258,9 +319,26 @@ function drawPlanet(temp, atm, d) {
     ctx.fill();
 }
 
-// ---------------------------
-// UPDATE EVERYTHING
-// ---------------------------
+// Life probability meter (0–1)
+function lifeProbability(temp, climate, atm, gh) {
+    let score = 0;
+
+    // Temperature sweet spot
+    if (temp >= 0 && temp <= 40) score += 0.5;
+    else if (temp > -20 && temp < 60) score += 0.25;
+
+    // Climate
+    if (climate === "Earth-like") score += 0.3;
+    else if (climate === "Cold but habitable" || climate === "Hot but habitable") score += 0.15;
+
+    // Atmosphere & greenhouse
+    if (atm > 0.2 && atm < 0.8) score += 0.15;
+    if (gh > 0.1 && gh < 0.7) score += 0.1;
+
+    return Math.max(0, Math.min(1, score));
+}
+
+// Update everything
 function update() {
     const L = Number(lumSlider.value);
     const d = Number(distSlider.value);
@@ -275,7 +353,7 @@ function update() {
     const percent = Math.min(Math.max((tempC + 50) / 150, 0), 1) * 100;
     tempFill.style.width = percent + "%";
 
-    // Draw planet + environment
+    // Planet + visuals
     drawPlanet(tempC, atm, d);
 
     // Habitability text
@@ -285,10 +363,21 @@ function update() {
     else if (climate === "Hot but habitable") habit = "✔ Marginally habitable";
     else habit = "✖ Not habitable";
 
+    // Life probability
+    const lifeProb = lifeProbability(tempC, climate, atm, gh);
+    lifeFill.style.width = (lifeProb * 100) + "%";
+
+    let lifeText;
+    if (lifeProb > 0.7) lifeText = "High chance for complex life";
+    else if (lifeProb > 0.4) lifeText = "Moderate chance for life";
+    else if (lifeProb > 0.2) lifeText = "Low chance for simple life";
+    else lifeText = "Very unlikely environment for life";
+
     readout.innerHTML = `
         <strong>Temperature:</strong> ${tempC.toFixed(1)} °C<br>
         <strong>Climate:</strong> ${climate}<br>
-        <strong>Habitability:</strong> ${habit}<br><br>
+        <strong>Habitability:</strong> ${habit}<br>
+        <strong>Life probability:</strong> ${(lifeProb * 100).toFixed(0)}% — ${lifeText}<br><br>
         Luminosity: ${L.toFixed(2)} • Distance: ${d.toFixed(2)} AU<br>
         Albedo: ${albedo.toFixed(2)} • Atmosphere: ${atm.toFixed(2)} • Greenhouse: ${gh.toFixed(2)}
     `;
@@ -310,4 +399,5 @@ animate();
 </body>
 </html>
 
+    
     
