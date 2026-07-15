@@ -602,9 +602,8 @@ window.onload = function() {
     ctx.fillStyle = "rgba(2,6,23,1)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const cx = canvas.width / 2;
-    const cy = canvas.height / 2 + 40; // ✅ centered lower
-
+    const cx = canvas.width / 2 - 40;   // shift left
+const cy = canvas.height / 2 + 40;  // shift down
     // Star
     ctx.save();
     const starGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 40);
