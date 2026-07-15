@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Atmosphere & Temperature Simulation</title>
+<style>
+body {
+    background: #0f172a;
+    color: #f8fafc;
+    font-family: Inter, sans-serif;
+    padding: 20px;
+}
+
+h1 {
+    margin-bottom: 5px;
+}
+
+canvas {
+    background: #1e293b;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+}
+
+input[type=range] {
+    width: 300px;
+}
+
+#readout {
+    margin-top: 25px;
+    padding: 15px;
+    background: #1e293b;
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+#tempBar {
+    height: 20px;
+    width: 300px;
+    background: #334155;
+    border-radius: 10px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+#tempFill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #38bdf8, #ef4444);
+}
+</style>
+</head>
+
+<body>
+
+<h1>Atmosphere & Temperature</h1>
+<p>Adjust greenhouse gases and see climate and habitability change.</p>
+
+<label>Star Luminosity (Sun = 1)</label>
+<input type="range" id="lumSlider" min="0.01" max="10" step="0.01" value="1">
+
+<label>Distance (AU)</label>
+<input type="range" id="distSlider" min="0.1" max="5" step="0.01" value="1">
+
+<label>Albedo (Reflectivity)</label>
+<input type="range" id="albedoSlider" min="0.1" max="0.9" step="0.01" value="0.3">
+
+<label>Atmosphere Thickness</label>
+<input type="range" id="atmSlider" min="0" max="1" step="0.01" value="0.5">
+
+<label>Greenhouse Strength</label>
+<input type="range" id="ghSlider" min="0" max="1" step="0.01" value="0.4">
+
+<canvas id="planetCanvas" width="300" height="300"></canvas>
+
+<div id="tempBar"><div id="tempFill"></div></div>
+
+<div id="readout">Temperature will appear here.</div>
+
+<script>
+// ---------------------------
+// TEMPERATURE MODEL
+// ---------------------------
+function computeTemperature(L, d, albedo, atm, gh) {
+    const Tbase = 278 * Math.sqrt(L / (d * d)) * Math.pow(1 - albedo, 0.25);
+    const Tatm = Tbase * (1 + 0.25 * atm);
+    const Tgh = Tatm + 35 * gh;
+    return Tgh - 273.15;
+}
+
+// ---------------------------
+// CLIMATE CLASSIFICATION
+// ---------------------------
+function classifyClimate(Tc) {
+    if (Tc < -20) return "Snowball";
+    if (Tc < 5) return "Cold but habitable";
+    if (Tc < 35) return "Earth-like";
+    if (Tc < 60) return "Hot but habitable";
+    return "Runaway greenhouse";
+}
+
+// ---------------------------
+// PLANET COLOR BASED ON TEMP
+// ---------------------------
+function planetColor(temp) {
+    if (temp < -20) return "#93c5fd"; // icy blue
+    if (temp < 5) return "#60a5fa";   // cold blue
+    if (temp < 35) return "#4ade80";  // green Earth-like
+    if (temp < 60) return "#facc15";  // warm yellow
+    return "#ef4444";                 // hot red
+}
+
+// ---------------------------
+// DRAW PLANET
+// ---------------------------
+const canvas = document.getElementById("planetCanvas");
+const ctx = canvas.getContext("2d");
+let t = 0;
+
+function drawPlanet(temp, atm) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const radius = 70;
+
+    // Atmosphere glow
+    const glow = ctx.createRadialGradient(cx, cy, radius, cx, cy, radius + 40 + atm * 40);
+    glow.addColorStop(0, "rgba(255,255,255,0)");
+    glow.addColorStop(1, `rgba(147,197,253,${atm})`);
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius + 40 + atm * 40, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Planet
+    ctx.fillStyle = planetColor(temp);
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Rotation highlight
+    const angle = t;
+    const hx = cx + Math.cos(angle) * 20;
+    const hy = cy + Math.sin(angle) * 20;
+
+    ctx.fillStyle = "rgba(255,255,255,0.15)";
+    ctx.beginPath();
+    ctx.arc(hx, hy, 25, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+// ---------------------------
+// UPDATE EVERYTHING
+// ---------------------------
+function update() {
+    const L = Number(lumSlider.value);
+    const d = Number(distSlider.value);
+    const albedo = Number(albedoSlider.value);
+    const atm = Number(atmSlider.value);
+    const gh = Number(ghSlider.value);
+
+    const tempC = computeTemperature(L, d, albedo, atm, gh);
+    const climate = classifyClimate(tempC);
+
+    // Temperature bar
+    const percent = Math.min(Math.max((tempC + 50) / 150, 0), 1) * 100;
+    tempFill.style.width = percent + "%";
+
+    // Draw planet
+    drawPlanet(tempC, atm);
+
+    // Readout
+    readout.innerHTML = `
+        <strong>Temperature:</strong> ${tempC.toFixed(1)} °C<br>
+        <strong>Climate:</strong> ${climate}<br>
+        <strong>Habitability:</strong> ${
+            climate === "Earth-like" ? "✔ Habitable" :
+            climate === "Cold but habitable" ? "✔ Possibly habitable" :
+            climate === "Hot but habitable" ? "✔ Marginally habitable" :
+            "✖ Not habitable"
+        }
+    `;
+}
+
+document.querySelectorAll("input").forEach(el => {
+    el.addEventListener("input", update);
+});
+
+function animate() {
+    t += 0.02;
+    update();
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
