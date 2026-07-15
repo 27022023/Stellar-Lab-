@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habitable Zone Simulator</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #020617;
+    --panel: rgba(15,23,42,0.9);
+    --border: rgba(148,163,184,0.7);
+    --text: #e5e7eb;
+    --accent: #22c55e;
+    --accent2: #38bdf8;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(255,255,255,0.8) 1px, transparent 3px),
+      radial-gradient(circle at 80% 30%, rgba(255,255,255,0.7) 1px, transparent 3px),
+      radial-gradient(circle at 50% 80%, rgba(255,255,255,0.6) 1px, transparent 3px),
+      radial-gradient(circle at 20% 70%, rgba(255,255,255,0.5) 1px, transparent 3px),
+      radial-gradient(circle at 90% 10%, rgba(255,255,255,0.9) 1px, transparent 3px);
+    background-attachment: fixed;
+  }
+
+  .overlay {
+    padding: 40px 20px 80px;
+    max-width: 1100px;
+    margin: auto;
+  }
+
+  .moon-home {
+    position: fixed;
+    left: 15px;
+    top: 15px;
+    width: 50px;
+    height: 50px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 11px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.6);
+    box-shadow: 0 0 10px rgba(0,0,0,0.7);
+    z-index: 10;
+  }
+
+  h1, p {
+    text-align: center;
+  }
+
+  .main-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    backdrop-filter: blur(12px);
+    margin-bottom: 20px;
+  }
+
+  canvas {
+    display: block;
+    margin: 0 auto 10px;
+    background: transparent;
+    border-radius: 12px;
+  }
+
+  .top-layout {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .visual-box {
+    flex: 1 1 340px;
+    min-width: 320px;
+  }
+
+  .control-box-main {
+    flex: 1 1 280px;
+    min-width: 280px;
+  }
+
+  .mode-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .mode-buttons button {
+    background: rgba(30,64,175,0.9);
+    border: 1px solid var(--border);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .mode-buttons button.active {
+    background: var(--accent);
+  }
+
+  .mode-buttons button:hover {
+    background: rgba(34,197,94,0.9);
+  }
+
+  .explanation {
+    font-size: 13px;
+    margin-top: 6px;
+    color: #cbd5f5;
+  }
+
+  .control-group {
+    margin-top: 8px;
+  }
+
+  .control-group label {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .control-group input,
+  .control-group select {
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .readout {
+    margin-top: 8px;
+    font-size: 13px;
+  }
+
+  details {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    backdrop-filter: blur(10px);
+  }
+
+  summary {
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .panel-content {
+    margin-top: 8px;
+    font-size: 13px;
+  }
+
+  .planet-list {
+    margin-top: 6px;
+  }
+
+  .planet-item {
+    margin-bottom: 6px;
+    padding: 6px;
+    border-radius: 10px;
+    border: 1px solid rgba(148,163,184,0.5);
+    background: rgba(15,23,42,0.9);
+  }
+
+  .notebook {
+    margin-top: 16px;
+    background: repeating-linear-gradient(
+      rgba(15,23,42,0.95),
+      rgba(15,23,42,0.95) 28px,
+      rgba(148,163,184,0.6) 29px
+    );
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 14px;
+    min-height: 160px;
+    font-size: 15px;
+    line-height: 26px;
+    outline: none;
+    resize: vertical;
+    color: white;
+  }
+
+  @media (max-width: 800px) {
+    .top-layout {
+      flex-direction: column;
+    }
+  }
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<a class="moon-home" href="../experiment.html">Lab</a>
+
+<h1>🌞 Habitable Zone Simulator</h1>
+<p>Star types, habitable zones, climates, multiple planets, binary stars, tidal locking — all in one playground.</p>
+
+<div class="main-panel">
+  <div class="top-layout">
+    <div class="visual-box">
+      <canvas id="hzCanvas" width="480" height="260"></canvas>
+      <div class="explanation" id="explanation">
+        The habitable zone is the “just right” ring where liquid water can exist on a planet’s surface.
+      </div>
+    </div>
+
+    <div class="control-box-main">
+      <div class="mode-buttons">
+        <button id="simpleBtn" class="active">Simple Model</button>
+        <button id="realBtn">Realistic Model</button>
+        <button id="hybridBtn">Hybrid Model</button>
+      </div>
+
+      <div class="control-group">
+        <label>Star Type</label>
+        <select id="starSelect">
+          <option value="M">M (Cool Red Dwarf)</option>
+          <option value="K">K (Orange Dwarf)</option>
+          <option value="G" selected>G (Sun-like)</option>
+          <option value="F">F (Hotter Yellow-White)</option>
+          <option value="A">A (Bright White)</option>
+          <option value="B">B (Blue-White)</option>
+          <option value="O">O (Massive Blue)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>Planet Distance (AU)</label>
+        <input type="range" id="distSlider" min="0.1" max="5" step="0.01" value="1">
+      </div>
+
+      <div class="control-group">
+        <label>Atmosphere Thickness</label>
+        <input type="range" id="atmSlider" min="0" max="1" step="0.01" value="0.5">
+      </div>
+
+      <div class="control-group">
+        <label>Orbit Speed</label>
+        <input type="range" id="speedSlider" min="0" max="1" step="0.01" value="0.4">
+      </div>
+
+      <div class="readout" id="readout">
+        Model: Simple<br>
+        Star: G (Sun-like)<br>
+        Distance: 1.00 AU<br>
+        Atmosphere: 0.50<br>
+        Planet: Habitable (approx.)
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Planet Builder -->
+<details open>
+  <summary>🪐 Planet Builder</summary>
+  <div class="panel-content">
+    <div class="control-group">
+      <label>Planet Size (Earth radii)</label>
+      <input type="range" id="sizeSlider" min="0.5" max="3" step="0.01" value="1">
+    </div>
+
+    <div class="control-group">
+      <label>Albedo (reflectivity)</label>
+      <input type="range" id="albedoSlider" min="0.1" max="0.9" step="0.01" value="0.3">
+    </div>
+
+    <div class="control-group">
+      <label>Greenhouse Strength</label>
+      <input type="range" id="ghSlider" min="0" max="1" step="0.01" value="0.4">
+    </div>
+
+    <div class="control-group">
+      <label>Rotation Speed</label>
+      <input type="range" id="rotSlider" min="0" max="1" step="0.01" value="0.5">
+    </div>
+
+    <div class="control-group">
+      <label>Tidal Locking</label>
+      <select id="tidalSelect">
+        <option value="none" selected>Not locked</option>
+        <option value="partial">Partial locking</option>
+        <option value="full">Fully tidally locked</option>
+      </select>
+    </div>
+  </div>
+</details>
+
+<!-- Climate Model -->
+<details>
+  <summary>🌍 Climate Model</summary>
+  <div class="panel-content" id="climateInfo">
+    Surface temperature, greenhouse boost, snowball and runaway thresholds will be estimated here.
+  </div>
+</details>
+
+<!-- Multi-Planet System -->
+<details>
+  <summary>🪐🪐 Multi-Planet System</summary>
+  <div class="panel-content">
+    <button id="addPlanetBtn">Add Planet</button>
+    <button id="clearPlanetsBtn">Clear Planets</button>
+    <div class="planet-list" id="planetList"></div>
+  </div>
+</details>
+
+<!-- Binary Stars -->
+<details>
+  <summary>🌟🌟 Binary Star Mode</summary>
+  <div class="panel-content">
+    <div class="control-group">
+      <label>Star A Type</label>
+      <select id="starASelect">
+        <option value="M">M</option>
+        <option value="K">K</option>
+        <option value="G" selected>G</option>
+        <option value="F">F</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="O">O</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>Star B Type</label>
+      <select id="starBSelect">
+        <option value="M">M</option>
+        <option value="K">K</option>
+        <option value="G">G</option>
+        <option value="F">F</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="O" selected>O</option>
+      </select>
+    </div>
+    <div class="panel-content" id="binaryInfo">
+      Binary habitable zone info will appear here (combined luminosity and overlapping zones).
+    </div>
+  </div>
+</details>
+
+<!-- Advanced Physics -->
+<details>
+  <summary>🌀 Advanced Physics</summary>
+  <div class="panel-content" id="advancedInfo">
+    Tidal locking, heat redistribution, eccentricity, and stellar variability notes will appear here.
+  </div>
+</details>
+
+<textarea class="notebook" id="notes" placeholder="Write your simulator notes, ideas, or discoveries here..."></textarea>
+
+<script>
+window.onload = function() {
+  const canvas = document.getElementById("hzCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const simpleBtn = document.getElementById("simpleBtn");
+  const realBtn = document.getElementById("realBtn");
+  const hybridBtn = document.getElementById("hybridBtn");
+
+  const starSelect = document.getElementById("starSelect");
+  const distSlider = document.getElementById("distSlider");
+  const atmSlider = document.getElementById("atmSlider");
+  const speedSlider = document.getElementById("speedSlider");
+
+  const sizeSlider = document.getElementById("sizeSlider");
+  const albedoSlider = document.getElementById("albedoSlider");
+  const ghSlider = document.getElementById("ghSlider");
+  const rotSlider = document.getElementById("rotSlider");
+  const tidalSelect = document.getElementById("tidalSelect");
+
+  const starASelect = document.getElementById("starASelect");
+  const starBSelect = document.getElementById("starBSelect");
+
+  const explanation = document.getElementById("explanation");
+  const readout = document.getElementById("readout");
+  const climateInfo = document.getElementById("climateInfo");
+  const binaryInfo = document.getElementById("binaryInfo");
+  const advancedInfo = document.getElementById("advancedInfo");
+  const notes = document.getElementById("notes");
+
+  const addPlanetBtn = document.getElementById("addPlanetBtn");
+  const clearPlanetsBtn = document.getElementById("clearPlanetsBtn");
+  const planetList = document.getElementById("planetList");
+
+  notes.value = localStorage.getItem("hzSimNotes") || "";
+  notes.addEventListener("input", () => {
+    localStorage.setItem("hzSimNotes", notes.value);
+  });
+
+  let model = "simple";
+  let t = 0;
+  let extraPlanets = [];
+
+  function setModel(newModel) {
+    model = newModel;
+    [simpleBtn, realBtn, hybridBtn].forEach(btn => btn.classList.remove("active"));
+    if (model === "simple") simpleBtn.classList.add("active");
+    if (model === "real") realBtn.classList.add("active");
+    if (model === "hybrid") hybridBtn.classList.add("active");
+    updateExplanation();
+    updateReadout();
+  }
+
+  function starLuminosity(type) {
+    if (type === "M") return 0.02;
+    if (type === "K") return 0.4;
+    if (type === "G") return 1.0;
+    if (type === "F") return 2.5;
+    if (type === "A") return 10;
+    if (type === "B") return 100;
+    if (type === "O") return 50000;
+    return 1.0;
+  }
+
+  function starColor(type) {
+    if (type === "M") return "#f97316";
+    if (type === "K") return "#fdba74";
+    if (type === "G") return "#fde68a";
+    if (type === "F") return "#e5e7eb";
+    if (type === "A") return "#bfdbfe";
+    if (type === "B") return "#60a5fa";
+    if (type === "O") return "#38bdf8";
+    return "#fde68a";
+  }
+
+  function hzBoundsSimple(L) {
+    const inner = Math.sqrt(L) * 0.95;
+    const outer = Math.sqrt(L) * 1.37;
+    return {inner, outer};
+  }
+
+  function hzBoundsRealistic(L, atm) {
+    const baseInner = Math.sqrt(L) * 0.9;
+    const baseOuter = Math.sqrt(L) * 1.5;
+    const greenhouseShift = atm * 0.4;
+    const inner = baseInner + greenhouseShift;
+    const outer = baseOuter + greenhouseShift * 0.7;
+    return {inner, outer};
+  }
+
+  function hzBoundsHybrid(L, atm) {
+    const s = hzBoundsSimple(L);
+    const r = hzBoundsRealistic(L, atm);
+    return {
+      inner: (s.inner + r.inner) / 2,
+      outer: (s.outer + r.outer) / 2
+    };
+  }
+
+  function planetTemperature(L, d, atm, albedo, gh) {
+    const base = Math.pow(L, 0.25) / Math.sqrt(d);
+    const greenhouse = 1 + gh * 0.5 + atm * 0.3;
+    const temp = base * greenhouse * (1 - albedo) * 280;
+    return temp;
+  }
+
+  function classifyPlanet(L, d, atm, albedo, gh) {
+    const bounds =
+      model === "simple"
+        ? hzBoundsSimple(L)
+        : model === "real"
+        ? hzBoundsRealistic(L, atm)
+        : hzBoundsHybrid(L, atm);
+
+    if (d < bounds.inner * 0.8) return "Too hot (runaway greenhouse)";
+    if (d < bounds.inner) return "Hot (inner edge)";
+    if (d > bounds.outer * 1.2) return "Too cold (snowball)";
+    if (d > bounds.outer) return "Cold (outer edge)";
+    return "Habitable (approx.)";
+  }
+
+  function planetColor(L, d, atm, albedo, gh) {
+    const status = classifyPlanet(L, d, atm, albedo, gh);
+    if (status.includes("Too hot")) return "#ef4444";
+    if (status.includes("Hot")) return "#f97316";
+    if (status.includes("Too cold")) return "#3b82f6";
+    if (status.includes("Cold")) return "#60a5fa";
+    return "#22c55e";
+  }
+
+  function starLabel(type) {
+    if (type === "M") return "Cool Red Dwarf";
+    if (type === "K") return "Orange Dwarf";
+    if (type === "G") return "Sun-like";
+    if (type === "F") return "Hotter Yellow-White";
+    if (type === "A") return "Bright White";
+    if (type === "B") return "Blue-White";
+    if (type === "O") return "Massive Blue";
+    return "Star";
+  }
+
+  function updateExplanation() {
+    if (model === "simple") {
+      explanation.textContent = "Simple model: habitable zone scales with star brightness. Green ring = liquid water zone.";
+    } else if (model === "real") {
+      explanation.textContent = "Realistic model: atmosphere, albedo, and greenhouse shift the habitable zone and climate.";
+    } else if (model === "hybrid") {
+      explanation.textContent = "Hybrid model: combines simple scaling with atmospheric effects for intuitive but scientific behavior.";
+    }
+  }
+
+  function updateReadout() {
+    const star = starSelect.value;
+    const L = starLuminosity(star);
+    const d = Number(distSlider.value);
+    const atm = Number(atmSlider.value);
+    const albedo = Number(albedoSlider.value);
+    const gh = Number(ghSlider.value);
+
+    const status = classifyPlanet(L, d, atm, albedo, gh);
+    const temp = planetTemperature(L, d, atm, albedo, gh);
+
+    let modelLabel = "Simple";
+    if (model === "real") modelLabel = "Realistic";
+    if (model === "hybrid") modelLabel = "Hybrid";
+
+    readout.innerHTML =
+      `Model: ${modelLabel}<br>` +
+      `Star: ${star} (${starLabel(star)})<br>` +
+      `Distance: ${d.toFixed(2)} AU<br>` +
+      `Atmosphere: ${atm.toFixed(2)}<br>` +
+      `Albedo: ${albedo.toFixed(2)}<br>` +
+      `Greenhouse: ${gh.toFixed(2)}<br>` +
+      `Estimated Temp: ${temp.toFixed(0)} K<br>` +
+      `Planet: ${status}`;
+
+    updateClimateInfo(temp, status);
+    updateBinaryInfo();
+    updateAdvancedInfo();
+  }
+
+  function updateClimateInfo(temp, status) {
+    const snowball = temp < 240;
+    const runaway = temp > 330;
+    climateInfo.innerHTML =
+      `Estimated surface temperature: ~${temp.toFixed(0)} K<br>` +
+      `Climate classification: ${status}<br>` +
+      `Snowball threshold (~240 K): ${snowball ? "Exceeded (likely frozen)" : "Not exceeded"}<br>` +
+      `Runaway greenhouse threshold (~330 K): ${runaway ? "Exceeded (likely runaway)" : "Not exceeded"}`;
+  }
+
+  function updateBinaryInfo() {
+    const typeA = starASelect.value;
+    const typeB = starBSelect.value;
+    const LA = starLuminosity(typeA);
+    const LB = starLuminosity(typeB);
+    const Ltot = LA + LB;
+    const bounds = hzBoundsSimple(Ltot);
+    binaryInfo.innerHTML =
+      `Star A: ${typeA} (${starLabel(typeA)}), L ≈ ${LA.toFixed(2)} L☉<br>` +
+      `Star B: ${typeB} (${starLabel(typeB)}), L ≈ ${LB.toFixed(2)} L☉<br>` +
+      `Combined luminosity: ≈ ${Ltot.toFixed(2)} L☉<br>` +
+      `Circumbinary habitable zone: inner ≈ ${bounds.inner.toFixed(2)} AU, outer ≈ ${bounds.outer.toFixed(2)} AU`;
+  }
+
+  function updateAdvancedInfo() {
+    const tidal = tidalSelect.value;
+    const rot = Number(rotSlider.value);
+    let tidalText = "";
+    if (tidal === "none") tidalText = "Planet rotates freely; day/night cycle distributes heat.";
+    else if (tidal === "partial") tidalText = "Partial tidal locking: one side gets more heat, but some redistribution occurs.";
+    else tidalText = "Fully tidally locked: one side faces the star, the other is in permanent night.";
+
+    const eccNote = "Eccentric orbits would cause seasons and varying distance, but here we assume circular orbits.";
+    const flareNote = "Cool M stars can flare, causing bursts of radiation; this simulator keeps stellar output smooth.";
+
+    advancedInfo.innerHTML =
+      `Tidal locking: ${tidalText}<br>` +
+      `Rotation speed slider affects how evenly heat is spread across the planet.<br>` +
+      `${eccNote}<br>` +
+      `${flareNote}`;
+  }
+
+  function render() {
+    const star = starSelect.value;
+    const L = starLuminosity(star);
+    const d = Number(distSlider.value);
+    const atm = Number(atmSlider.value);
+    const albedo = Number(albedoSlider.value);
+    const gh = Number(ghSlider.value);
+    const speed = Number(speedSlider.value);
+    const size = Number(sizeSlider.value);
+
+    t += 0.01 + speed * 0.03;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgba(2,6,23,1)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    // Star
+    ctx.save();
+    const starGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 40);
+    starGrad.addColorStop(0, "#ffffff");
+    starGrad.addColorStop(0.4, starColor(star));
+    starGrad.addColorStop(1, "rgba(15,23,42,0)");
+    ctx.fillStyle = starGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 40, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Habitable zone
+    const bounds =
+      model === "simple"
+        ? hzBoundsSimple(L)
+        : model === "real"
+        ? hzBoundsRealistic(L, atm)
+        : hzBoundsHybrid(L, atm);
+
+    const scale = 40;
+    const innerR = bounds.inner * scale;
+    const outerR = bounds.outer * scale;
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(248,250,252,0.4)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
+    ctx.stroke();
+
+    const hzGrad = ctx.createRadialGradient(cx, cy, innerR, cx, cy, outerR);
+    hzGrad.addColorStop(0, "rgba(34,197,94,0.1)");
+    hzGrad.addColorStop(0.5, "rgba(34,197,94,0.25)");
+    hzGrad.addColorStop(1, "rgba(34,197,94,0.05)");
+    ctx.fillStyle = hzGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
+    ctx.arc(cx, cy, innerR, 0, Math.PI * 2, true);
+    ctx.fill();
+    ctx.restore();
+
+    // Main planet orbit
+    const orbitR = d * scale;
+    ctx.save();
+    ctx.strokeStyle = "rgba(148,163,184,0.4)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, orbitR, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+
+    const angle = t;
+    const px = cx + Math.cos(angle) * orbitR;
+    const py = cy + Math.sin(angle) * orbitR;
+
+    const pColor = planetColor(L, d, atm, albedo, gh);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(px, py, 4 + size * 2, 0, Math.PI * 2);
+    ctx.fillStyle = pColor;
+    ctx.shadowColor = pColor;
+    ctx.shadowBlur = 12;
+    ctx.fill();
+    ctx.restore();
+
+    // Extra planets
+    extraPlanets.forEach((p, idx) => {
+      const pd = p.distance;
+      const pa = p.atm;
+      const palb = p.albedo;
+      const pgh = p.gh;
+      const pspeed = p.speed;
+      const pr = pd * scale;
+      const pang = t * (0.5 + pspeed * 1.5) + idx * 0.8;
+      const x = cx + Math.cos(pang) * pr;
+      const y = cy + Math.sin(pang) * pr;
+      const color = planetColor(L, pd, pa, palb, pgh);
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(x, y, 3 + p.size * 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 10;
+      ctx.fill();
+      ctx.restore();
+    });
+
+    requestAnimationFrame(render);
+  }
+
+  simpleBtn.onclick = () => setModel("simple");
+  realBtn.onclick = () => setModel("real");
+  hybridBtn.onclick = () => setModel("hybrid");
+
+  [starSelect, distSlider, atmSlider, speedSlider,
+   sizeSlider, albedoSlider, ghSlider, rotSlider,
+   tidalSelect, starASelect, starBSelect].forEach(ctrl => {
+    ctrl.addEventListener("input", () => {
+      updateReadout();
+    });
+  });
+
+  addPlanetBtn.onclick = () => {
+    if (extraPlanets.length >= 5) return;
+    const d = Number(distSlider.value) + (extraPlanets.length + 1) * 0.3;
+    const atm = Number(atmSlider.value);
+    const albedo = Number(albedoSlider.value);
+    const gh = Number(ghSlider.value);
+    const size = Number(sizeSlider.value);
+    const speed = Number(speedSlider.value);
+
+    const planet = {distance: d, atm, albedo, gh, size, speed};
+    extraPlanets.push(planet);
+    renderPlanetList();
+  };
+
+  clearPlanetsBtn.onclick = () => {
+    extraPlanets = [];
+    renderPlanetList();
+  };
+
+  function renderPlanetList() {
+    planetList.innerHTML = "";
+    const star = starSelect.value;
+    const L = starLuminosity(star);
+    extraPlanets.forEach((p, idx) => {
+      const status = classifyPlanet(L, p.distance, p.atm, p.albedo, p.gh);
+      const temp = planetTemperature(L, p.distance, p.atm, p.albedo, p.gh);
+      const div = document.createElement("div");
+      div.className = "planet-item";
+      div.innerHTML =
+        `Planet ${idx + 1}: d ≈ ${p.distance.toFixed(2)} AU, size ≈ ${p.size.toFixed(2)} R⊕<br>` +
+        `Atmosphere: ${p.atm.toFixed(2)}, albedo: ${p.albedo.toFixed(2)}, greenhouse: ${p.gh.toFixed(2)}<br>` +
+        `Temp ≈ ${temp.toFixed(0)} K, status: ${status}`;
+      planetList.appendChild(div);
+    });
+  }
+
+  updateExplanation();
+  updateReadout();
+  render();
+};
+</script>
+
+</body>
+</html>
