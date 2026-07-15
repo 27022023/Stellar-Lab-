@@ -12,11 +12,14 @@
     margin: 0;
     padding: 0;
     font-family: 'Inter', sans-serif;
-    color: black;
-    background: linear-gradient(135deg,
-      rgba(216,191,255,0.55),
-      rgba(189,255,214,0.55)
-    );
+    color: white;
+    background-color: #020617; /* dark navy */
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(255,255,255,0.8) 1px, transparent 3px),
+      radial-gradient(circle at 80% 30%, rgba(255,255,255,0.7) 1px, transparent 3px),
+      radial-gradient(circle at 50% 80%, rgba(255,255,255,0.6) 1px, transparent 3px),
+      radial-gradient(circle at 20% 70%, rgba(255,255,255,0.5) 1px, transparent 3px),
+      radial-gradient(circle at 90% 10%, rgba(255,255,255,0.9) 1px, transparent 3px);
     background-attachment: fixed;
   }
 
@@ -26,7 +29,6 @@
     margin: auto;
   }
 
-  /* FIXED MOON BUTTON */
   .moon-home {
     position: fixed;
     left: 15px;
@@ -43,7 +45,7 @@
     color: white;
     text-decoration: none;
     border: 2px solid rgba(255,255,255,0.6);
-    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    box-shadow: 0 0 10px rgba(0,0,0,0.7);
     transition: 0.3s;
     z-index: 10;
   }
@@ -53,8 +55,8 @@
   }
 
   .sim-container {
-    background: rgba(255,255,255,0.5);
-    border: 1px solid rgba(0,0,0,0.18);
+    background: rgba(15,23,42,0.8); /* deep navy panel */
+    border: 1px solid rgba(148,163,184,0.6);
     border-radius: 18px;
     padding: 20px;
     backdrop-filter: blur(12px);
@@ -74,14 +76,16 @@
     display: block;
     margin-left: auto;
     margin-right: auto;
+    background: transparent;
   }
 
   details {
-    background: rgba(255,255,255,0.7);
-    border: 1px solid rgba(0,0,0,0.18);
+    background: rgba(15,23,42,0.9);
+    border: 1px solid rgba(148,163,184,0.7);
     border-radius: 12px;
     padding: 12px;
     margin-top: 20px;
+    color: white;
   }
 
   summary {
@@ -108,18 +112,19 @@
   .notebook {
     margin-top: 30px;
     background: repeating-linear-gradient(
-      white,
-      white 28px,
-      #cbd5e1 29px
+      rgba(15,23,42,0.95),
+      rgba(15,23,42,0.95) 28px,
+      rgba(148,163,184,0.6) 29px
     );
     border-radius: 12px;
-    border: 1px solid rgba(0,0,0,0.2);
+    border: 1px solid rgba(148,163,184,0.8);
     padding: 20px;
     min-height: 200px;
     font-size: 16px;
     line-height: 28px;
     outline: none;
     resize: vertical;
+    color: white;
   }
 </style>
 </head>
@@ -136,7 +141,6 @@
 
   <canvas id="sim" width="350" height="350"></canvas>
 
-  <!-- COLLAPSIBLE CONTROL SECTIONS -->
   <details>
     <summary>Planet 1 Controls</summary>
     <div class="control-box">
@@ -202,152 +206,149 @@
 </div>
 
 <script>
-/* NOTEBOOK MEMORY */
-const notes = document.getElementById("notes");
-notes.value = localStorage.getItem("labNotes") || "";
-notes.addEventListener("input", () => {
-  localStorage.setItem("labNotes", notes.value);
-});
+window.onload = function() {
+  /* NOTEBOOK MEMORY */
+  const notes = document.getElementById("notes");
+  notes.value = localStorage.getItem("labNotes") || "";
+  notes.addEventListener("input", () => {
+    localStorage.setItem("labNotes", notes.value);
+  });
 
-/* CANVAS SETUP */
-const canvas = document.getElementById("sim");
-const ctx = canvas.getContext("2d");
+  /* CANVAS SETUP */
+  const canvas = document.getElementById("sim");
+  const ctx = canvas.getContext("2d");
 
-/* SLIDERS */
-const p1Size = document.getElementById("p1Size");
-const p2Size = document.getElementById("p2Size");
-const p3Size = document.getElementById("p3Size");
+  /* SLIDERS */
+  const p1Size = document.getElementById("p1Size");
+  const p2Size = document.getElementById("p2Size");
+  const p3Size = document.getElementById("p3Size");
 
-const p1Speed = document.getElementById("p1Speed");
-const p2Speed = document.getElementById("p2Speed");
-const p3Speed = document.getElementById("p3Speed");
+  const p1Speed = document.getElementById("p1Speed");
+  const p2Speed = document.getElementById("p2Speed");
+  const p3Speed = document.getElementById("p3Speed");
 
-const p1Radius = document.getElementById("p1Radius");
-const p2Radius = document.getElementById("p2Radius");
-const p3Radius = document.getElementById("p3Radius");
+  const p1Radius = document.getElementById("p1Radius");
+  const p2Radius = document.getElementById("p2Radius");
+  const p3Radius = document.getElementById("p3Radius");
 
-const starBrightnessEl = document.getElementById("starBrightness");
+  const starBrightnessEl = document.getElementById("starBrightness");
 
-let angle1 = 0, angle2 = 0, angle3 = 0;
+  let angle1 = 0, angle2 = 0, angle3 = 0;
 
-/* DRAW PLANET */
-function drawPlanet(x, y, r, c1, c2) {
-  const g = ctx.createRadialGradient(x - r/3, y - r/3, r/5, x, y, r);
-  g.addColorStop(0, c1);
-  g.addColorStop(1, c2);
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI * 2);
-  ctx.fillStyle = g;
-  ctx.fill();
-}
-
-/* DRAW ORBIT RING */
-function drawOrbitRing(radius) {
-  ctx.beginPath();
-  ctx.arc(canvas.width/2, canvas.height/2, radius, 0, Math.PI * 2);
-  ctx.strokeStyle = "rgba(0,0,0,0.15)";
-  ctx.lineWidth = 1;
-  ctx.stroke();
-}
-
-/* MAIN LOOP */
-function drawSim() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  const starX = canvas.width / 2;
-  const starY = canvas.height / 2;
-
-  /* READ SLIDER VALUES LIVE */
-  const starBrightness = Number(starBrightnessEl.value);
-
-  const p1 = Number(p1Size.value);
-  const p2 = Number(p2Size.value);
-  const p3 = Number(p3Size.value);
-
-  const r1 = Number(p1Radius.value);
-  const r2 = Number(p2Radius.value);
-  const r3 = Number(p3Radius.value);
-
-  const s1 = Number(p1Speed.value);
-  const s2 = Number(p2Speed.value);
-  const s3 = Number(p3Speed.value);
-
-  /* DRAW STAR */
-  ctx.beginPath();
-  ctx.arc(starX, starY, 40, 0, Math.PI * 2);
-  ctx.fillStyle = `rgba(255,255,0,${starBrightness})`;
-  ctx.fill();
-
-  /* DRAW ORBIT RINGS */
-  drawOrbitRing(r1);
-  drawOrbitRing(r2);
-  drawOrbitRing(r3);
-
-  /* UPDATE ANGLES */
-  angle1 += s1;
-  angle2 += s2;
-  angle3 += s3;
-
-  /* PLANET POSITIONS */
-  const x1 = starX + Math.cos(angle1) * r1;
-  const y1 = starY + Math.sin(angle1) * r1;
-
-  const x2 = starX + Math.cos(angle2) * r2;
-  const y2 = starY + Math.sin(angle2) * r2;
-
-  const x3 = starX + Math.cos(angle3) * r3;
-  const y3 = starY + Math.sin(angle3) * r3;
-
-  /* DRAW PLANETS */
-  drawPlanet(x1, y1, p1, "#1e3a8a", "#60a5fa");
-  drawPlanet(x2, y2, p2, "#b45309", "#fbbf24");
-  drawPlanet(x3, y3, p3, "#6b21a8", "#c084fc");
-
-  updateBrightness(x1, y1, p1, x2, y2, p2, x3, y3, p3, starX, starY);
-  requestAnimationFrame(drawSim);
-}
-
-drawSim();
-
-/* LIGHT CURVE */
-const graph = document.getElementById("graph");
-const g = graph.getContext("2d");
-let brightnessData = [];
-
-function updateBrightness(px1, py1, p1, px2, py2, p2, px3, py3, p3, sx, sy) {
-  let brightness = Number(starBrightnessEl.value);
-  const starRadius = 40;
-
-  function transit(px, py, pr) {
-    const dx = px - sx;
-    const dy = py - sy;
-    const dist = Math.sqrt(dx*dx + dy*dy);
-    if (dist < starRadius + pr) brightness -= pr / 200;
+  function drawPlanet(x, y, r, c1, c2) {
+    const grad = ctx.createRadialGradient(x - r/3, y - r/3, r/5, x, y, r);
+    grad.addColorStop(0, c1);
+    grad.addColorStop(1, c2);
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
   }
 
-  transit(px1, py1, p1);
-  transit(px2, py2, p2);
-  transit(px3, py3, p3);
-
-  brightnessData.push(brightness);
-  if (brightnessData.length > 300) brightnessData.shift();
-
-  drawGraph();
-}
-
-function drawGraph() {
-  g.clearRect(0, 0, graph.width, graph.height);
-  g.beginPath();
-  g.moveTo(0, graph.height - brightnessData[0] * graph.height);
-
-  for (let i = 1; i < brightnessData.length; i++) {
-    g.lineTo(i * (graph.width / 300), graph.height - brightnessData[i] * graph.height);
+  function drawOrbitRing(radius) {
+    ctx.beginPath();
+    ctx.arc(canvas.width/2, canvas.height/2, radius, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(148,163,184,0.5)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
   }
 
-  g.strokeStyle = "black";
-  g.lineWidth = 2;
-  g.stroke();
-}
+  function drawSim() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const starX = canvas.width / 2;
+    const starY = canvas.height / 2;
+
+    const starBrightness = Number(starBrightnessEl.value);
+
+    const p1 = Number(p1Size.value);
+    const p2 = Number(p2Size.value);
+    const p3 = Number(p3Size.value);
+
+    const r1 = Number(p1Radius.value);
+    const r2 = Number(p2Radius.value);
+    const r3 = Number(p3Radius.value);
+
+    const s1 = Number(p1Speed.value);
+    const s2 = Number(p2Speed.value);
+    const s3 = Number(p3Speed.value);
+
+    ctx.beginPath();
+    ctx.arc(starX, starY, 40, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,0,${starBrightness})`;
+    ctx.shadowColor = "rgba(250,250,150,0.7)";
+    ctx.shadowBlur = 20;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    drawOrbitRing(r1);
+    drawOrbitRing(r2);
+    drawOrbitRing(r3);
+
+    angle1 += s1;
+    angle2 += s2;
+    angle3 += s3;
+
+    const x1 = starX + Math.cos(angle1) * r1;
+    const y1 = starY + Math.sin(angle1) * r1;
+
+    const x2 = starX + Math.cos(angle2) * r2;
+    const y2 = starY + Math.sin(angle2) * r2;
+
+    const x3 = starX + Math.cos(angle3) * r3;
+    const y3 = starY + Math.sin(angle3) * r3;
+
+    drawPlanet(x1, y1, p1, "#38bdf8", "#0ea5e9");
+    drawPlanet(x2, y2, p2, "#fb923c", "#f97316");
+    drawPlanet(x3, y3, p3, "#a855f7", "#c084fc");
+
+    updateBrightness(x1, y1, p1, x2, y2, p2, x3, y3, p3, starX, starY);
+    requestAnimationFrame(drawSim);
+  }
+
+  const graph = document.getElementById("graph");
+  const g = graph.getContext("2d");
+  let brightnessData = [];
+
+  function updateBrightness(px1, py1, p1, px2, py2, p2, px3, py3, p3, sx, sy) {
+    let brightness = Number(starBrightnessEl.value);
+    const starRadius = 40;
+
+    function transit(px, py, pr) {
+      const dx = px - sx;
+      const dy = py - sy;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < starRadius + pr) brightness -= pr / 200;
+    }
+
+    transit(px1, py1, p1);
+    transit(px2, py2, p2);
+    transit(px3, py3, p3);
+
+    brightnessData.push(brightness);
+    if (brightnessData.length > 300) brightnessData.shift();
+
+    drawGraph();
+  }
+
+  function drawGraph() {
+    g.clearRect(0, 0, graph.width, graph.height);
+    if (brightnessData.length === 0) return;
+
+    g.beginPath();
+    g.moveTo(0, graph.height - brightnessData[0] * graph.height);
+
+    for (let i = 1; i < brightnessData.length; i++) {
+      g.lineTo(i * (graph.width / 300), graph.height - brightnessData[i] * graph.height);
+    }
+
+    g.strokeStyle = "white";
+    g.lineWidth = 2;
+    g.stroke();
+  }
+
+  drawSim();
+};
 </script>
 
 </body>
