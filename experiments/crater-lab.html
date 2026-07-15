@@ -157,7 +157,7 @@
 <a class="moon-home" href="../experiment.html">Lab</a>
 
 <h1>🪨 Crater Formation Lab</h1>
-<p>Simulate impact craters — size, speed, angle, and surface type.</p>
+<p>Hybrid physics + dramatic visuals + realistic geology.</p>
 
 <div class="sim-container">
 
@@ -166,17 +166,20 @@
   <div class="controls-row">
     <button id="impactBtn">Run Impact</button>
     <button id="resetSurfaceBtn">Reset Surface</button>
+    <button id="moonPresetBtn">Moon Gravity</button>
+    <button id="marsPresetBtn">Mars Gravity</button>
+    <button id="earthPresetBtn">Earth Gravity</button>
   </div>
 
   <details>
     <summary>Impactor Controls</summary>
     <div class="control-box">
       <label>Impactor Size</label>
-      <input type="range" id="sizeSlider" min="5" max="40" value="15">
+      <input type="range" id="sizeSlider" min="5" max="60" value="20">
     </div>
     <div class="control-box">
       <label>Impact Speed</label>
-      <input type="range" id="speedSlider" min="10" max="80" value="40">
+      <input type="range" id="speedSlider" min="10" max="120" value="60">
     </div>
     <div class="control-box">
       <label>Impact Angle (degrees)</label>
@@ -204,7 +207,7 @@
     </div>
     <div class="control-box">
       <label>Gravity (relative)</label>
-      <input type="range" id="gravitySlider" min="0.2" max="2" step="0.1" value="1">
+      <input type="range" id="gravitySlider" min="0.1" max="2" step="0.1" value="1">
     </div>
   </details>
 
@@ -228,6 +231,10 @@ window.onload = function() {
   const impactBtn = document.getElementById("impactBtn");
   const resetSurfaceBtn = document.getElementById("resetSurfaceBtn");
 
+  const moonPresetBtn = document.getElementById("moonPresetBtn");
+  const marsPresetBtn = document.getElementById("marsPresetBtn");
+  const earthPresetBtn = document.getElementById("earthPresetBtn");
+
   const sizeSlider = document.getElementById("sizeSlider");
   const speedSlider = document.getElementById("speedSlider");
   const angleSlider = document.getElementById("angleSlider");
@@ -248,13 +255,9 @@ window.onload = function() {
     const surfaceType = surfaceSelect.value;
 
     let baseColor;
-    if (surfaceType === "regolith") {
-      baseColor = "#4b5563";
-    } else if (surfaceType === "rock") {
-      baseColor = "#374151";
-    } else {
-      baseColor = "#6b7280";
-    }
+    if (surfaceType === "regolith") baseColor = "#4b5563";
+    else if (surfaceType === "rock") baseColor = "#374151";
+    else baseColor = "#6b7280";
 
     const grad = ctx.createLinearGradient(0, canvas.height * 0.4, 0, canvas.height);
     grad.addColorStop(0, baseColor);
@@ -276,6 +279,10 @@ window.onload = function() {
 
   drawSurface();
 
+  moonPresetBtn.onclick = () => gravitySlider.value = 0.16;
+  marsPresetBtn.onclick = () => gravitySlider.value = 0.38;
+  earthPresetBtn.onclick = () => gravitySlider.value = 1.0;
+
   function runImpact() {
     drawSurface();
 
@@ -292,55 +299,78 @@ window.onload = function() {
     const energy = 0.5 * mass * Math.pow(speed, 2);
 
     let surfaceStrength;
-    if (surfaceType === "regolith") surfaceStrength = 0.6;
-    else if (surfaceType === "rock") surfaceStrength = 1.0;
-    else surfaceStrength = 0.4;
+    if (surfaceType === "regolith") surfaceStrength = 0.5;
+    else if (surfaceType === "rock") surfaceStrength = 1.2;
+    else surfaceStrength = 0.3;
 
     const craterRadius =
-      (Math.pow(energy, 0.25) / 6) *
+      (Math.pow(energy, 0.28) / 4) *
       (1 / Math.sqrt(surfaceStrength)) *
       (1 / Math.sqrt(gravityFactor)) *
       (1 + Math.cos(angleRad));
 
-    const ejectaRadius = craterRadius * (1.8 + 0.4 * (densityFactor - 1));
+    const ejectaRadius = craterRadius * (2.2 + 0.4 * (densityFactor - 1));
 
     const cx = canvas.width / 2;
     const cy = canvas.height * 0.55;
 
+    const ovalX = craterRadius * (1 + angleDeg / 100);
+    const ovalY = craterRadius * (1 - angleDeg / 200);
+
     ctx.beginPath();
-    ctx.arc(cx, cy, craterRadius, 0, Math.PI * 2);
+    ctx.ellipse(cx, cy, ovalX, ovalY, 0, 0, Math.PI * 2);
     ctx.fillStyle = "rgba(17,24,39,1)";
     ctx.fill();
 
     ctx.beginPath();
-    ctx.arc(cx, cy, craterRadius * 0.6, 0, Math.PI * 2);
+    ctx.ellipse(cx, cy, ovalX * 0.6, ovalY * 0.6, 0, 0, Math.PI * 2);
     ctx.fillStyle = "rgba(75,85,99,0.9)";
     ctx.fill();
 
     ctx.beginPath();
-    ctx.arc(cx, cy, craterRadius * 0.3, 0, Math.PI * 2);
+    ctx.ellipse(cx, cy, ovalX * 0.3, ovalY * 0.3, 0, 0, Math.PI * 2);
     ctx.fillStyle = "rgba(156,163,175,0.9)";
     ctx.fill();
 
     ctx.beginPath();
-    ctx.arc(cx, cy, ejectaRadius, 0, Math.PI * 2);
+    ctx.ellipse(cx, cy, ejectaRadius, ejectaRadius * 0.9, 0, 0, Math.PI * 2);
     ctx.strokeStyle = "rgba(229,231,235,0.4)";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 2;
     ctx.stroke();
 
-    for (let i = 0; i < 80; i++) {
+    for (let i = 0; i < 120; i++) {
       const a = Math.random() * Math.PI * 2;
       const r = craterRadius + Math.random() * (ejectaRadius - craterRadius);
       const px = cx + Math.cos(a) * r;
       const py = cy + Math.sin(a) * r;
       ctx.beginPath();
-      ctx.arc(px, py, Math.random() * 2, 0, Math.PI * 2);
+      ctx.arc(px, py, Math.random() * 3, 0, Math.PI * 2);
       ctx.fillStyle = "rgba(229,231,235,0.7)";
       ctx.fill();
     }
 
-    const impactStartX = cx - Math.cos(angleRad) * 120;
-    const impactStartY = cy - Math.sin(angleRad) * 120;
+    ctx.beginPath();
+    ctx.arc(cx, cy, craterRadius * 1.4, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255,255,255,0.15)";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    for (let i = 0; i < 10; i++) {
+      const crackAngle = Math.random() * Math.PI * 2;
+      const crackLength = craterRadius * (1.2 + Math.random() * 0.6);
+      const endX = cx + Math.cos(crackAngle) * crackLength;
+      const endY = cy + Math.sin(crackAngle) * crackLength;
+
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(endX, endY);
+      ctx.strokeStyle = "rgba(255,255,255,0.25)";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    const impactStartX = cx - Math.cos(angleRad) * 140;
+    const impactStartY = cy - Math.sin(angleRad) * 140;
 
     ctx.beginPath();
     ctx.moveTo(impactStartX, impactStartY);
@@ -360,8 +390,8 @@ window.onload = function() {
     ctx.fillStyle = impactGrad;
     ctx.fill();
 
-    const craterDiameterKm = (craterRadius / 3).toFixed(1);
-    const ejectaExtentKm = (ejectaRadius / 3).toFixed(1);
+    const craterDiameterKm = (craterRadius / 2.5).toFixed(1);
+    const ejectaExtentKm = (ejectaRadius / 2.5).toFixed(1);
     const energyRelative = (energy / 100000).toFixed(1);
 
     readout.innerHTML =
@@ -380,3 +410,4 @@ window.onload = function() {
 
 </body>
 </html>
+            
