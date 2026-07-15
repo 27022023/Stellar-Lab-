@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Black Hole Warp Lab</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #020617;
+    --panel: rgba(15,23,42,0.9);
+    --border: rgba(148,163,184,0.7);
+    --text: #e5e7eb;
+    --accent: #38bdf8;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(255,255,255,0.8) 1px, transparent 3px),
+      radial-gradient(circle at 80% 30%, rgba(255,255,255,0.7) 1px, transparent 3px),
+      radial-gradient(circle at 50% 80%, rgba(255,255,255,0.6) 1px, transparent 3px),
+      radial-gradient(circle at 20% 70%, rgba(255,255,255,0.5) 1px, transparent 3px),
+      radial-gradient(circle at 90% 10%, rgba(255,255,255,0.9) 1px, transparent 3px);
+    background-attachment: fixed;
+  }
+
+  .overlay {
+    padding: 40px 20px 80px;
+    max-width: 1100px;
+    margin: auto;
+  }
+
+  .moon-home {
+    position: fixed;
+    left: 15px;
+    top: 15px;
+    width: 50px;
+    height: 50px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 11px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.6);
+    box-shadow: 0 0 10px rgba(0,0,0,0.7);
+    z-index: 10;
+  }
+
+  h1, p {
+    text-align: center;
+  }
+
+  .lab-layout {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .visual-panel, .control-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    backdrop-filter: blur(12px);
+  }
+
+  .visual-panel {
+    flex: 1 1 340px;
+    min-width: 320px;
+  }
+
+  .control-panel {
+    flex: 1 1 280px;
+    min-width: 280px;
+  }
+
+  canvas {
+    display: block;
+    margin: 0 auto 10px;
+    background: transparent;
+    border-radius: 12px;
+  }
+
+  .mode-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .mode-buttons button {
+    background: rgba(30,64,175,0.9);
+    border: 1px solid var(--border);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .mode-buttons button.active {
+    background: var(--accent);
+  }
+
+  .mode-buttons button:hover {
+    background: rgba(59,130,246,0.9);
+  }
+
+  .explanation {
+    font-size: 13px;
+    margin-top: 6px;
+    color: #cbd5f5;
+  }
+
+  details {
+    background: rgba(15,23,42,0.95);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin-top: 10px;
+  }
+
+  summary {
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .control-box {
+    margin-top: 8px;
+  }
+
+  .control-box label {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .control-box input {
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .readout {
+    margin-top: 8px;
+    font-size: 13px;
+  }
+
+  .notebook {
+    margin-top: 16px;
+    background: repeating-linear-gradient(
+      rgba(15,23,42,0.95),
+      rgba(15,23,42,0.95) 28px,
+      rgba(148,163,184,0.6) 29px
+    );
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 14px;
+    min-height: 160px;
+    font-size: 15px;
+    line-height: 26px;
+    outline: none;
+    resize: vertical;
+    color: white;
+  }
+
+  @media (max-width: 800px) {
+    .lab-layout {
+      flex-direction: column;
+    }
+  }
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<a class="moon-home" href="../experiment.html">Lab</a>
+
+<h1>🕳️ Black Hole Warp Lab</h1>
+<p>Accretion warp, spacetime grid, starfield lensing, photon ring. All the colours.</p>
+
+<div class="lab-layout">
+
+  <div class="visual-panel">
+    <canvas id="bhCanvas" width="480" height="260"></canvas>
+    <div class="explanation" id="explanation">
+      Accretion disk warp: light bends around a black hole, so the disk appears above and below.
+    </div>
+  </div>
+
+  <div class="control-panel">
+    <div class="mode-buttons">
+      <button id="accretionBtn" class="active">Accretion Warp</button>
+      <button id="gridBtn">Spacetime Grid</button>
+      <button id="starsBtn">Starfield Lensing</button>
+      <button id="photonBtn">Photon Ring</button>
+    </div>
+
+    <details open>
+      <summary>Controls</summary>
+
+      <div class="control-box">
+        <label>Warp Strength</label>
+        <input type="range" id="warpSlider" min="0" max="1" step="0.01" value="0.6">
+      </div>
+
+      <div class="control-box">
+        <label>Animation Speed</label>
+        <input type="range" id="speedSlider" min="0" max="1" step="0.01" value="0.4">
+      </div>
+    </details>
+
+    <div class="readout" id="readout">
+      Mode: Accretion Warp<br>
+      Warp Strength: 0.60<br>
+      Speed: 0.40
+    </div>
+
+    <textarea class="notebook" id="notes" placeholder="Write your black hole notes here..."></textarea>
+  </div>
+
+</div>
+
+<script>
+window.onload = function() {
+  const canvas = document.getElementById("bhCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const accretionBtn = document.getElementById("accretionBtn");
+  const gridBtn = document.getElementById("gridBtn");
+  const starsBtn = document.getElementById("starsBtn");
+  const photonBtn = document.getElementById("photonBtn");
+
+  const warpSlider = document.getElementById("warpSlider");
+  const speedSlider = document.getElementById("speedSlider");
+
+  const explanation = document.getElementById("explanation");
+  const readout = document.getElementById("readout");
+  const notes = document.getElementById("notes");
+
+  notes.value = localStorage.getItem("blackHoleNotes") || "";
+  notes.addEventListener("input", () => {
+    localStorage.setItem("blackHoleNotes", notes.value);
+  });
+
+  let mode = "accretion";
+  let t = 0;
+
+  function setMode(newMode) {
+    mode = newMode;
+    [accretionBtn, gridBtn, starsBtn, photonBtn].forEach(btn => btn.classList.remove("active"));
+    if (mode === "accretion") accretionBtn.classList.add("active");
+    if (mode === "grid") gridBtn.classList.add("active");
+    if (mode === "stars") starsBtn.classList.add("active");
+    if (mode === "photon") photonBtn.classList.add("active");
+    updateExplanation();
+    updateReadout();
+  }
+
+  function updateExplanation() {
+    if (mode === "accretion") {
+      explanation.textContent = "Accretion disk warp: light bends around a black hole, so the disk appears above and below.";
+    } else if (mode === "grid") {
+      explanation.textContent = "Spacetime grid: gravity curves the fabric of space, like a funnel pulling objects inward.";
+    } else if (mode === "stars") {
+      explanation.textContent = "Starfield lensing: background stars stretch and arc around the black hole, forming Einstein rings.";
+    } else if (mode === "photon") {
+      explanation.textContent = "Photon ring: a thin glowing ring of light orbiting the event horizon, with a hybrid cinematic glow.";
+    }
+  }
+
+  function updateReadout() {
+    const warp = Number(warpSlider.value).toFixed(2);
+    const speed = Number(speedSlider.value).toFixed(2);
+    let modeLabel = "Accretion Warp";
+    if (mode === "grid") modeLabel = "Spacetime Grid";
+    if (mode === "stars") modeLabel = "Starfield Lensing";
+    if (mode === "photon") modeLabel = "Photon Ring";
+    readout.innerHTML =
+      `Mode: ${modeLabel}<br>` +
+      `Warp Strength: ${warp}<br>` +
+      `Speed: ${speed}`;
+  }
+
+  function drawBlackHoleBase() {
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const r = 60;
+
+    ctx.save();
+    const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 1.4);
+    gradient.addColorStop(0, "#000000");
+    gradient.addColorStop(0.6, "#020617");
+    gradient.addColorStop(0.9, "rgba(148,163,184,0.4)");
+    gradient.addColorStop(1, "rgba(15,23,42,0.0)");
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 1.4, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = "#000000";
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawPhotonRing(hybrid) {
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const r = 70;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    const grad = ctx.createLinearGradient(cx - r, cy, cx + r, cy);
+    grad.addColorStop(0, "#f97316");   // orange
+    grad.addColorStop(0.3, "#22c55e"); // green
+    grad.addColorStop(0.6, "#38bdf8"); // cyan
+    grad.addColorStop(1, "#a855f7");   // purple
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = hybrid ? 5 : 3;
+    ctx.shadowColor = "rgba(56,189,248,0.8)";
+    ctx.shadowBlur = hybrid ? 25 : 10;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawAccretionDisk() {
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const warp = Number(warpSlider.value);
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(0.1 * Math.sin(t * 0.5));
+
+    const grad = ctx.createLinearGradient(-200, 0, 200, 0);
+    grad.addColorStop(0, "#f97316");   // orange
+    grad.addColorStop(0.3, "#facc15"); // yellow
+    grad.addColorStop(0.5, "#38bdf8"); // cyan
+    grad.addColorStop(0.7, "#6366f1"); // indigo
+    grad.addColorStop(1, "#ec4899");   // pink
+
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 200, 40, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.globalAlpha = 0.7;
+    ctx.beginPath();
+    ctx.ellipse(0, -warp * 60, 200, 40, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.ellipse(0, warp * 60, 200, 40, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawSpacetimeGrid() {
+    const warp = Number(warpSlider.value);
+    ctx.save();
+    ctx.strokeStyle = "rgba(148,163,184,0.5)";
+    ctx.lineWidth = 1;
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const maxR = 180;
+
+    for (let y = 0; y <= canvas.height; y += 20) {
+      ctx.beginPath();
+      for (let x = 0; x <= canvas.width; x += 10) {
+        const dx = x - cx;
+        const dy = y - cy;
+        const r = Math.sqrt(dx * dx + dy * dy);
+        const bend = warp * 0.6 * Math.exp(-r / maxR) * 80;
+        const ny = y + bend;
+        if (x === 0) ctx.moveTo(x, ny);
+        else ctx.lineTo(x, ny);
+      }
+      ctx.stroke();
+    }
+
+    for (let x = 0; x <= canvas.width; x += 20) {
+      ctx.beginPath();
+      for (let y = 0; y <= canvas.height; y += 10) {
+        const dx = x - cx;
+        const dy = y - cy;
+        const r = Math.sqrt(dx * dx + dy * dy);
+        const bend = warp * 0.6 * Math.exp(-r / maxR) * 80;
+        const ny = y + bend;
+        if (y === 0) ctx.moveTo(x, ny);
+        else ctx.lineTo(x, ny);
+      }
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  function drawStarfield() {
+    const warp = Number(warpSlider.value);
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    ctx.save();
+    for (let i = 0; i < 120; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const baseR = 40 + Math.random() * 220;
+      const r = baseR + Math.sin(t * 0.8 + i) * warp * 40;
+      const x = cx + Math.cos(angle) * r;
+      const y = cy + Math.sin(angle) * r;
+
+      const dist = Math.sqrt((x - cx) ** 2 + (y - cy) ** 2);
+      const lens = Math.exp(-Math.abs(dist - 120) / 40);
+
+      const size = 1 + lens * 2;
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, Math.PI * 2);
+      const c = 200 + Math.floor(lens * 55);
+      ctx.fillStyle = `rgb(${c},${c},${255})`;
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  function render() {
+    const speed = Number(speedSlider.value);
+    t += 0.02 + speed * 0.04;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgba(2,6,23,1)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (mode === "grid") {
+      drawSpacetimeGrid();
+      drawBlackHoleBase();
+      drawPhotonRing(false);
+    } else if (mode === "stars") {
+      drawStarfield();
+      drawBlackHoleBase();
+      drawPhotonRing(true);
+    } else if (mode === "photon") {
+      drawBlackHoleBase();
+      drawPhotonRing(true);
+    } else if (mode === "accretion") {
+      drawAccretionDisk();
+      drawBlackHoleBase();
+      drawPhotonRing(true);
+    }
+
+    requestAnimationFrame(render);
+  }
+
+  accretionBtn.onclick = () => setMode("accretion");
+  gridBtn.onclick = () => setMode("grid");
+  starsBtn.onclick = () => setMode("stars");
+  photonBtn.onclick = () => setMode("photon");
+
+  [warpSlider, speedSlider].forEach(ctrl => {
+    ctrl.addEventListener("input", () => {
+      updateReadout();
+    });
+  });
+
+  updateExplanation();
+  updateReadout();
+  render();
+};
+</script>
+
+</body>
+</html>
