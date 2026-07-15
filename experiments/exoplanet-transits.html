@@ -12,7 +12,7 @@
     margin: 0;
     padding: 0;
     font-family: 'Inter', sans-serif;
-    color: white;
+    color: black; /* PURE BLACK TEXT */
     background: linear-gradient(135deg,
       rgba(216,191,255,0.55),
       rgba(189,255,214,0.55)
@@ -37,17 +37,17 @@
     align-items: center;
     font-weight: 700;
     font-size: 10px;
-    color: white;
+    color: black;
     text-decoration: none;
-    border: 2px solid rgba(255,255,255,0.4);
-    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+    border: 2px solid rgba(0,0,0,0.4);
+    box-shadow: 0 0 15px rgba(0,0,0,0.4);
     transition: 0.3s;
     z-index: 10;
   }
 
   .moon-home:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 25px rgba(255,255,255,0.6);
+    box-shadow: 0 0 25px rgba(0,0,0,0.6);
   }
 
   h1 {
@@ -66,8 +66,8 @@
   .sim-container {
     max-width: 900px;
     margin: 0 auto;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.4);
+    border: 1px solid rgba(0,0,0,0.18);
     border-radius: 18px;
     padding: 20px;
     backdrop-filter: blur(12px);
@@ -76,7 +76,7 @@
   canvas {
     display: block;
     margin: 0 auto;
-    background: rgba(0,0,0,0.25);
+    background: rgba(0,0,0,0.15);
     border-radius: 12px;
   }
 
@@ -88,8 +88,8 @@
   }
 
   .control-box {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.6);
+    border: 1px solid rgba(0,0,0,0.18);
     padding: 12px;
     border-radius: 12px;
   }
@@ -108,7 +108,7 @@
     margin-top: 30px;
     width: 100%;
     height: 200px;
-    background: rgba(0,0,0,0.3);
+    background: rgba(0,0,0,0.15);
     border-radius: 12px;
   }
 </style>
@@ -130,17 +130,17 @@
 
     <div class="control-box">
       <label>Planet Size</label>
-      <input type="range" id="planetSize" min="5" max="40" value="20">
+      <input type="range" id="planetSize" min="5" max="60" value="25">
     </div>
 
     <div class="control-box">
       <label>Orbit Speed</label>
-      <input type="range" id="orbitSpeed" min="1" max="10" value="4">
+      <input type="range" id="orbitSpeed" min="1" max="12" value="5">
     </div>
 
     <div class="control-box">
       <label>Star Brightness</label>
-      <input type="range" id="starBrightness" min="0.7" max="1" step="0.01" value="1">
+      <input type="range" id="starBrightness" min="0.6" max="1" step="0.01" value="1">
     </div>
 
   </div>
@@ -208,7 +208,7 @@ function updateBrightness(px, py, sx, sy, pSize) {
   const dist = Math.sqrt(dx*dx + dy*dy);
 
   if (dist < 40 + pSize) {
-    brightness -= 0.2;
+    brightness -= (pSize / 200); // bigger planet = deeper dip
   }
 
   brightnessData.push(brightness);
@@ -227,11 +227,12 @@ function drawGraph() {
     g.lineTo(i * (graph.width / 300), graph.height - brightnessData[i] * graph.height);
   }
 
-  g.strokeStyle = "white";
+  g.strokeStyle = "black";
   g.lineWidth = 2;
   g.stroke();
 }
 </script>
 
 </body>
-</html>
+</html>     
+  
