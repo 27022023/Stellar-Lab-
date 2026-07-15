@@ -12,6 +12,27 @@ body {
     text-align: center;
 }
 
+/* ⭐ YOUR BIG MOON BUTTON */
+.moon-home {
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    width: 90px;
+    height: 90px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 16px;
+    color: white;
+    text-decoration: none;
+    border: 3px solid rgba(255,255,255,0.7);
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    z-index: 999;
+}
+
 h1 {
     font-size: 46px;
     margin-bottom: 8px;
@@ -104,12 +125,8 @@ input[type=range] {
 
 <body>
 
-<!-- Moon Home Button -->
-<a class="moon-home" href="experiment.html">
-    <img src="https://raw.githubusercontent.com/7022023/7022023.github.io/main/moon.png" 
-         alt="Home" 
-         style="width:70px; height:70px; border-radius:50%; position:absolute; top:20px; right:20px;">
-</a>
+<!-- ⭐ YOUR MOON BUTTON -->
+<a class="moon-home" href="../experiment.html">Lab</a>
 
 <h1>Atmosphere & Temperature</h1>
 <p>Adjust greenhouse gases and see climate, habitability, and visuals change.</p>
@@ -142,7 +159,7 @@ input[type=range] {
 <div id="readout">Temperature will appear here.</div>
 
 <script>
-// Ambient sound (simple loop using Audio API, you can replace src with your own file)
+// ⭐ Ambient sound
 let ambientAudio = null;
 let soundOn = false;
 const soundBtn = document.getElementById("soundBtn");
@@ -163,7 +180,7 @@ soundBtn.addEventListener("click", () => {
     }
 });
 
-// Temperature model
+// ⭐ Temperature model
 function computeTemperature(L, d, albedo, atm, gh) {
     const Tbase = 278 * Math.sqrt(L / (d * d)) * Math.pow(1 - albedo, 0.25);
     const Tatm = Tbase * (1 + 0.25 * atm);
@@ -171,7 +188,7 @@ function computeTemperature(L, d, albedo, atm, gh) {
     return Tgh - 273.15;
 }
 
-// Climate classification
+// ⭐ Climate classification
 function classifyClimate(Tc) {
     if (Tc < -20) return "Snowball";
     if (Tc < 5) return "Cold but habitable";
@@ -180,7 +197,7 @@ function classifyClimate(Tc) {
     return "Runaway greenhouse";
 }
 
-// Planet color
+// ⭐ Planet color
 function planetColor(temp) {
     if (temp < -20) return "#93c5fd";
     if (temp < 5) return "#60a5fa";
@@ -189,17 +206,17 @@ function planetColor(temp) {
     return "#ef4444";
 }
 
-// Canvas setup
+// ⭐ Canvas setup
 const canvas = document.getElementById("planetCanvas");
 const ctx = canvas.getContext("2d");
 let t = 0;
 
-// Simple noise
+// ⭐ Simple noise
 function noise(x, y) {
     return (Math.sin(x * 12.9898 + y * 78.233 + 43758.5453) * 43758.5453) % 1;
 }
 
-// Star background with pulsing star
+// ⭐ Star background with pulsing star
 function drawStars() {
     ctx.fillStyle = "#020617";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -216,7 +233,6 @@ function drawStars() {
     }
     ctx.restore();
 
-    // Pulsing central star
     const sx = canvas.width * 0.15;
     const sy = canvas.height * 0.25;
     const baseR = 40;
@@ -231,7 +247,7 @@ function drawStars() {
     ctx.fill();
 }
 
-// Draw planet + orbit + effects
+// ⭐ Draw planet + orbit + effects
 function drawPlanet(temp, atm, d) {
     drawStars();
 
@@ -239,7 +255,6 @@ function drawPlanet(temp, atm, d) {
     const cy = canvas.height * 0.55;
     const radius = 150;
 
-    // Orbit ring
     const orbitR = 80 + d * 30;
     ctx.save();
     ctx.strokeStyle = "rgba(148,163,184,0.4)";
@@ -249,7 +264,6 @@ function drawPlanet(temp, atm, d) {
     ctx.stroke();
     ctx.restore();
 
-    // Atmosphere glow
     const glow = ctx.createRadialGradient(cx, cy, radius, cx, cy, radius + 140 + atm * 140);
     glow.addColorStop(0, "rgba(255,255,255,0)");
     glow.addColorStop(1, `rgba(147,197,253,${0.2 + atm * 0.8})`);
@@ -258,7 +272,6 @@ function drawPlanet(temp, atm, d) {
     ctx.arc(cx, cy, radius + 140 + atm * 140, 0, Math.PI * 2);
     ctx.fill();
 
-    // Day/night shading
     ctx.save();
     const nightGrad = ctx.createRadialGradient(cx - 40, cy - 40, 0, cx, cy, radius * 1.4);
     nightGrad.addColorStop(0, "rgba(0,0,0,0.0)");
@@ -269,14 +282,12 @@ function drawPlanet(temp, atm, d) {
     ctx.fill();
     ctx.restore();
 
-    // Base planet
     ctx.save();
     ctx.fillStyle = planetColor(temp);
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
     ctx.fill();
 
-    // Surface texture
     const imgData = ctx.getImageData(cx - radius, cy - radius, radius * 2, radius * 2);
     for (let y = 0; y < imgData.height; y++) {
         for (let x = 0; x < imgData.width; x++) {
@@ -294,7 +305,6 @@ function drawPlanet(temp, atm, d) {
     ctx.putImageData(imgData, cx - radius, cy - radius);
     ctx.restore();
 
-    // Clouds
     ctx.save();
     ctx.globalAlpha = 0.2 + atm * 0.6;
     ctx.fillStyle = "#e5f4ff";
@@ -310,7 +320,6 @@ function drawPlanet(temp, atm, d) {
     }
     ctx.restore();
 
-    // Rotation highlight
     const hx = cx + Math.cos(t * 0.8) * 50;
     const hy = cy + Math.sin(t * 0.8) * 50;
     ctx.fillStyle = "rgba(255,255,255,0.18)";
@@ -319,26 +328,19 @@ function drawPlanet(temp, atm, d) {
     ctx.fill();
 }
 
-// Life probability meter (0–1)
+// ⭐ Life probability meter
 function lifeProbability(temp, climate, atm, gh) {
     let score = 0;
-
-    // Temperature sweet spot
     if (temp >= 0 && temp <= 40) score += 0.5;
     else if (temp > -20 && temp < 60) score += 0.25;
-
-    // Climate
     if (climate === "Earth-like") score += 0.3;
     else if (climate === "Cold but habitable" || climate === "Hot but habitable") score += 0.15;
-
-    // Atmosphere & greenhouse
     if (atm > 0.2 && atm < 0.8) score += 0.15;
     if (gh > 0.1 && gh < 0.7) score += 0.1;
-
     return Math.max(0, Math.min(1, score));
 }
 
-// Update everything
+// ⭐ Update everything
 function update() {
     const L = Number(lumSlider.value);
     const d = Number(distSlider.value);
@@ -349,21 +351,17 @@ function update() {
     const tempC = computeTemperature(L, d, albedo, atm, gh);
     const climate = classifyClimate(tempC);
 
-    // Temperature bar
     const percent = Math.min(Math.max((tempC + 50) / 150, 0), 1) * 100;
     tempFill.style.width = percent + "%";
 
-    // Planet + visuals
     drawPlanet(tempC, atm, d);
 
-    // Habitability text
     let habit;
     if (climate === "Earth-like") habit = "✔ Habitable";
     else if (climate === "Cold but habitable") habit = "✔ Possibly habitable";
     else if (climate === "Hot but habitable") habit = "✔ Marginally habitable";
     else habit = "✖ Not habitable";
 
-    // Life probability
     const lifeProb = lifeProbability(tempC, climate, atm, gh);
     lifeFill.style.width = (lifeProb * 100) + "%";
 
@@ -398,6 +396,5 @@ animate();
 
 </body>
 </html>
-
     
-    
+        
