@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Origin of Life Lab</title>
+<style>
+body {
+    background: #020617;
+    color: #e5e7eb;
+    font-family: Inter, sans-serif;
+    padding: 40px;
+    text-align: center;
+}
+
+/* ⭐ YOUR BIG MOON BUTTON */
+.moon-home {
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    width: 120px;
+    height: 120px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 18px;
+    color: white;
+    text-decoration: none;
+    border: 3px solid rgba(255,255,255,0.8);
+    box-shadow: 0 0 25px rgba(0,0,0,0.9);
+    z-index: 999;
+}
+
+h1 {
+    font-size: 48px;
+    margin-bottom: 8px;
+    color: #f9fafb;
+}
+
+p {
+    font-size: 20px;
+    opacity: 0.9;
+    margin-bottom: 10px;
+}
+
+canvas {
+    background: #020617;
+    border-radius: 20px;
+    margin-top: 30px;
+    box-shadow: 0 0 40px rgba(15,23,42,0.9);
+}
+
+#controls {
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+button {
+    margin: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid #4b5563;
+    background: #0f172a;
+    color: #e5e7eb;
+    cursor: pointer;
+}
+button.active {
+    border-color: #22c55e;
+    color: #f9fafb;
+}
+
+#readout {
+    margin-top: 30px;
+    padding: 22px;
+    background: #0f172a;
+    border-radius: 12px;
+    font-size: 22px;
+    line-height: 1.6;
+    border: 1px solid #1f2937;
+}
+
+#lifeBar, #envBar {
+    height: 28px;
+    width: 480px;
+    background: #1e293b;
+    border-radius: 20px;
+    margin: 20px auto;
+    overflow: hidden;
+    border: 1px solid #334155;
+}
+
+#lifeFill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #22c55e, #facc15, #ef4444);
+}
+
+#envFill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #38bdf8, #22c55e, #facc15);
+}
+</style>
+</head>
+
+<body>
+
+<a class="moon-home" href="../experiment.html">Lab</a>
+
+<h1>Origin of Life Lab</h1>
+<p>Mix molecules, water, heat, and energy to form proto-cells.</p>
+
+<div id="controls">
+    <button id="addWaterBtn">Add Water</button>
+    <button id="addEnergyBtn">Add Energy</button>
+    <button id="addMoleculesBtn">Add Molecules</button>
+    <button id="shakeBtn">Shake Environment</button>
+</div>
+
+<canvas id="lifeCanvas" width="900" height="900"></canvas>
+
+<div id="lifeBar"><div id="lifeFill"></div></div>
+<div id="envBar"><div id="envFill"></div></div>
+
+<div id="readout">Life simulation will appear here.</div>
+
+<script>
+const canvas = document.getElementById("lifeCanvas");
+const ctx = canvas.getContext("2d");
+
+let molecules = [];
+let protoCells = [];
+let water = 0;
+let energy = 0;
+let environmentStability = 0.5;
+let lifeProbability = 0;
+
+function rand(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+function addMolecule() {
+    molecules.push({
+        x: rand(100, canvas.width - 100),
+        y: rand(100, canvas.height - 100),
+        vx: rand(-1, 1),
+        vy: rand(-1, 1),
+        bonded: false
+    });
+}
+
+function addWater() {
+    water += 0.1;
+    if (water > 1) water = 1;
+}
+
+function addEnergy() {
+    energy += 0.1;
+    if (energy > 1) energy = 1;
+}
+
+function shakeEnvironment() {
+    environmentStability -= 0.1;
+    if (environmentStability < 0) environmentStability = 0;
+}
+
+function tryBonding() {
+    if (water < 0.2 || energy < 0.2) return;
+
+    for (let i = 0; i < molecules.length; i++) {
+        for (let j = i + 1; j < molecules.length; j++) {
+            const a = molecules[i];
+            const b = molecules[j];
+            const dx = a.x - b.x;
+            const dy = a.y - b.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < 40 && !a.bonded && !b.bonded) {
+                a.bonded = b.bonded = true;
+
+                protoCells.push({
+                    x: (a.x + b.x) / 2,
+                    y: (a.y + b.y) / 2,
+                    r: 30,
+                    wiggle: 0
+                });
+            }
+        }
+    }
+}
+
+function updateLifeProbability() {
+    lifeProbability =
+        water * 0.4 +
+        energy * 0.3 +
+        environmentStability * 0.2 +
+        protoCells.length * 0.1;
+
+    if (lifeProbability > 1) lifeProbability = 1;
+}
+
+function updateEnvironment() {
+    environmentStability += 0.002;
+    if (environmentStability > 1) environmentStability = 1;
+}
+
+function drawStars() {
+    ctx.fillStyle = "#020617";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "rgba(148,163,184,0.6)";
+    for (let i = 0; i < 200; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const r = Math.random() * 1.8;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function drawMolecules() {
+    for (let m of molecules) {
+        m.x += m.vx;
+        m.y += m.vy;
+
+        if (m.x < 50 || m.x > canvas.width - 50) m.vx *= -1;
+        if (m.y < 50 || m.y > canvas.height - 50) m.vy *= -1;
+
+        ctx.fillStyle = m.bonded ? "#22c55e" : "#38bdf8";
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, 10, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function drawProtoCells() {
+    for (let p of protoCells) {
+        p.wiggle += 0.05;
+        const wiggleOffset = Math.sin(p.wiggle) * 3;
+
+        ctx.fillStyle = "#facc15";
+        ctx.beginPath();
+        ctx.arc(p.x + wiggleOffset, p.y + wiggleOffset, p.r, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = "#ef4444";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(p.x + wiggleOffset, p.y + wiggleOffset, p.r + 4, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+}
+
+function draw() {
+    drawStars();
+    drawMolecules();
+    drawProtoCells();
+
+    tryBonding();
+    updateLifeProbability();
+    updateEnvironment();
+
+    document.getElementById("lifeFill").style.width = (lifeProbability * 100) + "%";
+    document.getElementById("envFill").style.width = (environmentStability * 100) + "%";
+
+    readout.innerHTML = `
+        <strong>Water:</strong> ${(water * 100).toFixed(0)}%<br>
+        <strong>Energy:</strong> ${(energy * 100).toFixed(0)}%<br>
+        <strong>Environment Stability:</strong> ${(environmentStability * 100).toFixed(0)}%<br>
+        <strong>Proto-cells:</strong> ${protoCells.length}<br>
+        <strong>Life Probability:</strong> ${(lifeProbability * 100).toFixed(0)}%
+    `;
+}
+
+document.getElementById("addWaterBtn").onclick = addWater;
+document.getElementById("addEnergyBtn").onclick = addEnergy;
+document.getElementById("addMoleculesBtn").onclick = () => {
+    for (let i = 0; i < 5; i++) addMolecule();
+};
+document.getElementById("shakeBtn").onclick = shakeEnvironment;
+
+function animate() {
+    draw();
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
