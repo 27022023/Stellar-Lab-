@@ -131,9 +131,6 @@ input[type=range] {
 <h1>Atmosphere & Temperature</h1>
 <p>Adjust greenhouse gases and see climate, habitability, and visuals change.</p>
 
-<div id="soundToggle">
-    <span id="soundBtn">🔊 Ambient sound: OFF</span>
-</div>
 
 <label>Star Luminosity (Sun = 1)</label>
 <input type="range" id="lumSlider" min="0.01" max="10" step="0.01" value="1">
@@ -159,26 +156,6 @@ input[type=range] {
 <div id="readout">Temperature will appear here.</div>
 
 <script>
-// ⭐ Ambient sound
-let ambientAudio = null;
-let soundOn = false;
-const soundBtn = document.getElementById("soundBtn");
-soundBtn.addEventListener("click", () => {
-    if (!ambientAudio) {
-        ambientAudio = new Audio("https://upload.wikimedia.org/wikipedia/commons/4/4e/Space_ambience.ogg");
-        ambientAudio.loop = true;
-    }
-    soundOn = !soundOn;
-    if (soundOn) {
-        ambientAudio.play();
-        soundBtn.textContent = "🔊 Ambient sound: ON";
-        soundBtn.classList.add("active");
-    } else {
-        ambientAudio.pause();
-        soundBtn.textContent = "🔊 Ambient sound: OFF";
-        soundBtn.classList.remove("active");
-    }
-});
 
 // ⭐ Temperature model
 function computeTemperature(L, d, albedo, atm, gh) {
