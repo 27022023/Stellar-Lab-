@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Star Life Cycle Lab</title>
+<title>Stellar & Galactic Lab</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -156,8 +156,8 @@
 
 <a class="moon-home" href="../experiment.html">Lab</a>
 
-<h1>⭐ Star Life Cycle Lab</h1>
-<p>Hybrid smooth + dramatic transitions. Full stellar evolution.</p>
+<h1>⭐ Stellar & Galactic Lab</h1>
+<p>Star life cycle, binaries, disks, pulsars, clusters, galaxies.</p>
 
 <div class="sim-container">
 
@@ -171,6 +171,14 @@
     <button id="supernovaBtn">Supernova</button>
     <button id="collapseBtn">Collapse</button>
     <button id="autoBtn">Auto Evolution</button>
+  </div>
+
+  <div class="controls-row" style="margin-top:10px;">
+    <button id="binaryBtn">Binary Stars</button>
+    <button id="diskBtn">Accretion Disk</button>
+    <button id="pulsarBtn">Pulsar</button>
+    <button id="clusterBtn">Star Cluster</button>
+    <button id="galaxyBtn">Galaxy</button>
   </div>
 
   <details>
@@ -199,6 +207,7 @@
 
   <div class="readout" id="readout">
     Stage: Nebula  
+    Mode: Single Star  
     Mass: —  
     Temperature: —  
     Metallicity: —  
@@ -206,7 +215,7 @@
     Age: —
   </div>
 
-  <textarea class="notebook" id="notes" placeholder="Write your star evolution notes here..."></textarea>
+  <textarea class="notebook" id="notes" placeholder="Write your star & galaxy notes here..."></textarea>
 
 </div>
 
@@ -225,6 +234,12 @@ window.onload = function() {
   const collapseBtn = document.getElementById("collapseBtn");
   const autoBtn = document.getElementById("autoBtn");
 
+  const binaryBtn = document.getElementById("binaryBtn");
+  const diskBtn = document.getElementById("diskBtn");
+  const pulsarBtn = document.getElementById("pulsarBtn");
+  const clusterBtn = document.getElementById("clusterBtn");
+  const galaxyBtn = document.getElementById("galaxyBtn");
+
   const massSlider = document.getElementById("massSlider");
   const tempSlider = document.getElementById("tempSlider");
   const metalSlider = document.getElementById("metalSlider");
@@ -240,12 +255,21 @@ window.onload = function() {
   });
 
   let stage = "nebula";
+  let mode = "single"; // single, binary, disk, pulsar, cluster, galaxy
   let autoMode = false;
-  let particles = [];
+  let t = 0;
 
   function updateReadout() {
+    let modeLabel = "Single Star";
+    if (mode === "binary") modeLabel = "Binary Stars";
+    if (mode === "disk") modeLabel = "Accretion Disk";
+    if (mode === "pulsar") modeLabel = "Pulsar";
+    if (mode === "cluster") modeLabel = "Star Cluster";
+    if (mode === "galaxy") modeLabel = "Galaxy";
+
     readout.innerHTML =
       `Stage: ${stage}<br>` +
+      `Mode: ${modeLabel}<br>` +
       `Mass: ${massSlider.value} M☉<br>` +
       `Temperature: ${tempSlider.value} K<br>` +
       `Metallicity: ${metalSlider.value}<br>` +
@@ -253,9 +277,12 @@ window.onload = function() {
       `Age: ${ageSlider.value}`;
   }
 
-  function drawNebula() {
+  function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
 
+  function drawNebula() {
+    clearCanvas();
     for (let i = 0; i < 80; i++) {
       const x = Math.random() * canvas.width;
       const y = Math.random() * canvas.height;
@@ -268,79 +295,74 @@ window.onload = function() {
   }
 
   function drawProtostar() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+    clearCanvas();
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
-
     const radius = 40 + massSlider.value * 0.8;
 
     const grad = ctx.createRadialGradient(cx, cy, radius * 0.2, cx, cy, radius);
     grad.addColorStop(0, "#ffffff");
     grad.addColorStop(1, "#fcd34d");
 
+    ctx.save();
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
     ctx.fillStyle = grad;
     ctx.shadowColor = "#fcd34d";
-    ctx.shadowBlur = 25;
+    ctx.shadowBlur = 40;
     ctx.fill();
-    ctx.shadowBlur = 0;
+    ctx.restore();
   }
 
-  function drawMainSequence() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+  function drawMainSequenceSingle() {
+    clearCanvas();
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
-
     const radius = 30 + massSlider.value;
 
     const temp = tempSlider.value;
     let color;
-
     if (temp < 5000) color = "#f87171";
     else if (temp < 7000) color = "#facc15";
     else if (temp < 12000) color = "#60a5fa";
     else color = "#93c5fd";
 
-    const grad = ctx.createRadialGradient(cx, cy, radius * 0.2, cx, cy, radius);
+    const grad = ctx.createRadialGradient(cx, cy, radius * 0.1, cx, cy, radius);
     grad.addColorStop(0, "#ffffff");
     grad.addColorStop(1, color);
 
+    ctx.save();
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
     ctx.fillStyle = grad;
     ctx.shadowColor = color;
-    ctx.shadowBlur = 25;
+    ctx.shadowBlur = 40;
     ctx.fill();
-    ctx.shadowBlur = 0;
+    ctx.restore();
   }
 
   function drawRedGiant() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+    clearCanvas();
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
-
     const radius = 40 + massSlider.value * 2;
 
-    const grad = ctx.createRadialGradient(cx, cy, radius * 0.2, cx, cy, radius);
+    const grad = ctx.createRadialGradient(cx, cy, radius * 0.1, cx, cy, radius);
     grad.addColorStop(0, "#ffffff");
     grad.addColorStop(1, "#fb7185");
 
+    ctx.save();
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
     ctx.fillStyle = grad;
     ctx.shadowColor = "#fb7185";
-    ctx.shadowBlur = 30;
+    ctx.shadowBlur = 50;
     ctx.fill();
-    ctx.shadowBlur = 0;
+    ctx.restore();
   }
 
   function drawSupernova() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+    clearCanvas();
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
 
@@ -356,71 +378,254 @@ window.onload = function() {
       ctx.fill();
     }
 
+    ctx.save();
     ctx.beginPath();
-    ctx.arc(cx, cy, 20, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 25, 0, Math.PI * 2);
     ctx.fillStyle = "#ffffff";
     ctx.shadowColor = "#ffffff";
-    ctx.shadowBlur = 40;
+    ctx.shadowBlur = 60;
     ctx.fill();
-    ctx.shadowBlur = 0;
+    ctx.restore();
   }
 
   function drawCollapse() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+    clearCanvas();
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
-
     const mass = massSlider.value;
 
+    ctx.save();
+    ctx.beginPath();
     if (mass < 15) {
-      ctx.beginPath();
       ctx.arc(cx, cy, 15, 0, Math.PI * 2);
       ctx.fillStyle = "#e5e7eb";
       ctx.shadowColor = "#e5e7eb";
-      ctx.shadowBlur = 20;
-      ctx.fill();
-      ctx.shadowBlur = 0;
+      ctx.shadowBlur = 30;
     } else {
-      ctx.beginPath();
       ctx.arc(cx, cy, 10, 0, Math.PI * 2);
       ctx.fillStyle = "#000000";
       ctx.shadowColor = "#000000";
-      ctx.shadowBlur = 30;
+      ctx.shadowBlur = 40;
+    }
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // --- EXTRA MODES ---
+
+  function drawBinaryStars() {
+    clearCanvas();
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const sep = 50;
+    const r1 = 20 + massSlider.value * 0.4;
+    const r2 = 15 + massSlider.value * 0.2;
+
+    const temp = tempSlider.value;
+    let color1, color2;
+    if (temp < 5000) { color1 = "#f87171"; color2 = "#facc15"; }
+    else if (temp < 7000) { color1 = "#facc15"; color2 = "#60a5fa"; }
+    else { color1 = "#60a5fa"; color2 = "#93c5fd"; }
+
+    const angle = t * 0.03;
+    const x1 = cx + Math.cos(angle) * sep;
+    const y1 = cy + Math.sin(angle) * sep;
+    const x2 = cx - Math.cos(angle) * sep;
+    const y2 = cy - Math.sin(angle) * sep;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(x1, y1, r1, 0, Math.PI * 2);
+    ctx.fillStyle = color1;
+    ctx.shadowColor = color1;
+    ctx.shadowBlur = 30;
+    ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(x2, y2, r2, 0, Math.PI * 2);
+    ctx.fillStyle = color2;
+    ctx.shadowColor = color2;
+    ctx.shadowBlur = 25;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawAccretionDisk() {
+    clearCanvas();
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+    ctx.fillStyle = "#000000";
+    ctx.shadowColor = "#000000";
+    ctx.shadowBlur = 40;
+    ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 70, 25, 0, 0, Math.PI * 2);
+    const grad = ctx.createLinearGradient(cx - 70, cy, cx + 70, cy);
+    grad.addColorStop(0, "#f97316");
+    grad.addColorStop(0.5, "#fde68a");
+    grad.addColorStop(1, "#f97316");
+    ctx.fillStyle = grad;
+    ctx.globalAlpha = 0.9;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 90, 35, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(248,250,252,0.4)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawPulsar() {
+    clearCanvas();
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+    ctx.fillStyle = "#e5e7eb";
+    ctx.shadowColor = "#e5e7eb";
+    ctx.shadowBlur = 30;
+    ctx.fill();
+    ctx.restore();
+
+    const beamAngle = t * 0.08;
+    for (let i = 0; i < 2; i++) {
+      const angle = beamAngle + i * Math.PI;
+      const x2 = cx + Math.cos(angle) * 120;
+      const y2 = cy + Math.sin(angle) * 120;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = "rgba(147,197,253,0.9)";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  function drawStarCluster() {
+    clearCanvas();
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    for (let i = 0; i < 60; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.random() * 120;
+      const x = cx + Math.cos(angle) * dist;
+      const y = cy + Math.sin(angle) * dist;
+      const r = Math.random() * 4 + 1;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(248,250,252,0.9)";
+      ctx.shadowColor = "#ffffff";
+      ctx.shadowBlur = 10;
       ctx.fill();
-      ctx.shadowBlur = 0;
+      ctx.restore();
+    }
+  }
+
+  function drawGalaxy() {
+    clearCanvas();
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, 10, 0, Math.PI * 2);
+    ctx.fillStyle = "#000000";
+    ctx.shadowColor = "#000000";
+    ctx.shadowBlur = 30;
+    ctx.fill();
+    ctx.restore();
+
+    for (let arm = 0; arm < 3; arm++) {
+      for (let i = 0; i < 80; i++) {
+        const baseAngle = arm * (2 * Math.PI / 3);
+        const angle = baseAngle + i * 0.05 + t * 0.002;
+        const dist = 10 + i * 2;
+        const x = cx + Math.cos(angle) * dist;
+        const y = cy + Math.sin(angle) * dist;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(248,250,252,0.9)";
+        ctx.shadowColor = "#ffffff";
+        ctx.shadowBlur = 8;
+        ctx.fill();
+        ctx.restore();
+      }
     }
   }
 
   function render() {
+    t++;
+
     updateReadout();
 
-    if (stage === "nebula") drawNebula();
-    if (stage === "protostar") drawProtostar();
-    if (stage === "main") drawMainSequence();
-    if (stage === "giant") drawRedGiant();
-    if (stage === "supernova") drawSupernova();
-    if (stage === "collapse") drawCollapse();
+    if (mode === "single") {
+      if (stage === "nebula") drawNebula();
+      else if (stage === "protostar") drawProtostar();
+      else if (stage === "main") drawMainSequenceSingle();
+      else if (stage === "giant") drawRedGiant();
+      else if (stage === "supernova") drawSupernova();
+      else if (stage === "collapse") drawCollapse();
+    } else if (mode === "binary") {
+      drawBinaryStars();
+    } else if (mode === "disk") {
+      drawAccretionDisk();
+    } else if (mode === "pulsar") {
+      drawPulsar();
+    } else if (mode === "cluster") {
+      drawStarCluster();
+    } else if (mode === "galaxy") {
+      drawGalaxy();
+    }
 
     requestAnimationFrame(render);
   }
 
-  nebulaBtn.onclick = () => stage = "nebula";
-  protostarBtn.onclick = () => stage = "protostar";
-  mainSequenceBtn.onclick = () => stage = "main";
-  redGiantBtn.onclick = () => stage = "giant";
-  supernovaBtn.onclick = () => stage = "supernova";
-  collapseBtn.onclick = () => stage = "collapse";
+  nebulaBtn.onclick = () => { stage = "nebula"; mode = "single"; };
+  protostarBtn.onclick = () => { stage = "protostar"; mode = "single"; };
+  mainSequenceBtn.onclick = () => { stage = "main"; mode = "single"; };
+  redGiantBtn.onclick = () => { stage = "giant"; mode = "single"; };
+  supernovaBtn.onclick = () => { stage = "supernova"; mode = "single"; };
+  collapseBtn.onclick = () => { stage = "collapse"; mode = "single"; };
+
+  binaryBtn.onclick = () => { mode = "binary"; };
+  diskBtn.onclick = () => { mode = "disk"; };
+  pulsarBtn.onclick = () => { mode = "pulsar"; };
+  clusterBtn.onclick = () => { mode = "cluster"; };
+  galaxyBtn.onclick = () => { mode = "galaxy"; };
 
   autoBtn.onclick = () => {
     autoMode = !autoMode;
     if (autoMode) {
-      let t = 0;
+      let i = 0;
       const seq = ["nebula", "protostar", "main", "giant", "supernova", "collapse"];
       const interval = setInterval(() => {
-        stage = seq[t];
-        t++;
-        if (t >= seq.length || !autoMode) clearInterval(interval);
+        stage = seq[i];
+        mode = "single";
+        i++;
+        if (i >= seq.length || !autoMode) clearInterval(interval);
       }, 2000);
     }
   };
@@ -431,3 +636,4 @@ window.onload = function() {
 
 </body>
 </html>
+              
