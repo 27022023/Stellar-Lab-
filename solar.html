@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solar System</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    background: #050316;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+
+  .overlay {
+    min-height: 100vh;
+    padding-bottom: 60px;
+
+    background: linear-gradient(
+        135deg,
+        rgba(216, 191, 255, 0.55) 0%,
+        rgba(189, 255, 214, 0.55) 50%,
+        rgba(216, 191, 255, 0.55) 100%
+      ),
+      radial-gradient(circle at top, rgba(150, 90, 255, 0.35), transparent 55%),
+      radial-gradient(circle at bottom, rgba(40, 10, 80, 0.6), #050316);
+
+    background-blend-mode: overlay;
+  }
+
+  .moon-home {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    width: 60px;
+    height: 60px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 10px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+    transition: 0.3s;
+    z-index: 10;
+  }
+
+  .moon-home:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255,255,255,0.6);
+  }
+
+  .hero {
+    text-align: center;
+    padding: 80px 20px 20px;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .hero p {
+    font-size: 18px;
+    opacity: 0.9;
+    margin-top: 10px;
+  }
+
+  .grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    transition: 0.3s;
+    cursor: pointer;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    background: rgba(150, 90, 255, 0.30);
+  }
+
+  .card img {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 12px;
+  }
+
+  .card h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .card p {
+    margin-top: 8px;
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  .info {
+    margin-top: 12px;
+    font-size: 14px;
+    opacity: 0.95;
+    text-align: left;
+    line-height: 1.45;
+  }
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<a class="moon-home" href="explore.html">Back</a>
+
+<div class="hero">
+  <h1>🪐 Solar System</h1>
+  <p>The Sun, eight planets, dwarf planets, moons, and cosmic wonders.</p>
+</div>
+
+<div class="grid">
+
+  <!-- SOLAR SYSTEM OVERVIEW -->
+  <div class="card">
+    <img src="Solar-System-3-scaled.jpg">
+    <h3>Solar System Overview</h3>
+    <p>The Sun and all objects orbiting it.</p>
+    <div class="info">
+      The Solar System formed 4.6 billion years ago from a giant cloud of gas and dust.  
+      It contains the Sun, eight planets, dwarf planets, moons, asteroids, comets, and the Kuiper Belt.  
+      <br><br>
+      ⭐ **Key Facts**  
+      • Age: 4.6 billion years  
+      • Largest planet: Jupiter  
+      • Hottest planet: Venus  
+      • Coldest planet: Neptune  
+      • Most tilted planet: Uranus  
+      • Most rings: Saturn  
+    </div>
+  </div>
+
+  <!-- MERCURY -->
+  <div class="card">
+    <img src="merkury.jpg">
+    <h3>Mercury</h3>
+    <p>The smallest and fastest planet.</p>
+    <div class="info">
+      Mercury is the closest planet to the Sun and has no atmosphere to trap heat.  
+      <br><br>
+      ⭐ **Key Facts**  
+      • Distance from Sun: 57 million km  
+      • Temperature: −173°C to 427°C  
+      • Surface: heavily cratered  
+      • Year length: 88 days  
+      <br><br>
+      ⭐ **Why It Matters**  
+      Mercury shows what happens to planets exposed to extreme solar radiation.
+    </div>
+  </div>
+
+  <!-- VENUS -->
+  <div class="card">
+    <img src="250px-Venus_-_December_23_2016.png">
+    <h3>Venus</h3>
+    <p>The hottest planet with a toxic atmosphere.</p>
+    <div class="info">
+      Venus is covered in thick clouds of sulfuric acid and has crushing pressure.  
+      <br><br>
+      ⭐ **Key Facts**  
+      • Temperature: 465°C  
+      • Atmosphere: CO₂ + sulfuric acid  
+      • Pressure: 92× Earth  
+      • Rotation: backwards  
+      <br><br>
+      ⭐ **Why It Matters**  
+      Venus is a warning of runaway greenhouse effects.
+    </div>
+  </div>
+
+  <!-- EARTH -->
+  <div class="card">
+    <img src="500px-Earth_from_Space.jpg">
+    <h3>Earth</h3>
+    <p>The only known planet with life.</p>
+    <div class="info">
+      Earth is the only planet with liquid water on the surface and a protective atmosphere.  
+      <br><br>
+      ⭐ **Key Facts**  
+      • Age: 4.5 billion years  
+      • Water coverage: 71%  
+      • Atmosphere: nitrogen + oxygen  
+      • Moon: stabilizes Earth’s tilt  
+      <br><br>
+      ⭐ **Why It Matters**  
+      Earth is the blueprint for habitability.
+    </div>
+  </div>
+
+  <!-- MARS -->
+  <div class="card">
+    <img src="250px-OSIRIS_Mars_true_color.jpg">
+    <h3>Mars</h3>
+    <p>The Red Planet with potential past life.</p>
+    <div class="info">
+      Mars has the largest volcano and canyon in the Solar System.  
+      <br><br>
+      ⭐ **Key Facts**  
+      • Temperature: −63°C average  
+      • Atmosphere: thin CO₂  
+      • Olympus Mons: largest volcano  
+      • Water: frozen in poles  
+      <br><br>
+      ⭐ **Why It Matters**  
+      Mars may have once supported life.
+    </div>
+  </div>
+
+  <!-- JUPITER -->
+  <div class="card">
+    <img src="Jupiter_OPAL_2024.png">
+    <h3>Jupiter</h3>
+    <p>The largest planet with powerful storms.</p>
+    <div class="info">
+      Jupiter is a gas giant with a massive storm called the Great Red Spot.  
+      <br><br>
+      ⭐ **Key Facts**  
+      • Diameter: 139,820 km  
+      • Moons: 95+  
+      • Composition: hydrogen + helium  
+      • Great Red Spot: 300-year storm  
+      <br><br>
+      ⭐ **Why It Matters**  
+      Jupiter’s gravity shapes the entire Solar System.
+    </div>
+  </div>
+
+  <!-- SATURN -->
+  <div class="card">
+    <img src="csm_16920210816_Saturn_NASA_a137631eab.png">
+    <h3>Saturn</h3>
+    <p>The planet with the most iconic rings.</p>
+    <div class="info">
+      Saturn’s rings are made of ice and rock.  
+      <br><br>
+      ⭐ **Key Facts**  
+      • Diameter: 116,460 km  
+      • Moons: 146+  
+      • Rings: billions of particles  
+      • Density: lower than water  
+      <br><br>
+      ⭐ **Why It Matters**  
+      Saturn’s rings reveal how planets and moons form.
+    </div>
+  </div>
+
+  <!-- URANUS -->
+  <div class="card">
+    <img src="Uranus_Voyager2_color_calibrated.png">
+    <h3>Uranus</h3>
+    <p>The sideways planet.</p>
+    <div class="info">
+      Uranus rotates on its side due to a massive ancient collision.  
+      <br><br>
+      ⭐ **Key Facts**  
+      • Tilt: 98°  
+      • Temperature: −224°C  
+      • Type: ice giant  
+      • Rings: faint  
+      <br><br>
+      ⭐ **Why It Matters**  
+      Uranus shows how violent early Solar System impacts were.
+    </div>
+  </div>
+
+  <!-- NEPTUNE -->
+  <div class="card">
+    <img src="250px-Neptune_-_Voyager_2_(29347980845)_flatten_crop.jpg">
+    <h3>Neptune</h3>
+    <p>The coldest and windiest planet.</p>
+    <div class="info">
+      Neptune has supersonic winds and a deep blue color from methane.  
+      <br><br>
+      ⭐ **Key Facts**  
+      • Temperature: −225°C  
+      • Winds: 2,100 km/h  
+      • Type: ice giant  
+      • Moons: 14  
+      <br><br>
+      ⭐ **Why It Matters**  
+      Neptune reveals extreme weather in the outer Solar System.
+    </div>
+  </div>
+
+  <!-- DWARF PLANETS -->
+  <div class="card">
+    <img src="dwarf-planets.jpg">
+    <h3>Dwarf Planets</h3>
+    <p>Small worlds beyond Neptune.</p>
+    <div class="info">
+      Dwarf planets include Pluto, Eris, Haumea, Makemake, and Ceres.  
+      <br><br>
+      ⭐ **Key Facts**  
+      • Located in Kuiper Belt or asteroid belt  
+      • Some have moons  
+      • Pluto has mountains of ice  
+      • Haumea is oval-shaped  
+      <br><br>
+      ⭐ **Why They Matter**  
+      Dwarf planets show the diversity of small worlds.
+    </div>
+  </div>
+
+  <!-- FULL SOLAR SYSTEM DIAGRAM -->
+  <div class="card">
+    <img src="The-Solar-System-scaled.jpg">
+    <h3>Solar System Map</h3>
+    <p>Orbits, belts, and cosmic structure.</p>
+    <div class="info">
+      This map shows the Sun, planets, asteroid belt, Kuiper Belt, and major orbital paths.  
+      <br><br>
+      ⭐ **Includes**  
+      • Planet orbits  
+      • Asteroid Belt  
+      • Kuiper Belt  
+      • Comets  
+      • Major moons  
+    </div>
+  </div>
+
+</div>
+
+</div>
+</body>
+</html>
