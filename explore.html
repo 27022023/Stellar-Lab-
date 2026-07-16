@@ -1,155 +1,185 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Explore the Universe</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
 <style>
-html, body {
+  body {
     margin: 0;
     padding: 0;
-    height: 100%;
-    width: 100%;
-    background: #020617;
-    font-family: Inter, system-ui, -apple-system, sans-serif;
-    color: #e5e7eb;
-    overflow-x: hidden;
-}
+    font-family: 'Inter', sans-serif;
+    color: white;
+    background: #050316;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
 
-/* Title */
-#title {
-    text-align: center;
-    margin-top: 70px;
-    font-size: 50px;
-    font-weight: 800;
-    color: #f9fafb;
-    text-shadow: 0 0 25px rgba(255,255,255,0.4);
-}
+  .overlay {
+    min-height: 100vh;
+    padding-bottom: 60px;
 
-/* Subtitle */
-#subtitle {
-    text-align: center;
-    margin-top: 15px;
-    font-size: 20px;
-    opacity: 0.9;
-}
+    background: linear-gradient(
+        135deg,
+        rgba(216, 191, 255, 0.55) 0%,
+        rgba(189, 255, 214, 0.55) 50%,
+        rgba(216, 191, 255, 0.55) 100%
+      ),
+      radial-gradient(circle at top, rgba(150, 90, 255, 0.35), transparent 55%),
+      radial-gradient(circle at bottom, rgba(40, 10, 80, 0.6), #050316);
 
-/* Cards container */
-#cards {
-    max-width: 900px;
-    margin: 50px auto;
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    padding: 0 20px;
-}
+    background-blend-mode: overlay;
+  }
 
-/* Card */
-.card {
-    background: rgba(15,23,42,0.9);
-    border: 2px solid #1f2937;
-    border-radius: 20px;
-    padding: 25px;
-    cursor: pointer;
-    transition: 0.3s;
-    backdrop-filter: blur(12px);
-}
-
-.card:hover {
-    border-color: #22c55e;
-    transform: translateY(-6px);
-}
-
-.card h2 {
-    margin: 0;
-    font-size: 28px;
-    color: #f9fafb;
-}
-
-.card p {
-    font-size: 17px;
-    opacity: 0.85;
-    margin-top: 10px;
-}
-
-/* Rocket emoji animation */
-#rocket {
+  .moon-home {
     position: fixed;
-    bottom: -300px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 110px;
-    transition: bottom 1.2s ease, opacity 1.2s ease;
-    opacity: 0;
-    z-index: 999;
-}
-
-/* Home moon button */
-.moon-home {
-    position: fixed;
-    left: 12px;
-    top: 12px;
-    width: 80px;
-    height: 80px;
+    right: 20px;
+    top: 20px;
+    width: 60px;
+    height: 60px;
     background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: 700;
-    font-size: 15px;
+    font-size: 10px;
     color: white;
     text-decoration: none;
-    border: 2px solid rgba(255,255,255,0.9);
-    box-shadow: 0 0 25px rgba(0,0,0,0.9);
-    z-index: 30;
-}
+    border: 2px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+    transition: 0.3s;
+    z-index: 10;
+  }
+
+  .moon-home:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255,255,255,0.6);
+  }
+
+  .hero {
+    text-align: center;
+    padding: 80px 20px 20px;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .hero p {
+    font-size: 18px;
+    opacity: 0.9;
+    margin-top: 10px;
+  }
+
+  .grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    transition: 0.3s;
+    cursor: pointer;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    background: rgba(150, 90, 255, 0.30);
+  }
+
+  .card h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .card p {
+    margin-top: 8px;
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  /* ROCKET EMOJI */
+  #rocket {
+    position: fixed;
+    bottom: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 90px;
+    opacity: 0;
+    transition: bottom 1.2s ease, opacity 1.2s ease;
+    z-index: 999;
+  }
 </style>
 </head>
+
 <body>
+<div class="overlay">
 
 <a class="moon-home" href="index.html">Home</a>
 
 <div id="rocket">🚀</div>
 
-<div id="title">🌌 Explore the Universe</div>
-<div id="subtitle">Choose a Museum Wing to Begin Your Journey</div>
+<div class="hero">
+  <h1>🌌 Explore the Universe</h1>
+  <p>Choose a Museum Wing to Begin Your Journey</p>
+</div>
 
-<div id="cards">
+<div class="grid">
 
-    <div class="card" onclick="launch('stars.html')">
-        <h2>✨ Stars & Phenomena</h2>
-        <p>Constellations, star maps, bright stars, nebulae, galaxies, black holes.</p>
-    </div>
+  <div class="card" onclick="launch('stars.html')">
+    <h3>✨ Stars & Phenomena</h3>
+    <p>Constellations, star maps, bright stars, nebulae, galaxies, black holes.</p>
+  </div>
 
-    <div class="card" onclick="launch('solar.html')">
-        <h2>🪐 Solar System</h2>
-        <p>Planets, moons, the Sun, fun facts, missions, diagrams.</p>
-    </div>
+  <div class="card" onclick="launch('solar.html')">
+    <h3>🪐 Solar System</h3>
+    <p>Planets, moons, the Sun, fun facts, missions, diagrams.</p>
+  </div>
 
-    <div class="card" onclick="launch('tech.html')">
-        <h2>🚀 Space Technology</h2>
-        <p>ISS, Hubble, JWST, rockets, astronauts, scientists.</p>
-    </div>
+  <div class="card" onclick="launch('tech.html')">
+    <h3>🚀 Space Technology</h3>
+    <p>ISS, Hubble, JWST, rockets, astronauts, scientists.</p>
+  </div>
 
-    <div class="card" onclick="launch('life.html')">
-        <h2>🌍 Life Worlds</h2>
-        <p>Exoplanets, habitability, water, temperature, star types.</p>
-    </div>
+  <div class="card" onclick="launch('life.html')">
+    <h3>🌍 Life Worlds</h3>
+    <p>Exoplanets, habitability, water, temperature, star types.</p>
+  </div>
+
+</div>
 
 </div>
 
 <script>
 function launch(page) {
-    const rocket = document.getElementById("rocket");
-    rocket.style.opacity = "1";
-    rocket.style.bottom = "65vh";
+  const rocket = document.getElementById("rocket");
+  rocket.style.opacity = "1";
+  rocket.style.bottom = "60vh";
 
-    setTimeout(() => {
-        window.location.href = page;
-    }, 1200);
+  setTimeout(() => {
+    window.location.href = page;
+  }, 1200);
 }
 </script>
 
 </body>
 </html>
-        
+
+    
