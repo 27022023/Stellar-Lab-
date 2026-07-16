@@ -18,66 +18,66 @@ html, body {
 /* Title */
 #title {
     text-align: center;
-    margin-top: 60px;
-    font-size: 42px;
-    font-weight: 700;
+    margin-top: 80px;
+    font-size: 55px;
+    font-weight: 800;
     color: #f9fafb;
-    text-shadow: 0 0 20px rgba(255,255,255,0.3);
+    text-shadow: 0 0 25px rgba(255,255,255,0.4);
 }
 
 /* Subtitle */
 #subtitle {
     text-align: center;
-    margin-top: 10px;
-    font-size: 16px;
-    opacity: 0.85;
+    margin-top: 20px;
+    font-size: 22px;
+    opacity: 0.9;
 }
 
 /* Cards container */
 #cards {
-    max-width: 900px;
-    margin: 40px auto;
+    max-width: 1100px;
+    margin: 60px auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding: 0 20px;
+    gap: 35px;
+    padding: 0 30px;
 }
 
 /* Card */
 .card {
-    background: rgba(15,23,42,0.85);
-    border: 1px solid #1f2937;
-    border-radius: 16px;
-    padding: 20px;
+    background: rgba(15,23,42,0.9);
+    border: 2px solid #1f2937;
+    border-radius: 22px;
+    padding: 30px;
     cursor: pointer;
     transition: 0.3s;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
 }
 
 .card:hover {
     border-color: #22c55e;
-    transform: translateY(-4px);
+    transform: translateY(-6px);
 }
 
 .card h2 {
     margin: 0;
-    font-size: 22px;
+    font-size: 30px;
     color: #f9fafb;
 }
 
 .card p {
-    font-size: 14px;
-    opacity: 0.8;
-    margin-top: 8px;
+    font-size: 18px;
+    opacity: 0.85;
+    margin-top: 12px;
 }
 
 /* Rocket emoji animation */
 #rocket {
     position: fixed;
-    bottom: -200px;
+    bottom: -300px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 80px;
+    font-size: 120px;
     transition: bottom 1.2s ease, opacity 1.2s ease;
     opacity: 0;
     z-index: 999;
@@ -88,19 +88,19 @@ html, body {
     position: fixed;
     left: 12px;
     top: 12px;
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
     background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: 700;
-    font-size: 13px;
+    font-size: 15px;
     color: white;
     text-decoration: none;
-    border: 2px solid rgba(255,255,255,0.8);
-    box-shadow: 0 0 20px rgba(0,0,0,0.9);
+    border: 2px solid rgba(255,255,255,0.9);
+    box-shadow: 0 0 25px rgba(0,0,0,0.9);
     z-index: 30;
 }
 </style>
@@ -142,7 +142,7 @@ html, body {
 function launch(page) {
     const rocket = document.getElementById("rocket");
     rocket.style.opacity = "1";
-    rocket.style.bottom = "60vh";
+    rocket.style.bottom = "65vh";
 
     setTimeout(() => {
         window.location.href = page;
@@ -152,4 +152,4 @@ function launch(page) {
 
 </body>
 </html>
-        
+    
