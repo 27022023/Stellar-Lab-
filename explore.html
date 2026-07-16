@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Explore the Universe</title>
+<style>
+body {
+    background: #020617;
+    color: #e5e7eb;
+    font-family: Inter, sans-serif;
+    padding: 40px;
+    text-align: center;
+}
+
+/* BIG LAB MOON BUTTON */
+.moon-home {
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    width: 120px;
+    height: 120px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 18px;
+    color: white;
+    text-decoration: none;
+    border: 3px solid rgba(255,255,255,0.8);
+    box-shadow: 0 0 25px rgba(0,0,0,0.9);
+    z-index: 999;
+}
+
+h1 {
+    font-size: 48px;
+    margin-bottom: 8px;
+    color: #f9fafb;
+}
+
+p {
+    font-size: 20px;
+    opacity: 0.9;
+    margin-bottom: 10px;
+}
+
+#modeButtons {
+    margin-top: 20px;
+}
+
+button {
+    margin: 6px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid #4b5563;
+    background: #0f172a;
+    color: #e5e7eb;
+    cursor: pointer;
+    font-size: 15px;
+}
+button.active {
+    border-color: #22c55e;
+    color: #f9fafb;
+}
+
+canvas {
+    background: #020617;
+    border-radius: 20px;
+    margin-top: 30px;
+    box-shadow: 0 0 40px rgba(15,23,42,0.9);
+}
+
+#infoPanel {
+    margin-top: 30px;
+    padding: 22px;
+    background: #0f172a;
+    border-radius: 12px;
+    font-size: 20px;
+    line-height: 1.6;
+    border: 1px solid #1f2937;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#locationText {
+    margin-top: 10px;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+#lifeList {
+    margin-top: 20px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+}
+
+.life-card {
+    background: #020617;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border: 1px solid #1f2937;
+    cursor: pointer;
+}
+.life-card:hover {
+    border-color: #22c55e;
+}
+.life-name {
+    font-weight: 600;
+    font-size: 18px;
+}
+.life-meta {
+    font-size: 14px;
+    opacity: 0.8;
+}
+</style>
+</head>
+
+<body>
+
+<a class="moon-home" href="../experiment.html">Lab</a>
+
+<h1>Explore the Universe</h1>
+<p>Explore stars, planets, and worlds where life might exist.</p>
+
+<div id="modeButtons">
+    <button id="skyBtn" class="active">Sky</button>
+    <button id="planetsBtn">Planets</button>
+    <button id="lifeBtn">Life</button>
+</div>
+
+<canvas id="exploreCanvas" width="900" height="900"></canvas>
+
+<div id="infoPanel">
+    Tap on stars, planets, or worlds to learn more.
+</div>
+
+<div id="locationText">Detecting your location and time…</div>
+
+<div id="lifeList" style="display:none;"></div>
+
+<script>
+const canvas = document.getElementById("exploreCanvas");
+const ctx = canvas.getContext("2d");
+
+const skyBtn = document.getElementById("skyBtn");
+const planetsBtn = document.getElementById("planetsBtn");
+const lifeBtn = document.getElementById("lifeBtn");
+const infoPanel = document.getElementById("infoPanel");
+const locationText = document.getElementById("locationText");
+const lifeList = document.getElementById("lifeList");
+
+let mode = "sky";
+let objects = [];
+let t = 0;
+
+/* THEMES */
+const themes = {
+    day: {
+        name: "day",
+        top: [122, 184, 255],   // #7ab8ff
+        mid: [188, 217, 255],   // #bcd9ff
+        bottom: [232, 242, 255],// #e8f2ff
+        starOpacity: 0.3
+    },
+    sunrise: {
+        name: "sunrise",
+        top: [255, 179, 107],   // #ffb36b
+        mid: [255, 223, 194],   // #ffdfc2
+        bottom: [200, 217, 255],// #c8d9ff
+        starOpacity: 0.5
+    },
+    sunset: {
+        name: "sunset",
+        top: [255, 138, 92],    // #ff8a5c
+        mid: [255, 191, 161],   // #ffbfa1
+        bottom: [184, 201, 255],// #b8c9ff
+        starOpacity: 0.6
+    },
+    night: {
+        name: "night",
+        top: [26, 11, 61],      // #1a0b3d
+        mid: [10, 6, 30],
+        bottom: [2, 6, 23],     // #020617
+        starOpacity: 1.0
+    }
+};
+
+let currentTheme = themes.night;
+let targetTheme = themes.night;
+let themeProgress = 1; // 0 -> 1 over time
+
+function lerp(a, b, p) {
+    return a + (b - a) * p;
+}
+
+function lerpColor(c1, c2, p) {
+    return [
+        Math.round(lerp(c1[0], c2[0], p)),
+        Math.round(lerp(c1[1], c2[1], p)),
+        Math.round(lerp(c1[2], c2[2], p))
+    ];
+}
+
+function rgbToStr(c) {
+    return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+}
+
+/* LOCATION + TIME */
+function initLocation() {
+    const now = new Date();
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "Unknown time zone";
+    const timeStr = now.toLocaleString();
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+            const { latitude, longitude } = pos.coords;
+            locationText.textContent =
+                `Location: lat ${latitude.toFixed(2)}, lon ${longitude.toFixed(2)} • Time: ${timeStr} (${tz})`;
+        }, () => {
+            locationText.textContent =
+                `Location: device time zone (${tz}) • Time: ${timeStr}`;
+        });
+    } else {
+        locationText.textContent =
+            `Location: device time zone (${tz}) • Time: ${timeStr}`;
+    }
+}
+
+/* DETERMINE THEME BASED ON TIME */
+function getTimeTheme() {
+    const now = new Date();
+    const hour = now.getHours() + now.getMinutes() / 60;
+
+    // Simple bands: adjust if you want
+    if (hour >= 7 && hour < 17) {
+        return themes.day;
+    } else if (hour >= 5 && hour < 7) {
+        return themes.sunrise;
+    } else if (hour >= 17 && hour < 20.5) {
+        return themes.sunset;
+    } else {
+        return themes.night;
+    }
+}
+
+function updateThemeTarget() {
+    const newTheme = getTimeTheme();
+    if (newTheme.name !== targetTheme.name) {
+        targetTheme = newTheme;
+        themeProgress = 0; // start transition
+    }
+}
+
+/* STARFIELD BACKGROUND WITH THEME */
+function drawBackground() {
+    // Blend currentTheme toward targetTheme
+    if (themeProgress < 1) {
+        themeProgress += 0.002; // ~20–30s for full transition
+        if (themeProgress > 1) themeProgress = 1;
+    }
+
+    const top = lerpColor(currentTheme.top, targetTheme.top, themeProgress);
+    const mid = lerpColor(currentTheme.mid, targetTheme.mid, themeProgress);
+    const bottom = lerpColor(currentTheme.bottom, targetTheme.bottom, themeProgress);
+    const starOpacity = lerp(currentTheme.starOpacity, targetTheme.starOpacity, themeProgress);
+
+    // Once fully transitioned, set currentTheme = targetTheme
+    if (themeProgress === 1) {
+        currentTheme = targetTheme;
+    }
+
+    const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    grad.addColorStop(0, rgbToStr(top));
+    grad.addColorStop(0.5, rgbToStr(mid));
+    grad.addColorStop(1, rgbToStr(bottom));
+
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Stars
+    ctx.save();
+    ctx.fillStyle = `rgba(148,163,184,${starOpacity})`;
+    for (let i = 0; i < 180; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const r = Math.random() * 1.8;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    ctx.restore();
+}
+
+/* SKY MODE OBJECTS */
+const skyObjects = [
+    { name: "Sirius", type: "Star", x: 200, y: 300, mag: -1.46, info: "Brightest star in the night sky, in Canis Major." },
+    { name: "Betelgeuse", type: "Star", x: 500, y: 260, mag: 0.5, info: "Red supergiant in Orion, nearing end of life." },
+    { name: "Rigel", type: "Star", x: 540, y: 340, mag: 0.1, info: "Blue supergiant, also in Orion." },
+    { name: "Polaris", type: "Star", x: 450, y: 120, mag: 2.0, info: "North Star, near the north celestial pole." },
+    { name: "Mars", type: "Planet", x: 300, y: 600, info: "The Red Planet, with past water and potential ancient life." },
+    { name: "Jupiter", type: "Planet", x: 650, y: 500, info: "Gas giant with many moons, including Europa." },
+    { name: "Saturn", type: "Planet", x: 700, y: 350, info: "Ringed giant, home to Titan with thick atmosphere." }
+];
+
+/* PLANETS MODE OBJECTS */
+const planetObjects = [
+    { name: "Sun", type: "Star", x: 450, y: 450, r: 70, info: "Our star, source of energy for life on Earth." },
+    { name: "Mercury", type: "Planet", x: 450 + 110, y: 450, r: 10, info: "Small, airless, closest to the Sun." },
+    { name: "Venus", type: "Planet", x: 450 + 160, y: 450, r: 14, info: "Thick atmosphere, runaway greenhouse." },
+    { name: "Earth", type: "Planet", x: 450 + 210, y: 450, r: 16, info: "Our home, liquid water and complex life." },
+    { name: "Mars", type: "Planet", x: 450 + 260, y: 450, r: 14, info: "Cold desert world, past rivers and lakes." },
+    { name: "Jupiter", type: "Planet", x: 450 + 330, y: 450, r: 30, info: "Largest planet, powerful magnetic field." },
+    { name: "Saturn", type: "Planet", x: 450 + 410, y: 450, r: 26, info: "Spectacular rings, moon Titan may host chemistry for life." }
+];
+
+/* LIFE MODE DATA */
+const lifeWorlds = [
+    {
+        name: "TRAPPIST-1e",
+        star: "TRAPPIST-1",
+        distance: "39 ly",
+        temp: "≈ 250 K",
+        water: "High probability",
+        habitability: "Very promising",
+        description: "Earth-sized world in the habitable zone of a cool red dwarf."
+    },
+    {
+        name: "Kepler-186f",
+        star: "Kepler-186",
+        distance: "≈ 500 ly",
+        temp: "Cool, Earth-sized",
+        water: "Possible",
+        habitability: "Moderate",
+        description: "First Earth-sized planet found in the habitable zone of another star."
+    },
+    {
+        name: "Proxima Centauri b",
+        star: "Proxima Centauri",
+        distance: "4.24 ly",
+        temp: "Temperate",
+        water: "Unknown",
+        habitability: "Uncertain",
+        description: "Closest known exoplanet, orbiting the nearest star to the Sun."
+    },
+    {
+        name: "LHS 1140 b",
+        star: "LHS 1140",
+        distance: "≈ 40 ly",
+        temp: "Cool super-Earth",
+        water: "Likely",
+        habitability: "High potential",
+        description: "Dense planet in the habitable zone, may host deep oceans."
+    }
+];
+
+/* DRAW SKY MODE */
+function drawSky() {
+    drawBackground();
+
+    // Simple constellation line
+    ctx.save();
+    ctx.strokeStyle = "rgba(148,163,184,0.6)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(500, 260); // Betelgeuse
+    ctx.lineTo(540, 340); // Rigel
+    ctx.stroke();
+    ctx.restore();
+
+    objects = [];
+
+    for (let obj of skyObjects) {
+        objects.push({
+            name: obj.name,
+            type: obj.type,
+            x: obj.x,
+            y: obj.y,
+            r: obj.type === "Planet" ? 12 : 6,
+            info: obj.info
+        });
+
+        if (obj.type === "Star") {
+            ctx.fillStyle = "#f9fafb";
+        } else {
+            ctx.fillStyle = "#f97316";
+        }
+
+        ctx.beginPath();
+        ctx.arc(obj.x, obj.y, obj.type === "Planet" ? 12 : 6, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    infoPanel.innerHTML = `
+        <strong>Sky Mode:</strong> A simplified view of bright stars and planets.<br>
+        Tap Sirius, Betelgeuse, Mars, Jupiter, or Saturn to learn more.<br>
+        The sky theme changes automatically with time (day, sunrise/sunset, night).
+    `;
+}
+
+/* DRAW PLANETS MODE */
+function drawPlanets() {
+    drawBackground();
+
+    // Orbits
+    ctx.save();
+    ctx.strokeStyle = "rgba(148,163,184,0.4)";
+    ctx.lineWidth = 1.5;
+    for (let i = 1; i <= 6; i++) {
+        ctx.beginPath();
+        ctx.arc(450, 450, 100 + i * 50, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+    ctx.restore();
+
+    objects = [];
+
+    for (let obj of planetObjects) {
+        objects.push({
+            name: obj.name,
+            type: obj.type,
+            x: obj.x,
+            y: obj.y,
+            r: obj.r,
+            info: obj.info
+        });
+
+        if (obj.name === "Sun") {
+            const grad = ctx.createRadialGradient(obj.x, obj.y, 0, obj.x, obj.y, obj.r * 2.5);
+            grad.addColorStop(0, "#ffffff");
+            grad.addColorStop(0.3, "#fde68a");
+            grad.addColorStop(1, "rgba(251,191,36,0)");
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(obj.x, obj.y, obj.r * 2.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = "#fde68a";
+            ctx.beginPath();
+            ctx.arc(obj.x, obj.y, obj.r, 0, Math.PI * 2);
+            ctx.fill();
+        } else {
+            let color = "#3b82f6";
+            if (obj.name === "Mars") color = "#ef4444";
+            if (obj.name === "Venus") color = "#f97316";
+            if (obj.name === "Jupiter") color = "#facc15";
+            if (obj.name === "Saturn") color = "#e5e7eb";
+
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(obj.x, obj.y, obj.r, 0, Math.PI * 2);
+            ctx.fill();
+
+            if (obj.name === "Saturn") {
+                ctx.strokeStyle = "rgba(229,231,235,0.8)";
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.ellipse(obj.x, obj.y, obj.r + 10, obj.r + 4, 0, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+        }
+    }
+
+    infoPanel.innerHTML = `
+        <strong>Planets Mode:</strong> A simplified solar system view.<br>
+        Tap the Sun, Earth, Mars, Jupiter, or Saturn to learn more.<br>
+        Background sky still follows time of day.
+    `;
+}
+
+/* DRAW LIFE MODE */
+function drawLife() {
+    drawBackground();
+    objects = []; // no canvas taps here, we use cards
+
+    infoPanel.innerHTML = `
+        <strong>Life Mode:</strong> Explore real exoplanets where life might exist.<br>
+        Tap a world below to see its details.
+    `;
+
+    lifeList.style.display = "block";
+    lifeList.innerHTML = "";
+
+    lifeWorlds.forEach(world => {
+        const card = document.createElement("div");
+        card.className = "life-card";
+        card.innerHTML = `
+            <div class="life-name">${world.name}</div>
+            <div class="life-meta">${world.star} • ${world.distance} • Habitability: ${world.habitability}</div>
+            <div class="life-meta">Water: ${world.water} • Temperature: ${world.temp}</div>
+        `;
+        card.onclick = () => {
+            infoPanel.innerHTML = `
+                <strong>${world.name}</strong><br>
+                Star: ${world.star}<br>
+                Distance: ${world.distance}<br>
+                Temperature: ${world.temp}<br>
+                Water: ${world.water}<br>
+                Habitability: ${world.habitability}<br><br>
+                ${world.description}
+            `;
+        };
+        lifeList.appendChild(card);
+    });
+}
+
+/* MODE SWITCHING */
+function setMode(newMode) {
+    mode = newMode;
+    skyBtn.classList.toggle("active", mode === "sky");
+    planetsBtn.classList.toggle("active", mode === "planets");
+    lifeBtn.classList.toggle("active", mode === "life");
+
+    if (mode === "life") {
+        drawLife();
+    } else {
+        lifeList.style.display = "none";
+        if (mode === "sky") drawSky();
+        if (mode === "planets") drawPlanets();
+    }
+}
+
+skyBtn.onclick = () => setMode("sky");
+planetsBtn.onclick = () => setMode("planets");
+lifeBtn.onclick = () => setMode("life");
+
+/* TAP HANDLING ON CANVAS */
+canvas.addEventListener("click", (e) => {
+    if (mode === "life") return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    for (let obj of objects) {
+        const dx = x - obj.x;
+        const dy = y - obj.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist <= obj.r + 4) {
+            infoPanel.innerHTML = `
+                <strong>${obj.name}</strong> (${obj.type})<br>
+                ${obj.info}
+            `;
+            break;
+        }
+    }
+});
+
+/* ANIMATION LOOP */
+function animate() {
+    t += 0.01;
+    updateThemeTarget();
+
+    if (mode === "sky") {
+        drawSky();
+    } else if (mode === "planets") {
+        drawPlanets();
+    } else if (mode === "life") {
+        drawLife();
+    }
+
+    requestAnimationFrame(animate);
+}
+
+initLocation();
+currentTheme = getTimeTheme();
+targetTheme = currentTheme;
+themeProgress = 1;
+setMode("sky");
+animate();
+</script>
+
+</body>
+</html>
