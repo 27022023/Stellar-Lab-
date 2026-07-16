@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Space Technology</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    background: #050316;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+
+  .overlay {
+    min-height: 100vh;
+    padding-bottom: 60px;
+
+    background: linear-gradient(
+        135deg,
+        rgba(216, 191, 255, 0.55) 0%,
+        rgba(189, 255, 214, 0.55) 50%,
+        rgba(216, 191, 255, 0.55) 100%
+      ),
+      radial-gradient(circle at top, rgba(150, 90, 255, 0.35), transparent 55%),
+      radial-gradient(circle at bottom, rgba(40, 10, 80, 0.6), #050316);
+
+    background-blend-mode: overlay;
+  }
+
+  .moon-home {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    width: 60px;
+    height: 60px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 10px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+    transition: 0.3s;
+    z-index: 10;
+  }
+
+  .moon-home:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255,255,255,0.6);
+  }
+
+  .hero {
+    text-align: center;
+    padding: 80px 20px 20px;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .hero p {
+    font-size: 18px;
+    opacity: 0.9;
+    margin-top: 10px;
+  }
+
+  .grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    transition: 0.3s;
+    cursor: pointer;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    background: rgba(150, 90, 255, 0.30);
+  }
+
+  .card img {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 12px;
+  }
+
+  .card h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .card p {
+    margin-top: 8px;
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  .info {
+    margin-top: 12px;
+    font-size: 14px;
+    opacity: 0.95;
+    text-align: left;
+    line-height: 1.45;
+  }
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<a class="moon-home" href="explore.html">Back</a>
+
+<div class="hero">
+  <h1>🚀 Space Technology</h1>
+  <p>Human engineering, spacecraft, rockets, stations, and exploration tools.</p>
+</div>
+
+<div class="grid">
+
+  <!-- SOYUZ ROCKET -->
+  <div class="card">
+    <img src="Soyuz_TMA-9_launch.jpg">
+    <h3>Soyuz Rocket</h3>
+    <p>One of the most reliable rockets ever built.</p>
+    <div class="info">
+      The Soyuz rocket has been launching astronauts and cargo since 1966.  
+      It is known for its reliability and long operational history.  
+      <br><br>
+      ⭐ Key Facts  
+      • First flight: 1966  
+      • Height: 50 meters  
+      • Country: Russia  
+      • Missions: Crewed + cargo  
+      • Launches: 1,900+  
+      <br><br>
+      ⭐ Why It Matters: 
+      Soyuz has been the backbone of human spaceflight for decades.
+    </div>
+  </div>
+
+  <!-- VOYAGER SPACECRAFT -->
+  <div class="card">
+    <img src="1280px-Voyager_spacecraft.jpg">
+    <h3>Voyager Spacecraft</h3>
+    <p>Humanity’s farthest explorers.</p>
+    <div class="info">
+      Voyager 1 and 2 launched in 1977 to explore the outer planets.  
+      They are now in interstellar space.  
+      <br><br>
+      ⭐ Key Facts 
+      • Launched: 1977  
+      • Power: Radioisotope generators  
+      • Famous feature: Golden Record  
+      • Status: Still transmitting  
+      <br><br>
+      ⭐ Why It Matters:  
+      Voyager revealed new moons, rings, and atmospheric features of the outer planets.
+    </div>
+  </div>
+
+  <!-- VOYAGER 2 -->
+  <div class="card">
+    <img src="voyager-2-hat-im-vergangenen.webp">
+    <h3>Voyager 2</h3>
+    <p>The only spacecraft to visit Uranus and Neptune.</p>
+    <div class="info">
+      Voyager 2 performed flybys of Jupiter, Saturn, Uranus, and Neptune.  
+      <br><br>
+      ⭐ Key Facts  
+      • Only probe to visit Uranus & Neptune  
+      • Discovered new moons  
+      • Studied magnetic fields  
+      • Now in interstellar space  
+      <br><br>
+      ⭐ Why It Matters: 
+      Voyager 2 expanded our knowledge of the outer Solar System.
+    </div>
+  </div>
+
+  <!-- ISS -->
+  <div class="card">
+    <img src="ISS.jpg">
+    <h3>International Space Station</h3>
+    <p>Humanity’s laboratory in space.</p>
+    <div class="info">
+      The ISS is a modular space station orbiting Earth since 1998.  
+      <br><br>
+      ⭐ Key Facts  
+      • Orbit height: ~420 km  
+      • Speed: 28,000 km/h  
+      • Crew: 7  
+      • Partners: NASA, ESA, JAXA, Roscosmos, CSA  
+      <br><br>
+      ⭐ Why It Matters:
+      The ISS is essential for long‑duration space research and future missions to Mars.
+    </div>
+  </div>
+
+  <!-- HUBBLE SPACE TELESCOPE -->
+  <div class="card">
+    <img src="gettyimages-73075390-jpg-100-1280x720.jpg">
+    <h3>Hubble Space Telescope</h3>
+    <p>One of the most important scientific instruments ever built.</p>
+    <div class="info">
+      Hubble orbits Earth and captures high‑resolution images of space.  
+      <br><br>
+      ⭐ Key Facts  
+      • Launched: 1990  
+      • Orbit height: ~540 km  
+      • Mirror: 2.4 meters  
+      • Operator: NASA + ESA  
+      <br><br>
+      ⭐ Why It Matters:  
+      Hubble revolutionized our understanding of the universe.
+    </div>
+  </div>
+
+  <!-- NASA SLS / ARTEMIS -->
+  <div class="card">
+    <img src="NHQ202601170085-2~large.jpg">
+    <h3>NASA SLS (Artemis)</h3>
+    <p>The rocket that will return humans to the Moon.</p>
+    <div class="info">
+      The Space Launch System is NASA’s newest super‑heavy rocket.  
+      <br><br>
+      ⭐ Key Facts  
+      • Height: 98 meters  
+      • Boosters: Solid rocket boosters  
+      • Payload: Orion spacecraft  
+      • Mission: Artemis program  
+      <br><br>
+      ⭐ Why It Matters:
+      SLS will enable human missions to the Moon and Mars.
+    </div>
+  </div>
+
+  <!-- SATURN V -->
+  <div class="card">
+    <img src="lor_decision_8_apollo_11_launch_s69-39529.jpg">
+    <h3>Saturn V</h3>
+    <p>The rocket that took humans to the Moon.</p>
+    <div class="info">
+      Saturn V is the most powerful rocket ever successfully flown.  
+      <br><br>
+      ⭐ Key Facts  
+      • Height: 110 meters  
+      • Thrust: 7.6 million pounds  
+      • Missions: Apollo 8–17  
+      • Success rate: 100%  
+      <br><br>
+      ⭐ Why It Matters:
+      Saturn V made the Apollo Moon landings possible.
+    </div>
+  </div>
+
+</div>
+
+</div>
+</body>
+</html>
