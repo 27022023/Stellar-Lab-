@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Worlds</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    background: #050316;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+
+  .overlay {
+    min-height: 100vh;
+    padding-bottom: 60px;
+
+    background: linear-gradient(
+        135deg,
+        rgba(216, 191, 255, 0.55) 0%,
+        rgba(189, 255, 214, 0.55) 50%,
+        rgba(216, 191, 255, 0.55) 100%
+      ),
+      radial-gradient(circle at top, rgba(150, 90, 255, 0.35), transparent 55%),
+      radial-gradient(circle at bottom, rgba(40, 10, 80, 0.6), #050316);
+
+    background-blend-mode: overlay;
+  }
+
+  .moon-home {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    width: 60px;
+    height: 60px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 10px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+    transition: 0.3s;
+    z-index: 10;
+  }
+
+  .moon-home:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255,255,255,0.6);
+  }
+
+  .hero {
+    text-align: center;
+    padding: 80px 20px 20px;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .hero p {
+    font-size: 18px;
+    opacity: 0.9;
+    margin-top: 10px;
+  }
+
+  .grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    transition: 0.3s;
+    cursor: pointer;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    background: rgba(150, 90, 255, 0.30);
+  }
+
+  .card img {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 12px;
+  }
+
+  .card h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .card p {
+    margin-top: 8px;
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  .info {
+    margin-top: 12px;
+    font-size: 14px;
+    opacity: 0.95;
+    text-align: left;
+    line-height: 1.45;
+  }
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<a class="moon-home" href="explore.html">Back</a>
+
+<div class="hero">
+  <h1>🌍 Life Worlds</h1>
+  <p>Exoplanets, habitability, water, temperature, atmospheres, and star types.</p>
+</div>
+
+<div class="grid">
+
+  <!-- WATER WORLDS -->
+  <div class="card">
+    <img src="Oceanworld.jpg">
+    <h3>Water Worlds</h3>
+    <p>Planets covered entirely by global oceans.</p>
+    <div class="info">
+      Water worlds are planets with deep global oceans and little or no land.  
+      They may contain more water than Earth by factors of 10–100.  
+      <br><br>
+      ⭐ Key Facts  
+      • Global oceans hundreds of kilometers deep  
+      • Possible underwater continents  
+      • Thick atmospheres rich in water vapor  
+      • Potential for life in deep oceans  
+      <br><br>
+      ⭐ Why They Matter:  
+      Water is essential for life — these worlds may be the most common habitable planets.
+    </div>
+  </div>
+
+  <!-- WATER WORLD #2 -->
+  <div class="card">
+    <img src="exoplanets1.jpg">
+    <h3>Ocean Exoplanet</h3>
+    <p>A blue world rich in water and clouds.</p>
+    <div class="info">
+      Some exoplanets show signatures of water vapor and thick cloud layers.  
+      <br><br>
+      ⭐ Key Facts  
+      • Blue color from water vapor  
+      • Thick cloud systems  
+      • Possible warm oceans  
+      • Stable climates around calm stars  
+    </div>
+  </div>
+
+  <!-- CLOSE-ORBIT EXOPLANET -->
+  <div class="card">
+    <img src="Artist’s_impression_of_an_ultra-hot_Jupiter_transiting_its_star.jpg">
+    <h3>Close‑Orbit Exoplanet</h3>
+    <p>Extreme heat and intense radiation.</p>
+    <div class="info">
+      Close‑orbit exoplanets orbit extremely near their stars, often completing a year in hours or days.  
+      <br><br>
+      ⭐ Key Facts 
+      • Temperatures > 1,000°C  
+      • Atmospheres stripped by radiation  
+      • Tidally locked (one side always day)  
+      • Violent storms and winds  
+      <br><br>
+      ⭐ Why They Matter:  
+      They show how planets evolve under extreme stellar conditions.
+    </div>
+  </div>
+
+  <!-- ATMOSPHERIC / THERMAL WORLDS -->
+  <div class="card">
+    <img src="ECyDgDb5dd3twS2i6ac3U.jpeg">
+    <h3>Thermal Worlds</h3>
+    <p>Planets with thick, heat‑trapping atmospheres.</p>
+    <div class="info">
+      These worlds have dense atmospheres that trap heat, similar to Venus but often more extreme.  
+      <br><br>
+      ⭐ Key Facts  
+      • Thick greenhouse atmospheres  
+      • High surface pressure  
+      • Thermal glow from heat retention  
+      • Possible volcanic activity  
+    </div>
+  </div>
+
+  <!-- HABITABILITY -->
+  <div class="card">
+    <img src="Habitability-Infographic.png">
+    <h3>Habitability</h3>
+    <p>Conditions required for life to exist.</p>
+    <div class="info">
+      Habitability is the ability of a world to support life.  
+      <br><br>
+      ⭐ Key Factors  
+      • Liquid water  
+      • Stable climate  
+      • Atmosphere  
+      • Magnetic field  
+      • Distance from star  
+      <br><br>
+      ⭐ Why It Matters  
+      Only planets with the right conditions can support biology.
+    </div>
+  </div>
+
+  <!-- TEMPERATURE & ATMOSPHERES -->
+  <div class="card">
+    <img src="FiS4SnzmwAsNiYjsBFH9K.jpeg">
+    <h3>Temperature & Atmospheres</h3>
+    <p>Climate control and habitability.</p>
+    <div class="info">
+      Temperature determines whether water can exist as liquid.  
+      <br><br>
+      ⭐ Key Facts 
+      • Ideal range: −20°C to +50°C  
+      • Too hot → oceans evaporate  
+      • Too cold → oceans freeze  
+      • Atmospheres regulate heat  
+    </div>
+  </div>
+
+  <!-- GAS GIANTS -->
+  <div class="card">
+    <img src="image_5122e-Ice-Giant.jpg">
+    <h3>Gas & Ice Giants</h3>
+    <p>Massive planets with thick atmospheres.</p>
+    <div class="info">
+      Gas giants and ice giants dominate many exoplanet systems.  
+      <br><br>
+      ⭐ Key Facts  
+      • Hydrogen, helium, methane  
+      • Extreme winds  
+      • Deep cloud layers  
+      • Possible rocky cores  
+    </div>
+  </div>
+
+  <!-- RINGED ALIEN PLANET -->
+  <div class="card">
+    <img src="gYuWBqdUyPDwEFiqk8HmZ.jpeg">
+    <h3>Ringed Alien Planet</h3>
+    <p>Exotic worlds with massive ring systems.</p>
+    <div class="info">
+      Some exoplanets may have rings far larger than Saturn’s.  
+      <br><br>
+      ⭐ Key Facts
+      • Rings made of ice, dust, rock  
+      • Moons sculpt ring shapes  
+      • Possible habitable moons  
+    </div>
+  </div>
+
+  <!-- STAR TYPES -->
+  <div class="card">
+    <img src="types-of-stars.webp">
+    <h3>Star Types</h3>
+    <p>Stars determine planetary habitability.</p>
+    <div class="info">
+      Different stars create different environments for planets.  
+      <br><br>
+      ⭐ Best Stars for Life
+      • G‑type (Sun‑like)  
+      • K‑type (cool, long‑lived)  
+      <br><br>
+      ⭐ Challenging Stars
+      • M‑type (flares)  
+      • F‑type (short lifetimes)  
+      • O/B‑type (too hot)  
+    </div>
+  </div>
+
+</div>
+
+</div>
+</body>
+</html>
