@@ -367,7 +367,7 @@ function drawBackground() {
     grad.addColorStop(1, rgbToStr(bottom));
 
     ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, canvas.height);
 
     ctx.save();
     ctx.fillStyle = `rgba(148,163,184,${starOpacity})`;
@@ -383,12 +383,9 @@ function drawBackground() {
 }
 
 /* ASTRONOMY MATH (simplified) */
-
-/* Convert degrees to radians */
 function deg2rad(d) { return d * Math.PI / 180; }
 function rad2deg(r) { return r * 180 / Math.PI; }
 
-/* Local sidereal time (very simplified) */
 function getLocalSiderealTime(date, lonDeg) {
     const JD = (date.getTime() / 86400000) + 2440587.5;
     const D = JD - 2451545.0;
@@ -398,10 +395,9 @@ function getLocalSiderealTime(date, lonDeg) {
     return ((LST % 24) + 24) % 24;
 }
 
-/* RA/Dec (deg) -> Alt/Az (deg) */
 function raDecToAltAz(raDeg, decDeg, latDeg, lonDeg, date) {
     const LST = getLocalSiderealTime(date, lonDeg);
-    const HA = (LST * 15) - raDeg; // hour angle in degrees
+    const HA = (LST * 15) - raDeg;
 
     const ha = deg2rad(HA);
     const dec = deg2rad(decDeg);
@@ -423,9 +419,8 @@ function raDecToAltAz(raDeg, decDeg, latDeg, lonDeg, date) {
     };
 }
 
-/* Alt/Az -> screen coordinates (simple projection) */
 function altAzToScreen(altDeg, azDeg) {
-    const altNorm = altDeg / 90; // 0 at horizon, 1 at zenith
+    const altNorm = altDeg / 90;
     const azRad = deg2rad(azDeg);
 
     const cx = 0.5;
@@ -439,7 +434,6 @@ function altAzToScreen(altDeg, azDeg) {
     return { x, y };
 }
 
-/* Apply gyroscope rotation (very simplified) */
 function applyGyroToScreen(xNorm, yNorm) {
     if (!useGyro) return { x: xNorm, y: yNorm };
 
@@ -464,7 +458,7 @@ function applyGyroToScreen(xNorm, yNorm) {
     return { x: cx + rx, y: cy + ry };
 }
 
-/* DRAW SKY MODE (stars + planets + moons + DSOs) */
+/* DRAW SKY MODE */
 function drawSky() {
     drawBackground();
     renderedObjects = [];
@@ -484,7 +478,7 @@ function drawSky() {
         const y = rotated.y * canvas.height;
 
         const mag = star.mag ?? 3.0;
-        const r = Math.max(1, 6 - mag); // simple size scaling
+        const r = Math.max(1, 6 - mag);
 
         let color = "#f9fafb";
         if (star.spectral) {
@@ -572,7 +566,7 @@ function drawSky() {
         const x = rotated.x * canvas.width;
         const y = rotated.y * canvas.height;
 
-        const r = (dso.size || 30) / 200; // small patch
+        const r = (dso.size || 30) / 200;
         const radiusPx = r * canvas.width;
 
         ctx.fillStyle = "rgba(147,197,253,0.6)";
@@ -590,10 +584,10 @@ function drawSky() {
 
     infoTitle.textContent = "Sky Mode";
     infoBody.innerHTML = "Real sky based on your location and time. Tap stars, planets, moons, and nebulae to see their information.";
-    infoHint.textContent = "Catalogs: stars.json, planets.json, moons.json, dsos.json.";
+    infoHint.textContent = "Catalogs: stars-part1.json, stars-part2.json, planets.json, moons.json, dsos.json.";
 }
 
-/* PLANETS MODE (solar system view placeholder) */
+/* PLANETS MODE */
 function drawPlanetsMode() {
     drawBackground();
     renderedObjects = [];
@@ -638,7 +632,7 @@ function drawPlanetsMode() {
     infoHint.textContent = "Real ephemeris math can refine positions later.";
 }
 
-/* LIFE MODE (exoplanets list placeholder) */
+/* LIFE MODE */
 const lifeWorlds = [
     {
         name: "TRAPPIST-1e",
@@ -802,22 +796,32 @@ if (window.DeviceOrientationEvent) {
 /* LOAD CATALOGS */
 async function loadCatalogs() {
     try {
-        const [stars, planets, moons, dsos] = await Promise.all([
-            fetch("stars.json").then(r => r.json()),
+        const starFiles = [
+            "stars-part1.json",
+            "stars-part2.json"
+        ];
+
+        starCatalog = [];
+
+        for (const file of starFiles) {
+            const data = await fetch(file).then(r => r.json());
+            starCatalog.push(...data);
+        }
+
+        const [planets, moons, dsos] = await Promise.all([
             fetch("planets.json").then(r => r.json()),
             fetch("moons.json").then(r => r.json()),
             fetch("dsos.json").then(r => r.json())
         ]);
 
-        starCatalog = stars;
         planetCatalog = planets;
         moonCatalog = moons;
         dsoCatalog = dsos;
 
-        infoHint.textContent = "Catalogs loaded. Tap objects in the sky to see their information.";
+        infoHint.textContent = "Hipparcos catalog loaded. Tap stars, planets, moons, and nebulae to explore.";
     } catch (err) {
         console.error("Error loading catalogs:", err);
-        infoHint.textContent = "Error loading catalogs. Check stars.json, planets.json, moons.json, dsos.json.";
+        infoHint.textContent = "Error loading catalogs. Check your JSON files.";
     }
 }
 
@@ -844,4 +848,9 @@ animate();
 </script>
 
 </body>
-</html>
+</html>      
+            
+            
+
+            
+            
