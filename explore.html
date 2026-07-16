@@ -4,105 +4,170 @@
 <meta charset="UTF-8">
 <title>Explore the Universe</title>
 <style>
-body {
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-family: Inter, system-ui, -apple-system, sans-serif;
     background: #020617;
     color: #e5e7eb;
-    font-family: Inter, sans-serif;
-    padding: 40px;
+}
+
+/* FULLSCREEN SKY */
+#skyCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+}
+
+/* TOP BAR */
+#topBar {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 20;
     text-align: center;
 }
 
-/* BIG LAB MOON BUTTON */
-.moon-home {
-    position: fixed;
-    left: 20px;
-    top: 20px;
-    width: 120px;
-    height: 120px;
-    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 700;
-    font-size: 18px;
-    color: white;
-    text-decoration: none;
-    border: 3px solid rgba(255,255,255,0.8);
-    box-shadow: 0 0 25px rgba(0,0,0,0.9);
-    z-index: 999;
-}
-
-h1 {
-    font-size: 48px;
-    margin-bottom: 8px;
+#topBar h1 {
+    margin: 0;
+    font-size: 24px;
     color: #f9fafb;
+    text-shadow: 0 0 10px rgba(0,0,0,0.7);
 }
 
-p {
-    font-size: 20px;
+#topBar p {
+    margin: 4px 0 10px;
+    font-size: 13px;
     opacity: 0.9;
-    margin-bottom: 10px;
 }
 
+/* MODE BUTTONS */
 #modeButtons {
-    margin-top: 20px;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
 }
 
 button {
-    margin: 6px;
-    padding: 10px 18px;
+    margin: 0;
+    padding: 7px 13px;
     border-radius: 999px;
     border: 1px solid #4b5563;
-    background: #0f172a;
+    background: rgba(15,23,42,0.9);
     color: #e5e7eb;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 12px;
+    backdrop-filter: blur(8px);
 }
 button.active {
     border-color: #22c55e;
     color: #f9fafb;
 }
 
-canvas {
-    background: #020617;
-    border-radius: 20px;
-    margin-top: 30px;
-    box-shadow: 0 0 40px rgba(15,23,42,0.9);
+/* MOON HOME BUTTON */
+.moon-home {
+    position: fixed;
+    left: 12px;
+    top: 12px;
+    width: 70px;
+    height: 70px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 13px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.8);
+    box-shadow: 0 0 20px rgba(0,0,0,0.9);
+    z-index: 30;
 }
 
-#infoPanel {
-    margin-top: 30px;
-    padding: 22px;
-    background: #0f172a;
-    border-radius: 12px;
-    font-size: 20px;
-    line-height: 1.6;
-    border: 1px solid #1f2937;
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
+/* LOCATION TEXT */
 #locationText {
-    margin-top: 10px;
-    font-size: 14px;
-    opacity: 0.8;
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    opacity: 0.85;
+    text-shadow: 0 0 8px rgba(0,0,0,0.8);
+    z-index: 15;
 }
 
+/* SLIDE-UP INFO PANEL */
+#infoPanel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: -240px;
+    height: 240px;
+    background: rgba(15,23,42,0.96);
+    border-top: 1px solid #1f2937;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.7);
+    padding: 16px 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    z-index: 25;
+    transition: bottom 0.35s ease;
+    backdrop-filter: blur(12px);
+}
+
+#infoPanel.visible {
+    bottom: 0;
+}
+
+#infoTitle {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+#infoBody {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+#infoHint {
+    margin-top: 10px;
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* LIFE LIST */
 #lifeList {
-    margin-top: 20px;
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: left;
+    position: fixed;
+    right: 10px;
+    top: 110px;
+    width: 260px;
+    max-height: 60vh;
+    overflow-y: auto;
+    background: rgba(15,23,42,0.9);
+    border-radius: 12px;
+    border: 1px solid #1f2937;
+    padding: 10px;
+    display: none;
+    z-index: 22;
+    backdrop-filter: blur(10px);
 }
 
 .life-card {
     background: #020617;
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 10px;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
     border: 1px solid #1f2937;
     cursor: pointer;
 }
@@ -111,10 +176,10 @@ canvas {
 }
 .life-name {
     font-weight: 600;
-    font-size: 18px;
+    font-size: 14px;
 }
 .life-meta {
-    font-size: 14px;
+    font-size: 12px;
     opacity: 0.8;
 }
 </style>
@@ -124,80 +189,111 @@ canvas {
 
 <a class="moon-home" href="../experiment.html">Lab</a>
 
-<h1>Explore the Universe</h1>
-<p>Explore stars, planets, and worlds where life might exist.</p>
-
-<div id="modeButtons">
-    <button id="skyBtn" class="active">Sky</button>
-    <button id="planetsBtn">Planets</button>
-    <button id="lifeBtn">Life</button>
+<div id="topBar">
+    <h1>Explore the Universe</h1>
+    <p>Real sky, real objects, tap to learn.</p>
+    <div id="modeButtons">
+        <button id="skyBtn" class="active">Sky</button>
+        <button id="planetsBtn">Planets</button>
+        <button id="lifeBtn">Life</button>
+    </div>
 </div>
 
-<canvas id="exploreCanvas" width="900" height="900"></canvas>
-
-<div id="infoPanel">
-    Tap on stars, planets, or worlds to learn more.
-</div>
+<canvas id="skyCanvas"></canvas>
 
 <div id="locationText">Detecting your location and time…</div>
 
-<div id="lifeList" style="display:none;"></div>
+<div id="infoPanel">
+    <div id="infoTitle">Tap an object in the sky</div>
+    <div id="infoBody">
+        Once the catalogs load, you can tap stars, planets, moons, and nebulae to see their information here.
+    </div>
+    <div id="infoHint">Sky mode uses your location and time to show the real sky.</div>
+</div>
+
+<div id="lifeList"></div>
 
 <script>
-const canvas = document.getElementById("exploreCanvas");
+const canvas = document.getElementById("skyCanvas");
 const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
 
 const skyBtn = document.getElementById("skyBtn");
 const planetsBtn = document.getElementById("planetsBtn");
 const lifeBtn = document.getElementById("lifeBtn");
 const infoPanel = document.getElementById("infoPanel");
+const infoTitle = document.getElementById("infoTitle");
+const infoBody = document.getElementById("infoBody");
+const infoHint = document.getElementById("infoHint");
 const locationText = document.getElementById("locationText");
 const lifeList = document.getElementById("lifeList");
 
 let mode = "sky";
-let objects = [];
 let t = 0;
+
+/* Gyroscope state */
+let useGyro = true;
+let alpha = 0;
+let beta = 0;
+let gamma = 0;
+
+/* Location/time */
+let userLat = 0;
+let userLon = 0;
+let hasLocation = false;
+
+/* Catalogs */
+let starCatalog = [];
+let planetCatalog = [];
+let moonCatalog = [];
+let dsoCatalog = [];
+
+/* Rendered objects for tap detection */
+let renderedObjects = [];
 
 /* THEMES */
 const themes = {
     day: {
         name: "day",
-        top: [122, 184, 255],   // #7ab8ff
-        mid: [188, 217, 255],   // #bcd9ff
-        bottom: [232, 242, 255],// #e8f2ff
+        top: [122, 184, 255],
+        mid: [188, 217, 255],
+        bottom: [232, 242, 255],
         starOpacity: 0.3
     },
     sunrise: {
         name: "sunrise",
-        top: [255, 179, 107],   // #ffb36b
-        mid: [255, 223, 194],   // #ffdfc2
-        bottom: [200, 217, 255],// #c8d9ff
+        top: [255, 179, 107],
+        mid: [255, 223, 194],
+        bottom: [200, 217, 255],
         starOpacity: 0.5
     },
     sunset: {
         name: "sunset",
-        top: [255, 138, 92],    // #ff8a5c
-        mid: [255, 191, 161],   // #ffbfa1
-        bottom: [184, 201, 255],// #b8c9ff
+        top: [255, 138, 92],
+        mid: [255, 191, 161],
+        bottom: [184, 201, 255],
         starOpacity: 0.6
     },
     night: {
         name: "night",
-        top: [26, 11, 61],      // #1a0b3d
+        top: [26, 11, 61],
         mid: [10, 6, 30],
-        bottom: [2, 6, 23],     // #020617
+        bottom: [2, 6, 23],
         starOpacity: 1.0
     }
 };
 
 let currentTheme = themes.night;
 let targetTheme = themes.night;
-let themeProgress = 1; // 0 -> 1 over time
+let themeProgress = 1;
 
-function lerp(a, b, p) {
-    return a + (b - a) * p;
-}
-
+function lerp(a, b, p) { return a + (b - a) * p; }
 function lerpColor(c1, c2, p) {
     return [
         Math.round(lerp(c1[0], c2[0], p)),
@@ -205,10 +301,7 @@ function lerpColor(c1, c2, p) {
         Math.round(lerp(c1[2], c2[2], p))
     ];
 }
-
-function rgbToStr(c) {
-    return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
-}
+function rgbToStr(c) { return `rgb(${c[0]}, ${c[1]}, ${c[2]})`; }
 
 /* LOCATION + TIME */
 function initLocation() {
@@ -218,48 +311,46 @@ function initLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
             const { latitude, longitude } = pos.coords;
+            userLat = latitude;
+            userLon = longitude;
+            hasLocation = true;
             locationText.textContent =
                 `Location: lat ${latitude.toFixed(2)}, lon ${longitude.toFixed(2)} • Time: ${timeStr} (${tz})`;
         }, () => {
+            hasLocation = false;
             locationText.textContent =
                 `Location: device time zone (${tz}) • Time: ${timeStr}`;
         });
     } else {
+        hasLocation = false;
         locationText.textContent =
             `Location: device time zone (${tz}) • Time: ${timeStr}`;
     }
 }
 
-/* DETERMINE THEME BASED ON TIME */
+/* TIME-BASED THEME */
 function getTimeTheme() {
     const now = new Date();
     const hour = now.getHours() + now.getMinutes() / 60;
 
-    // Simple bands: adjust if you want
-    if (hour >= 7 && hour < 17) {
-        return themes.day;
-    } else if (hour >= 5 && hour < 7) {
-        return themes.sunrise;
-    } else if (hour >= 17 && hour < 20.5) {
-        return themes.sunset;
-    } else {
-        return themes.night;
-    }
+    if (hour >= 7 && hour < 17) return themes.day;
+    else if (hour >= 5 && hour < 7) return themes.sunrise;
+    else if (hour >= 17 && hour < 20.5) return themes.sunset;
+    else return themes.night;
 }
 
 function updateThemeTarget() {
     const newTheme = getTimeTheme();
     if (newTheme.name !== targetTheme.name) {
         targetTheme = newTheme;
-        themeProgress = 0; // start transition
+        themeProgress = 0;
     }
 }
 
-/* STARFIELD BACKGROUND WITH THEME */
+/* BACKGROUND */
 function drawBackground() {
-    // Blend currentTheme toward targetTheme
     if (themeProgress < 1) {
-        themeProgress += 0.002; // ~20–30s for full transition
+        themeProgress += 0.002;
         if (themeProgress > 1) themeProgress = 1;
     }
 
@@ -268,10 +359,7 @@ function drawBackground() {
     const bottom = lerpColor(currentTheme.bottom, targetTheme.bottom, themeProgress);
     const starOpacity = lerp(currentTheme.starOpacity, targetTheme.starOpacity, themeProgress);
 
-    // Once fully transitioned, set currentTheme = targetTheme
-    if (themeProgress === 1) {
-        currentTheme = targetTheme;
-    }
+    if (themeProgress === 1) currentTheme = targetTheme;
 
     const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
     grad.addColorStop(0, rgbToStr(top));
@@ -281,10 +369,9 @@ function drawBackground() {
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Stars
     ctx.save();
     ctx.fillStyle = `rgba(148,163,184,${starOpacity})`;
-    for (let i = 0; i < 180; i++) {
+    for (let i = 0; i < 220; i++) {
         const x = Math.random() * canvas.width;
         const y = Math.random() * canvas.height;
         const r = Math.random() * 1.8;
@@ -295,29 +382,263 @@ function drawBackground() {
     ctx.restore();
 }
 
-/* SKY MODE OBJECTS */
-const skyObjects = [
-    { name: "Sirius", type: "Star", x: 200, y: 300, mag: -1.46, info: "Brightest star in the night sky, in Canis Major." },
-    { name: "Betelgeuse", type: "Star", x: 500, y: 260, mag: 0.5, info: "Red supergiant in Orion, nearing end of life." },
-    { name: "Rigel", type: "Star", x: 540, y: 340, mag: 0.1, info: "Blue supergiant, also in Orion." },
-    { name: "Polaris", type: "Star", x: 450, y: 120, mag: 2.0, info: "North Star, near the north celestial pole." },
-    { name: "Mars", type: "Planet", x: 300, y: 600, info: "The Red Planet, with past water and potential ancient life." },
-    { name: "Jupiter", type: "Planet", x: 650, y: 500, info: "Gas giant with many moons, including Europa." },
-    { name: "Saturn", type: "Planet", x: 700, y: 350, info: "Ringed giant, home to Titan with thick atmosphere." }
-];
+/* ASTRONOMY MATH (simplified) */
 
-/* PLANETS MODE OBJECTS */
-const planetObjects = [
-    { name: "Sun", type: "Star", x: 450, y: 450, r: 70, info: "Our star, source of energy for life on Earth." },
-    { name: "Mercury", type: "Planet", x: 450 + 110, y: 450, r: 10, info: "Small, airless, closest to the Sun." },
-    { name: "Venus", type: "Planet", x: 450 + 160, y: 450, r: 14, info: "Thick atmosphere, runaway greenhouse." },
-    { name: "Earth", type: "Planet", x: 450 + 210, y: 450, r: 16, info: "Our home, liquid water and complex life." },
-    { name: "Mars", type: "Planet", x: 450 + 260, y: 450, r: 14, info: "Cold desert world, past rivers and lakes." },
-    { name: "Jupiter", type: "Planet", x: 450 + 330, y: 450, r: 30, info: "Largest planet, powerful magnetic field." },
-    { name: "Saturn", type: "Planet", x: 450 + 410, y: 450, r: 26, info: "Spectacular rings, moon Titan may host chemistry for life." }
-];
+/* Convert degrees to radians */
+function deg2rad(d) { return d * Math.PI / 180; }
+function rad2deg(r) { return r * 180 / Math.PI; }
 
-/* LIFE MODE DATA */
+/* Local sidereal time (very simplified) */
+function getLocalSiderealTime(date, lonDeg) {
+    const JD = (date.getTime() / 86400000) + 2440587.5;
+    const D = JD - 2451545.0;
+    let GMST = 18.697374558 + 24.06570982441908 * D;
+    GMST = ((GMST % 24) + 24) % 24;
+    const LST = GMST + lonDeg / 15;
+    return ((LST % 24) + 24) % 24;
+}
+
+/* RA/Dec (deg) -> Alt/Az (deg) */
+function raDecToAltAz(raDeg, decDeg, latDeg, lonDeg, date) {
+    const LST = getLocalSiderealTime(date, lonDeg);
+    const HA = (LST * 15) - raDeg; // hour angle in degrees
+
+    const ha = deg2rad(HA);
+    const dec = deg2rad(decDeg);
+    const lat = deg2rad(latDeg);
+
+    const sinAlt = Math.sin(dec) * Math.sin(lat) + Math.cos(dec) * Math.cos(lat) * Math.cos(ha);
+    const alt = Math.asin(sinAlt);
+
+    const cosAz = (Math.sin(dec) - Math.sin(alt) * Math.sin(lat)) / (Math.cos(alt) * Math.cos(lat));
+    let az = Math.acos(cosAz);
+
+    if (Math.sin(ha) > 0) {
+        az = 2 * Math.PI - az;
+    }
+
+    return {
+        altDeg: rad2deg(alt),
+        azDeg: rad2deg(az)
+    };
+}
+
+/* Alt/Az -> screen coordinates (simple projection) */
+function altAzToScreen(altDeg, azDeg) {
+    const altNorm = altDeg / 90; // 0 at horizon, 1 at zenith
+    const azRad = deg2rad(azDeg);
+
+    const cx = 0.5;
+    const cy = 0.6;
+
+    const radius = 0.45 * altNorm;
+
+    const x = cx + radius * Math.sin(azRad);
+    const y = cy - radius * Math.cos(azRad);
+
+    return { x, y };
+}
+
+/* Apply gyroscope rotation (very simplified) */
+function applyGyroToScreen(xNorm, yNorm) {
+    if (!useGyro) return { x: xNorm, y: yNorm };
+
+    const yaw = alpha * Math.PI / 180;
+    const pitch = beta * Math.PI / 180;
+
+    const cx = 0.5;
+    const cy = 0.5;
+    let dx = xNorm - cx;
+    let dy = yNorm - cy;
+
+    const cosY = Math.cos(yaw);
+    const sinY = Math.sin(yaw);
+    const cosP = Math.cos(pitch);
+    const sinP = Math.sin(pitch);
+
+    let rx = dx * cosY - dy * sinY;
+    let ry = dx * sinY + dy * cosY;
+
+    ry = ry * cosP - 0.3 * sinP;
+
+    return { x: cx + rx, y: cy + ry };
+}
+
+/* DRAW SKY MODE (stars + planets + moons + DSOs) */
+function drawSky() {
+    drawBackground();
+    renderedObjects = [];
+
+    const now = new Date();
+    const lat = hasLocation ? userLat : 48.0;
+    const lon = hasLocation ? userLon : 11.5;
+
+    /* Stars */
+    for (const star of starCatalog) {
+        const { altDeg, azDeg } = raDecToAltAz(star.ra, star.dec, lat, lon, now);
+        if (altDeg <= 0) continue;
+
+        const proj = altAzToScreen(altDeg, azDeg);
+        const rotated = applyGyroToScreen(proj.x, proj.y);
+        const x = rotated.x * canvas.width;
+        const y = rotated.y * canvas.height;
+
+        const mag = star.mag ?? 3.0;
+        const r = Math.max(1, 6 - mag); // simple size scaling
+
+        let color = "#f9fafb";
+        if (star.spectral) {
+            const s = star.spectral[0];
+            if (s === "O" || s === "B") color = "#93c5fd";
+            else if (s === "A") color = "#bfdbfe";
+            else if (s === "F") color = "#fee2e2";
+            else if (s === "G") color = "#fde68a";
+            else if (s === "K") color = "#fdba74";
+            else if (s === "M") color = "#f97316";
+        }
+
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        renderedObjects.push({
+            type: "star",
+            name: star.name,
+            x, y, r,
+            data: star
+        });
+    }
+
+    /* Planets */
+    for (const planet of planetCatalog) {
+        if (!planet.ra || !planet.dec) continue;
+        const { altDeg, azDeg } = raDecToAltAz(planet.ra, planet.dec, lat, lon, now);
+        if (altDeg <= 0) continue;
+
+        const proj = altAzToScreen(altDeg, azDeg);
+        const rotated = applyGyroToScreen(proj.x, proj.y);
+        const x = rotated.x * canvas.width;
+        const y = rotated.y * canvas.height;
+
+        const r = planet.size || 10;
+        let color = planet.color || "#facc15";
+
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        renderedObjects.push({
+            type: "planet",
+            name: planet.name,
+            x, y, r,
+            data: planet
+        });
+    }
+
+    /* Moons */
+    for (const moon of moonCatalog) {
+        if (!moon.ra || !moon.dec) continue;
+        const { altDeg, azDeg } = raDecToAltAz(moon.ra, moon.dec, lat, lon, now);
+        if (altDeg <= 0) continue;
+
+        const proj = altAzToScreen(altDeg, azDeg);
+        const rotated = applyGyroToScreen(proj.x, proj.y);
+        const x = rotated.x * canvas.width;
+        const y = rotated.y * canvas.height;
+
+        const r = moon.size || 6;
+        ctx.fillStyle = moon.color || "#e5e7eb";
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        renderedObjects.push({
+            type: "moon",
+            name: moon.name,
+            x, y, r,
+            data: moon
+        });
+    }
+
+    /* DSOs */
+    for (const dso of dsoCatalog) {
+        const { altDeg, azDeg } = raDecToAltAz(dso.ra, dso.dec, lat, lon, now);
+        if (altDeg <= 0) continue;
+
+        const proj = altAzToScreen(altDeg, azDeg);
+        const rotated = applyGyroToScreen(proj.x, proj.y);
+        const x = rotated.x * canvas.width;
+        const y = rotated.y * canvas.height;
+
+        const r = (dso.size || 30) / 200; // small patch
+        const radiusPx = r * canvas.width;
+
+        ctx.fillStyle = "rgba(147,197,253,0.6)";
+        ctx.beginPath();
+        ctx.arc(x, y, radiusPx, 0, Math.PI * 2);
+        ctx.fill();
+
+        renderedObjects.push({
+            type: "dso",
+            name: dso.name,
+            x, y, r: radiusPx,
+            data: dso
+        });
+    }
+
+    infoTitle.textContent = "Sky Mode";
+    infoBody.innerHTML = "Real sky based on your location and time. Tap stars, planets, moons, and nebulae to see their information.";
+    infoHint.textContent = "Catalogs: stars.json, planets.json, moons.json, dsos.json.";
+}
+
+/* PLANETS MODE (solar system view placeholder) */
+function drawPlanetsMode() {
+    drawBackground();
+    renderedObjects = [];
+
+    const cx = canvas.width * 0.5;
+    const cy = canvas.height * 0.5;
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(148,163,184,0.4)";
+    ctx.lineWidth = 1.5;
+    for (let i = 1; i <= 6; i++) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, 90 + i * 45, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+    ctx.restore();
+
+    for (const planet of planetCatalog) {
+        const idx = planet.index ?? 1;
+        const angle = (t * 0.05 * (idx + 1)) % (Math.PI * 2);
+        const radius = 90 + idx * 45;
+
+        const x = cx + radius * Math.cos(angle);
+        const y = cy + radius * Math.sin(angle);
+        const r = planet.size || 14;
+
+        ctx.fillStyle = planet.color || "#facc15";
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        renderedObjects.push({
+            type: "planet",
+            name: planet.name,
+            x, y, r,
+            data: planet
+        });
+    }
+
+    infoTitle.textContent = "Planets Mode";
+    infoBody.innerHTML = "Simplified solar system view. Tap a planet to see its details.";
+    infoHint.textContent = "Real ephemeris math can refine positions later.";
+}
+
+/* LIFE MODE (exoplanets list placeholder) */
 const lifeWorlds = [
     {
         name: "TRAPPIST-1e",
@@ -345,141 +666,12 @@ const lifeWorlds = [
         water: "Unknown",
         habitability: "Uncertain",
         description: "Closest known exoplanet, orbiting the nearest star to the Sun."
-    },
-    {
-        name: "LHS 1140 b",
-        star: "LHS 1140",
-        distance: "≈ 40 ly",
-        temp: "Cool super-Earth",
-        water: "Likely",
-        habitability: "High potential",
-        description: "Dense planet in the habitable zone, may host deep oceans."
     }
 ];
 
-/* DRAW SKY MODE */
-function drawSky() {
+function drawLifeMode() {
     drawBackground();
-
-    // Simple constellation line
-    ctx.save();
-    ctx.strokeStyle = "rgba(148,163,184,0.6)";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(500, 260); // Betelgeuse
-    ctx.lineTo(540, 340); // Rigel
-    ctx.stroke();
-    ctx.restore();
-
-    objects = [];
-
-    for (let obj of skyObjects) {
-        objects.push({
-            name: obj.name,
-            type: obj.type,
-            x: obj.x,
-            y: obj.y,
-            r: obj.type === "Planet" ? 12 : 6,
-            info: obj.info
-        });
-
-        if (obj.type === "Star") {
-            ctx.fillStyle = "#f9fafb";
-        } else {
-            ctx.fillStyle = "#f97316";
-        }
-
-        ctx.beginPath();
-        ctx.arc(obj.x, obj.y, obj.type === "Planet" ? 12 : 6, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    infoPanel.innerHTML = `
-        <strong>Sky Mode:</strong> A simplified view of bright stars and planets.<br>
-        Tap Sirius, Betelgeuse, Mars, Jupiter, or Saturn to learn more.<br>
-        The sky theme changes automatically with time (day, sunrise/sunset, night).
-    `;
-}
-
-/* DRAW PLANETS MODE */
-function drawPlanets() {
-    drawBackground();
-
-    // Orbits
-    ctx.save();
-    ctx.strokeStyle = "rgba(148,163,184,0.4)";
-    ctx.lineWidth = 1.5;
-    for (let i = 1; i <= 6; i++) {
-        ctx.beginPath();
-        ctx.arc(450, 450, 100 + i * 50, 0, Math.PI * 2);
-        ctx.stroke();
-    }
-    ctx.restore();
-
-    objects = [];
-
-    for (let obj of planetObjects) {
-        objects.push({
-            name: obj.name,
-            type: obj.type,
-            x: obj.x,
-            y: obj.y,
-            r: obj.r,
-            info: obj.info
-        });
-
-        if (obj.name === "Sun") {
-            const grad = ctx.createRadialGradient(obj.x, obj.y, 0, obj.x, obj.y, obj.r * 2.5);
-            grad.addColorStop(0, "#ffffff");
-            grad.addColorStop(0.3, "#fde68a");
-            grad.addColorStop(1, "rgba(251,191,36,0)");
-            ctx.fillStyle = grad;
-            ctx.beginPath();
-            ctx.arc(obj.x, obj.y, obj.r * 2.5, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.fillStyle = "#fde68a";
-            ctx.beginPath();
-            ctx.arc(obj.x, obj.y, obj.r, 0, Math.PI * 2);
-            ctx.fill();
-        } else {
-            let color = "#3b82f6";
-            if (obj.name === "Mars") color = "#ef4444";
-            if (obj.name === "Venus") color = "#f97316";
-            if (obj.name === "Jupiter") color = "#facc15";
-            if (obj.name === "Saturn") color = "#e5e7eb";
-
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.arc(obj.x, obj.y, obj.r, 0, Math.PI * 2);
-            ctx.fill();
-
-            if (obj.name === "Saturn") {
-                ctx.strokeStyle = "rgba(229,231,235,0.8)";
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.ellipse(obj.x, obj.y, obj.r + 10, obj.r + 4, 0, 0, Math.PI * 2);
-                ctx.stroke();
-            }
-        }
-    }
-
-    infoPanel.innerHTML = `
-        <strong>Planets Mode:</strong> A simplified solar system view.<br>
-        Tap the Sun, Earth, Mars, Jupiter, or Saturn to learn more.<br>
-        Background sky still follows time of day.
-    `;
-}
-
-/* DRAW LIFE MODE */
-function drawLife() {
-    drawBackground();
-    objects = []; // no canvas taps here, we use cards
-
-    infoPanel.innerHTML = `
-        <strong>Life Mode:</strong> Explore real exoplanets where life might exist.<br>
-        Tap a world below to see its details.
-    `;
+    renderedObjects = [];
 
     lifeList.style.display = "block";
     lifeList.innerHTML = "";
@@ -493,8 +685,8 @@ function drawLife() {
             <div class="life-meta">Water: ${world.water} • Temperature: ${world.temp}</div>
         `;
         card.onclick = () => {
-            infoPanel.innerHTML = `
-                <strong>${world.name}</strong><br>
+            infoTitle.textContent = world.name;
+            infoBody.innerHTML = `
                 Star: ${world.star}<br>
                 Distance: ${world.distance}<br>
                 Temperature: ${world.temp}<br>
@@ -502,9 +694,15 @@ function drawLife() {
                 Habitability: ${world.habitability}<br><br>
                 ${world.description}
             `;
+            infoHint.textContent = "These are real exoplanets discovered by astronomers.";
+            infoPanel.classList.add("visible");
         };
         lifeList.appendChild(card);
     });
+
+    infoTitle.textContent = "Life Mode";
+    infoBody.innerHTML = "Explore real exoplanets where life might exist. Tap a world in the list to see its details.";
+    infoHint.textContent = "Later you can connect this to more detailed habitability models.";
 }
 
 /* MODE SWITCHING */
@@ -515,19 +713,21 @@ function setMode(newMode) {
     lifeBtn.classList.toggle("active", mode === "life");
 
     if (mode === "life") {
-        drawLife();
+        lifeList.style.display = "block";
+        drawLifeMode();
     } else {
         lifeList.style.display = "none";
         if (mode === "sky") drawSky();
-        if (mode === "planets") drawPlanets();
+        if (mode === "planets") drawPlanetsMode();
     }
+    infoPanel.classList.remove("visible");
 }
 
 skyBtn.onclick = () => setMode("sky");
 planetsBtn.onclick = () => setMode("planets");
 lifeBtn.onclick = () => setMode("life");
 
-/* TAP HANDLING ON CANVAS */
+/* TAP HANDLING */
 canvas.addEventListener("click", (e) => {
     if (mode === "life") return;
 
@@ -535,41 +735,111 @@ canvas.addEventListener("click", (e) => {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    for (let obj of objects) {
+    let hit = null;
+    let bestDist = Infinity;
+
+    for (const obj of renderedObjects) {
         const dx = x - obj.x;
         const dy = y - obj.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist <= obj.r + 4) {
-            infoPanel.innerHTML = `
-                <strong>${obj.name}</strong> (${obj.type})<br>
-                ${obj.info}
-            `;
-            break;
+        if (dist <= obj.r + 8 && dist < bestDist) {
+            bestDist = dist;
+            hit = obj;
         }
     }
+
+    if (hit) {
+        const d = hit.data;
+        infoTitle.textContent = `${hit.name} (${hit.type.toUpperCase()})`;
+
+        let bodyHtml = "";
+
+        if (hit.type === "star") {
+            bodyHtml = `
+                Magnitude: ${d.mag ?? "?"}<br>
+                Spectral type: ${d.spectral ?? "?"}<br>
+                Constellation: ${d.constellation ?? "?"}<br>
+            `;
+        } else if (hit.type === "planet") {
+            bodyHtml = `
+                Type: ${d.type ?? "Planet"}<br>
+                Orbit: ${d.orbit ?? "?"}<br>
+                Radius: ${d.radius ?? "?"}<br>
+                Description: ${d.description ?? "No description yet."}<br>
+            `;
+        } else if (hit.type === "moon") {
+            bodyHtml = `
+                Host planet: ${d.host ?? "?"}<br>
+                Radius: ${d.radius ?? "?"}<br>
+                Description: ${d.description ?? "No description yet."}<br>
+            `;
+        } else if (hit.type === "dso") {
+            bodyHtml = `
+                Type: ${d.type ?? "Deep-sky object"}<br>
+                Magnitude: ${d.mag ?? "?"}<br>
+                Size: ${d.size ?? "?"} arcmin<br>
+                Description: ${d.description ?? "No description yet."}<br>
+            `;
+        }
+
+        infoBody.innerHTML = bodyHtml;
+        infoHint.textContent = "Tap another object to explore more of the sky.";
+        infoPanel.classList.add("visible");
+    } else {
+        infoPanel.classList.remove("visible");
+    }
 });
+
+/* GYROSCOPE / DEVICE ORIENTATION */
+if (window.DeviceOrientationEvent) {
+    window.addEventListener("deviceorientation", (event) => {
+        alpha = event.alpha || 0;
+        beta = event.beta || 0;
+        gamma = event.gamma || 0;
+    });
+}
+
+/* LOAD CATALOGS */
+async function loadCatalogs() {
+    try {
+        const [stars, planets, moons, dsos] = await Promise.all([
+            fetch("stars.json").then(r => r.json()),
+            fetch("planets.json").then(r => r.json()),
+            fetch("moons.json").then(r => r.json()),
+            fetch("dsos.json").then(r => r.json())
+        ]);
+
+        starCatalog = stars;
+        planetCatalog = planets;
+        moonCatalog = moons;
+        dsoCatalog = dsos;
+
+        infoHint.textContent = "Catalogs loaded. Tap objects in the sky to see their information.";
+    } catch (err) {
+        console.error("Error loading catalogs:", err);
+        infoHint.textContent = "Error loading catalogs. Check stars.json, planets.json, moons.json, dsos.json.";
+    }
+}
 
 /* ANIMATION LOOP */
 function animate() {
     t += 0.01;
     updateThemeTarget();
 
-    if (mode === "sky") {
-        drawSky();
-    } else if (mode === "planets") {
-        drawPlanets();
-    } else if (mode === "life") {
-        drawLife();
-    }
+    if (mode === "sky") drawSky();
+    else if (mode === "planets") drawPlanetsMode();
+    else if (mode === "life") drawLifeMode();
 
     requestAnimationFrame(animate);
 }
 
+/* INIT */
 initLocation();
 currentTheme = getTimeTheme();
 targetTheme = currentTheme;
 themeProgress = 1;
 setMode("sky");
+loadCatalogs();
 animate();
 </script>
 
