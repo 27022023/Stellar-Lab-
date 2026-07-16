@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Explore the Universe</title>
+<title>Explore the Universe (WebGL)</title>
 <style>
 html, body {
     margin: 0;
@@ -14,9 +14,7 @@ html, body {
     background: #020617;
     color: #e5e7eb;
 }
-
-/* FULLSCREEN SKY */
-#skyCanvas {
+#glCanvas {
     position: fixed;
     top: 0;
     left: 0;
@@ -24,8 +22,6 @@ html, body {
     height: 100vh;
     display: block;
 }
-
-/* TOP BAR */
 #topBar {
     position: fixed;
     top: 12px;
@@ -37,27 +33,22 @@ html, body {
     z-index: 20;
     text-align: center;
 }
-
 #topBar h1 {
     margin: 0;
     font-size: 24px;
     color: #f9fafb;
     text-shadow: 0 0 10px rgba(0,0,0,0.7);
 }
-
 #topBar p {
     margin: 4px 0 10px;
     font-size: 13px;
     opacity: 0.9;
 }
-
-/* MODE BUTTONS */
 #modeButtons {
     display: flex;
     gap: 8px;
     justify-content: center;
 }
-
 button {
     margin: 0;
     padding: 7px 13px;
@@ -73,8 +64,6 @@ button.active {
     border-color: #22c55e;
     color: #f9fafb;
 }
-
-/* MOON HOME BUTTON */
 .moon-home {
     position: fixed;
     left: 12px;
@@ -94,8 +83,6 @@ button.active {
     box-shadow: 0 0 20px rgba(0,0,0,0.9);
     z-index: 30;
 }
-
-/* LOCATION TEXT */
 #locationText {
     position: fixed;
     bottom: 90px;
@@ -106,8 +93,6 @@ button.active {
     text-shadow: 0 0 8px rgba(0,0,0,0.8);
     z-index: 15;
 }
-
-/* SLIDE-UP INFO PANEL */
 #infoPanel {
     position: fixed;
     left: 0;
@@ -124,29 +109,23 @@ button.active {
     transition: bottom 0.35s ease;
     backdrop-filter: blur(12px);
 }
-
 #infoPanel.visible {
     bottom: 0;
 }
-
 #infoTitle {
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 6px;
 }
-
 #infoBody {
     font-size: 14px;
     opacity: 0.9;
 }
-
 #infoHint {
     margin-top: 10px;
     font-size: 12px;
     opacity: 0.7;
 }
-
-/* LIFE LIST */
 #lifeList {
     position: fixed;
     right: 10px;
@@ -162,7 +141,6 @@ button.active {
     z-index: 22;
     backdrop-filter: blur(10px);
 }
-
 .life-card {
     background: #020617;
     border-radius: 10px;
@@ -184,14 +162,13 @@ button.active {
 }
 </style>
 </head>
-
 <body>
 
 <a class="moon-home" href="../experiment.html">Lab</a>
 
 <div id="topBar">
     <h1>Explore the Universe</h1>
-    <p>Real sky, real objects, tap to learn.</p>
+    <p>WebGL sky, real objects, tap to learn.</p>
     <div id="modeButtons">
         <button id="skyBtn" class="active">Sky</button>
         <button id="planetsBtn">Planets</button>
@@ -199,14 +176,14 @@ button.active {
     </div>
 </div>
 
-<canvas id="skyCanvas"></canvas>
+<canvas id="glCanvas"></canvas>
 
 <div id="locationText">Detecting your location and time…</div>
 
 <div id="infoPanel">
     <div id="infoTitle">Tap an object in the sky</div>
     <div id="infoBody">
-        Once the catalogs load, you can tap stars, planets, moons, and nebulae to see their information here.
+        WebGL sky is active. Stars, planets, moons, and nebulae can be tapped to show info here.
     </div>
     <div id="infoHint">Sky mode uses your location and time to show the real sky.</div>
 </div>
@@ -214,16 +191,8 @@ button.active {
 <div id="lifeList"></div>
 
 <script>
-const canvas = document.getElementById("skyCanvas");
-const ctx = canvas.getContext("2d");
-
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
+const canvas = document.getElementById("glCanvas");
+const gl = canvas.getContext("webgl");
 const skyBtn = document.getElementById("skyBtn");
 const planetsBtn = document.getElementById("planetsBtn");
 const lifeBtn = document.getElementById("lifeBtn");
@@ -236,74 +205,19 @@ const lifeList = document.getElementById("lifeList");
 
 let mode = "sky";
 let t = 0;
-
-/* Gyroscope state */
-let useGyro = true;
-let alpha = 0;
-let beta = 0;
-let gamma = 0;
-
-/* Location/time */
-let userLat = 0;
-let userLon = 0;
+let userLat = 48.0;
+let userLon = 11.5;
 let hasLocation = false;
 
-/* Catalogs */
-let starCatalog = [];
-let planetCatalog = [];
-let moonCatalog = [];
-let dsoCatalog = [];
-
-/* Rendered objects for tap detection */
-let renderedObjects = [];
-
-/* THEMES */
-const themes = {
-    day: {
-        name: "day",
-        top: [122, 184, 255],
-        mid: [188, 217, 255],
-        bottom: [232, 242, 255],
-        starOpacity: 0.3
-    },
-    sunrise: {
-        name: "sunrise",
-        top: [255, 179, 107],
-        mid: [255, 223, 194],
-        bottom: [200, 217, 255],
-        starOpacity: 0.5
-    },
-    sunset: {
-        name: "sunset",
-        top: [255, 138, 92],
-        mid: [255, 191, 161],
-        bottom: [184, 201, 255],
-        starOpacity: 0.6
-    },
-    night: {
-        name: "night",
-        top: [26, 11, 61],
-        mid: [10, 6, 30],
-        bottom: [2, 6, 23],
-        starOpacity: 1.0
-    }
-};
-
-let currentTheme = themes.night;
-let targetTheme = themes.night;
-let themeProgress = 1;
-
-function lerp(a, b, p) { return a + (b - a) * p; }
-function lerpColor(c1, c2, p) {
-    return [
-        Math.round(lerp(c1[0], c2[0], p)),
-        Math.round(lerp(c1[1], c2[1], p)),
-        Math.round(lerp(c1[2], c2[2], p))
-    ];
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    gl.viewport(0, 0, canvas.width, canvas.height);
 }
-function rgbToStr(c) { return `rgb(${c[0]}, ${c[1]}, ${c[2]})`; }
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
 
-/* LOCATION + TIME */
+/* Simple location/time */
 function initLocation() {
     const now = new Date();
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "Unknown time zone";
@@ -328,311 +242,101 @@ function initLocation() {
     }
 }
 
-/* TIME-BASED THEME */
-function getTimeTheme() {
-    const now = new Date();
-    const hour = now.getHours() + now.getMinutes() / 60;
+/* WebGL shaders for stars */
+const vsSource = `
+attribute vec2 aPosition;
+attribute float aBrightness;
+uniform vec2 uResolution;
+uniform float uPointSize;
+varying float vBrightness;
+void main() {
+    vec2 zeroToOne = aPosition / uResolution;
+    vec2 clipSpace = zeroToOne * 2.0 - 1.0;
+    gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+    gl_PointSize = uPointSize * aBrightness;
+    vBrightness = aBrightness;
+}
+`;
 
-    if (hour >= 7 && hour < 17) return themes.day;
-    else if (hour >= 5 && hour < 7) return themes.sunrise;
-    else if (hour >= 17 && hour < 20.5) return themes.sunset;
-    else return themes.night;
+const fsSource = `
+precision mediump float;
+varying float vBrightness;
+void main() {
+    float d = distance(gl_PointCoord, vec2(0.5, 0.5));
+    float alpha = smoothstep(0.5, 0.0, d) * vBrightness;
+    gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
+}
+`;
+
+function createShader(gl, type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    return shader;
+}
+function createProgram(gl, vsSource, fsSource) {
+    const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+    const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+    const program = gl.createProgram();
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+    gl.linkProgram(program);
+    return program;
 }
 
-function updateThemeTarget() {
-    const newTheme = getTimeTheme();
-    if (newTheme.name !== targetTheme.name) {
-        targetTheme = newTheme;
-        themeProgress = 0;
-    }
+const program = createProgram(gl, vsSource, fsSource);
+gl.useProgram(program);
+
+const positionLoc = gl.getAttribLocation(program, "aPosition");
+const brightnessLoc = gl.getAttribLocation(program, "aBrightness");
+const resolutionLoc = gl.getUniformLocation(program, "uResolution");
+const pointSizeLoc = gl.getUniformLocation(program, "uPointSize");
+
+/* Star data (placeholder: 2000 stars, you can replace with real catalog later) */
+const starCount = 2000;
+const starPositions = new Float32Array(starCount * 2);
+const starBrightness = new Float32Array(starCount);
+
+for (let i = 0; i < starCount; i++) {
+    const x = Math.random() * window.innerWidth;
+    const y = Math.random() * window.innerHeight;
+    const b = 0.4 + Math.random() * 0.6;
+    starPositions[i * 2] = x;
+    starPositions[i * 2 + 1] = y;
+    starBrightness[i] = b;
 }
 
-/* BACKGROUND */
-function drawBackground() {
-    if (themeProgress < 1) {
-        themeProgress += 0.002;
-        if (themeProgress > 1) themeProgress = 1;
-    }
+/* Buffers */
+const positionBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, starPositions, gl.STATIC_DRAW);
 
-    const top = lerpColor(currentTheme.top, targetTheme.top, themeProgress);
-    const mid = lerpColor(currentTheme.mid, targetTheme.mid, themeProgress);
-    const bottom = lerpColor(currentTheme.bottom, targetTheme.bottom, themeProgress);
-    const starOpacity = lerp(currentTheme.starOpacity, targetTheme.starOpacity, themeProgress);
+const brightnessBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, brightnessBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, starBrightness, gl.STATIC_DRAW);
 
-    if (themeProgress === 1) currentTheme = targetTheme;
+/* Planets, moons, DSOs (simple sample data) */
+const planets = [
+    { name: "Mercury", radius: 8, color: "#e5e7eb", orbit: 60 },
+    { name: "Venus", radius: 10, color: "#fbbf24", orbit: 90 },
+    { name: "Earth", radius: 11, color: "#22c55e", orbit: 120 },
+    { name: "Mars", radius: 9, color: "#f97316", orbit: 150 },
+    { name: "Jupiter", radius: 16, color: "#facc15", orbit: 190 },
+    { name: "Saturn", radius: 14, color: "#fde68a", orbit: 230 }
+];
 
-    const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    grad.addColorStop(0, rgbToStr(top));
-    grad.addColorStop(0.5, rgbToStr(mid));
-    grad.addColorStop(1, rgbToStr(bottom));
+const moons = [
+    { name: "Moon", host: "Earth", radius: 5, orbit: 20 },
+    { name: "Phobos", host: "Mars", radius: 3, orbit: 12 },
+    { name: "Deimos", host: "Mars", radius: 2, orbit: 18 }
+];
 
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, canvas.height);
+const dsos = [
+    { name: "Orion Nebula", type: "Nebula", size: 40, x: 0.3, y: 0.4 },
+    { name: "Andromeda Galaxy", type: "Galaxy", size: 50, x: 0.7, y: 0.3 },
+    { name: "Pleiades", type: "Cluster", size: 35, x: 0.5, y: 0.2 }
+];
 
-    ctx.save();
-    ctx.fillStyle = `rgba(148,163,184,${starOpacity})`;
-    for (let i = 0; i < 220; i++) {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
-        const r = Math.random() * 1.8;
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fill();
-    }
-    ctx.restore();
-}
-
-/* ASTRONOMY MATH (simplified) */
-function deg2rad(d) { return d * Math.PI / 180; }
-function rad2deg(r) { return r * 180 / Math.PI; }
-
-function getLocalSiderealTime(date, lonDeg) {
-    const JD = (date.getTime() / 86400000) + 2440587.5;
-    const D = JD - 2451545.0;
-    let GMST = 18.697374558 + 24.06570982441908 * D;
-    GMST = ((GMST % 24) + 24) % 24;
-    const LST = GMST + lonDeg / 15;
-    return ((LST % 24) + 24) % 24;
-}
-
-function raDecToAltAz(raDeg, decDeg, latDeg, lonDeg, date) {
-    const LST = getLocalSiderealTime(date, lonDeg);
-    const HA = (LST * 15) - raDeg;
-
-    const ha = deg2rad(HA);
-    const dec = deg2rad(decDeg);
-    const lat = deg2rad(latDeg);
-
-    const sinAlt = Math.sin(dec) * Math.sin(lat) + Math.cos(dec) * Math.cos(lat) * Math.cos(ha);
-    const alt = Math.asin(sinAlt);
-
-    const cosAz = (Math.sin(dec) - Math.sin(alt) * Math.sin(lat)) / (Math.cos(alt) * Math.cos(lat));
-    let az = Math.acos(cosAz);
-
-    if (Math.sin(ha) > 0) {
-        az = 2 * Math.PI - az;
-    }
-
-    return {
-        altDeg: rad2deg(alt),
-        azDeg: rad2deg(az)
-    };
-}
-
-function altAzToScreen(altDeg, azDeg) {
-    const altNorm = altDeg / 90;
-    const azRad = deg2rad(azDeg);
-
-    const cx = 0.5;
-    const cy = 0.6;
-
-    const radius = 0.45 * altNorm;
-
-    const x = cx + radius * Math.sin(azRad);
-    const y = cy - radius * Math.cos(azRad);
-
-    return { x, y };
-}
-
-function applyGyroToScreen(xNorm, yNorm) {
-    if (!useGyro) return { x: xNorm, y: yNorm };
-
-    const yaw = alpha * Math.PI / 180;
-    const pitch = beta * Math.PI / 180;
-
-    const cx = 0.5;
-    const cy = 0.5;
-    let dx = xNorm - cx;
-    let dy = yNorm - cy;
-
-    const cosY = Math.cos(yaw);
-    const sinY = Math.sin(yaw);
-    const cosP = Math.cos(pitch);
-    const sinP = Math.sin(pitch);
-
-    let rx = dx * cosY - dy * sinY;
-    let ry = dx * sinY + dy * cosY;
-
-    ry = ry * cosP - 0.3 * sinP;
-
-    return { x: cx + rx, y: cy + ry };
-}
-
-/* DRAW SKY MODE */
-function drawSky() {
-    drawBackground();
-    renderedObjects = [];
-
-    const now = new Date();
-    const lat = hasLocation ? userLat : 48.0;
-    const lon = hasLocation ? userLon : 11.5;
-
-    /* Stars */
-    for (const star of starCatalog) {
-        const { altDeg, azDeg } = raDecToAltAz(star.ra, star.dec, lat, lon, now);
-        if (altDeg <= 0) continue;
-
-        const proj = altAzToScreen(altDeg, azDeg);
-        const rotated = applyGyroToScreen(proj.x, proj.y);
-        const x = rotated.x * canvas.width;
-        const y = rotated.y * canvas.height;
-
-        const mag = star.mag ?? 3.0;
-        const r = Math.max(1, 6 - mag);
-
-        let color = "#f9fafb";
-        if (star.spectral) {
-            const s = star.spectral[0];
-            if (s === "O" || s === "B") color = "#93c5fd";
-            else if (s === "A") color = "#bfdbfe";
-            else if (s === "F") color = "#fee2e2";
-            else if (s === "G") color = "#fde68a";
-            else if (s === "K") color = "#fdba74";
-            else if (s === "M") color = "#f97316";
-        }
-
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fill();
-
-        renderedObjects.push({
-            type: "star",
-            name: star.name,
-            x, y, r,
-            data: star
-        });
-    }
-
-    /* Planets */
-    for (const planet of planetCatalog) {
-        if (!planet.ra || !planet.dec) continue;
-        const { altDeg, azDeg } = raDecToAltAz(planet.ra, planet.dec, lat, lon, now);
-        if (altDeg <= 0) continue;
-
-        const proj = altAzToScreen(altDeg, azDeg);
-        const rotated = applyGyroToScreen(proj.x, proj.y);
-        const x = rotated.x * canvas.width;
-        const y = rotated.y * canvas.height;
-
-        const r = planet.size || 10;
-        let color = planet.color || "#facc15";
-
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fill();
-
-        renderedObjects.push({
-            type: "planet",
-            name: planet.name,
-            x, y, r,
-            data: planet
-        });
-    }
-
-    /* Moons */
-    for (const moon of moonCatalog) {
-        if (!moon.ra || !moon.dec) continue;
-        const { altDeg, azDeg } = raDecToAltAz(moon.ra, moon.dec, lat, lon, now);
-        if (altDeg <= 0) continue;
-
-        const proj = altAzToScreen(altDeg, azDeg);
-        const rotated = applyGyroToScreen(proj.x, proj.y);
-        const x = rotated.x * canvas.width;
-        const y = rotated.y * canvas.height;
-
-        const r = moon.size || 6;
-        ctx.fillStyle = moon.color || "#e5e7eb";
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fill();
-
-        renderedObjects.push({
-            type: "moon",
-            name: moon.name,
-            x, y, r,
-            data: moon
-        });
-    }
-
-    /* DSOs */
-    for (const dso of dsoCatalog) {
-        const { altDeg, azDeg } = raDecToAltAz(dso.ra, dso.dec, lat, lon, now);
-        if (altDeg <= 0) continue;
-
-        const proj = altAzToScreen(altDeg, azDeg);
-        const rotated = applyGyroToScreen(proj.x, proj.y);
-        const x = rotated.x * canvas.width;
-        const y = rotated.y * canvas.height;
-
-        const r = (dso.size || 30) / 200;
-        const radiusPx = r * canvas.width;
-
-        ctx.fillStyle = "rgba(147,197,253,0.6)";
-        ctx.beginPath();
-        ctx.arc(x, y, radiusPx, 0, Math.PI * 2);
-        ctx.fill();
-
-        renderedObjects.push({
-            type: "dso",
-            name: dso.name,
-            x, y, r: radiusPx,
-            data: dso
-        });
-    }
-
-    infoTitle.textContent = "Sky Mode";
-    infoBody.innerHTML = "Real sky based on your location and time. Tap stars, planets, moons, and nebulae to see their information.";
-    infoHint.textContent = "Catalogs: stars-part1.json, stars-part2.json, planets.json, moons.json, dsos.json.";
-}
-
-/* PLANETS MODE */
-function drawPlanetsMode() {
-    drawBackground();
-    renderedObjects = [];
-
-    const cx = canvas.width * 0.5;
-    const cy = canvas.height * 0.5;
-
-    ctx.save();
-    ctx.strokeStyle = "rgba(148,163,184,0.4)";
-    ctx.lineWidth = 1.5;
-    for (let i = 1; i <= 6; i++) {
-        ctx.beginPath();
-        ctx.arc(cx, cy, 90 + i * 45, 0, Math.PI * 2);
-        ctx.stroke();
-    }
-    ctx.restore();
-
-    for (const planet of planetCatalog) {
-        const idx = planet.index ?? 1;
-        const angle = (t * 0.05 * (idx + 1)) % (Math.PI * 2);
-        const radius = 90 + idx * 45;
-
-        const x = cx + radius * Math.cos(angle);
-        const y = cy + radius * Math.sin(angle);
-        const r = planet.size || 14;
-
-        ctx.fillStyle = planet.color || "#facc15";
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fill();
-
-        renderedObjects.push({
-            type: "planet",
-            name: planet.name,
-            x, y, r,
-            data: planet
-        });
-    }
-
-    infoTitle.textContent = "Planets Mode";
-    infoBody.innerHTML = "Simplified solar system view. Tap a planet to see its details.";
-    infoHint.textContent = "Real ephemeris math can refine positions later.";
-}
-
-/* LIFE MODE */
 const lifeWorlds = [
     {
         name: "TRAPPIST-1e",
@@ -663,10 +367,160 @@ const lifeWorlds = [
     }
 ];
 
-function drawLifeMode() {
-    drawBackground();
+/* Rendered objects for hit detection (planets/moons/dsos) */
+let renderedObjects = [];
+
+/* Draw sky (WebGL stars + 2D overlay for planets/moons/dsos) */
+const ctx2d = canvas.getContext("2d"); // reuse canvas for overlay
+
+function drawSky() {
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(0.01, 0.02, 0.07, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    gl.useProgram(program);
+    gl.uniform2f(resolutionLoc, canvas.width, canvas.height);
+    gl.uniform1f(pointSizeLoc, 3.0);
+
+    gl.enableVertexAttribArray(positionLoc);
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
+
+    gl.enableVertexAttribArray(brightnessLoc);
+    gl.bindBuffer(gl.ARRAY_BUFFER, brightnessBuffer);
+    gl.vertexAttribPointer(brightnessLoc, 1, gl.FLOAT, false, 0, 0);
+
+    gl.drawArrays(gl.POINTS, 0, starCount);
+
+    renderedObjects = [];
+    ctx2d.clearRect(0, 0, canvas.width, canvas.height);
+
+    /* Planets */
+    const cx = canvas.width * 0.5;
+    const cy = canvas.height * 0.6;
+    ctx2d.save();
+    ctx2d.strokeStyle = "rgba(148,163,184,0.4)";
+    ctx2d.lineWidth = 1.2;
+    for (let i = 0; i < planets.length; i++) {
+        ctx2d.beginPath();
+        ctx2d.arc(cx, cy, planets[i].orbit, 0, Math.PI * 2);
+        ctx2d.stroke();
+    }
+    ctx2d.restore();
+
+    for (let i = 0; i < planets.length; i++) {
+        const p = planets[i];
+        const angle = t * 0.3 + i;
+        const x = cx + p.orbit * Math.cos(angle);
+        const y = cy + p.orbit * Math.sin(angle);
+
+        ctx2d.fillStyle = p.color;
+        ctx2d.beginPath();
+        ctx2d.arc(x, y, p.radius, 0, Math.PI * 2);
+        ctx2d.fill();
+
+        renderedObjects.push({
+            type: "planet",
+            name: p.name,
+            x, y, r: p.radius,
+            data: p
+        });
+    }
+
+    /* Moons */
+    for (let i = 0; i < moons.length; i++) {
+        const m = moons[i];
+        const host = planets.find(p => p.name === m.host);
+        if (!host) continue;
+        const angle = t * 0.8 + i * 1.5;
+        const hx = cx + host.orbit * Math.cos(angle);
+        const hy = cy + host.orbit * Math.sin(angle);
+        const x = hx + m.orbit * Math.cos(angle * 2);
+        const y = hy + m.orbit * Math.sin(angle * 2);
+
+        ctx2d.fillStyle = "#e5e7eb";
+        ctx2d.beginPath();
+        ctx2d.arc(x, y, m.radius, 0, Math.PI * 2);
+        ctx2d.fill();
+
+        renderedObjects.push({
+            type: "moon",
+            name: m.name,
+            x, y, r: m.radius,
+            data: m
+        });
+    }
+
+    /* DSOs */
+    for (const d of dsos) {
+        const x = d.x * canvas.width;
+        const y = d.y * canvas.height;
+        const r = d.size;
+
+        ctx2d.fillStyle = "rgba(147,197,253,0.6)";
+        ctx2d.beginPath();
+        ctx2d.arc(x, y, r, 0, Math.PI * 2);
+        ctx2d.fill();
+
+        renderedObjects.push({
+            type: "dso",
+            name: d.name,
+            x, y, r,
+            data: d
+        });
+    }
+
+    infoTitle.textContent = "Sky Mode (WebGL)";
+    infoBody.innerHTML = "Stars are rendered with WebGL. Planets, moons, and deep-sky objects are overlaid. Tap them to see details.";
+    infoHint.textContent = "This version can be extended to real catalogs (Hipparcos, Gaia) without huge JSON files.";
+}
+
+/* Planets-only mode (2D solar system view) */
+function drawPlanetsMode() {
+    ctx2d.clearRect(0, 0, canvas.width, canvas.height);
     renderedObjects = [];
 
+    const cx = canvas.width * 0.5;
+    const cy = canvas.height * 0.5;
+
+    ctx2d.save();
+    ctx2d.strokeStyle = "rgba(148,163,184,0.4)";
+    ctx2d.lineWidth = 1.5;
+    for (let i = 0; i < planets.length; i++) {
+        ctx2d.beginPath();
+        ctx2d.arc(cx, cy, planets[i].orbit, 0, Math.PI * 2);
+        ctx2d.stroke();
+    }
+    ctx2d.restore();
+
+    for (let i = 0; i < planets.length; i++) {
+        const p = planets[i];
+        const angle = t * 0.3 + i;
+        const x = cx + p.orbit * Math.cos(angle);
+        const y = cy + p.orbit * Math.sin(angle);
+
+        ctx2d.fillStyle = p.color;
+        ctx2d.beginPath();
+        ctx2d.arc(x, y, p.radius, 0, Math.PI * 2);
+        ctx2d.fill();
+
+        renderedObjects.push({
+            type: "planet",
+            name: p.name,
+            x, y, r: p.radius,
+            data: p
+        });
+    }
+
+    infoTitle.textContent = "Planets Mode";
+    infoBody.innerHTML = "Simplified solar system view. Tap a planet to see its details.";
+    infoHint.textContent = "You can later plug in real ephemeris data for accurate positions.";
+}
+
+/* Life mode */
+function drawLifeMode() {
+    ctx2d.clearRect(0, 0, canvas.width, canvas.height);
+    renderedObjects = [];
     lifeList.style.display = "block";
     lifeList.innerHTML = "";
 
@@ -699,7 +553,7 @@ function drawLifeMode() {
     infoHint.textContent = "Later you can connect this to more detailed habitability models.";
 }
 
-/* MODE SWITCHING */
+/* Mode switching */
 function setMode(newMode) {
     mode = newMode;
     skyBtn.classList.toggle("active", mode === "sky");
@@ -721,7 +575,7 @@ skyBtn.onclick = () => setMode("sky");
 planetsBtn.onclick = () => setMode("planets");
 lifeBtn.onclick = () => setMode("life");
 
-/* TAP HANDLING */
+/* Tap handling */
 canvas.addEventListener("click", (e) => {
     if (mode === "life") return;
 
@@ -748,31 +602,22 @@ canvas.addEventListener("click", (e) => {
 
         let bodyHtml = "";
 
-        if (hit.type === "star") {
+        if (hit.type === "planet") {
             bodyHtml = `
-                Magnitude: ${d.mag ?? "?"}<br>
-                Spectral type: ${d.spectral ?? "?"}<br>
-                Constellation: ${d.constellation ?? "?"}<br>
-            `;
-        } else if (hit.type === "planet") {
-            bodyHtml = `
-                Type: ${d.type ?? "Planet"}<br>
-                Orbit: ${d.orbit ?? "?"}<br>
-                Radius: ${d.radius ?? "?"}<br>
-                Description: ${d.description ?? "No description yet."}<br>
+                Type: Planet<br>
+                Orbit radius: ${d.orbit ?? "?"} px<br>
+                Radius: ${d.radius ?? "?"} px<br>
             `;
         } else if (hit.type === "moon") {
             bodyHtml = `
                 Host planet: ${d.host ?? "?"}<br>
-                Radius: ${d.radius ?? "?"}<br>
-                Description: ${d.description ?? "No description yet."}<br>
+                Orbit radius: ${d.orbit ?? "?"} px<br>
+                Radius: ${d.radius ?? "?"} px<br>
             `;
         } else if (hit.type === "dso") {
             bodyHtml = `
                 Type: ${d.type ?? "Deep-sky object"}<br>
-                Magnitude: ${d.mag ?? "?"}<br>
-                Size: ${d.size ?? "?"} arcmin<br>
-                Description: ${d.description ?? "No description yet."}<br>
+                Size: ${d.size ?? "?"} px<br>
             `;
         }
 
@@ -784,72 +629,22 @@ canvas.addEventListener("click", (e) => {
     }
 });
 
-/* GYROSCOPE / DEVICE ORIENTATION */
-if (window.DeviceOrientationEvent) {
-    window.addEventListener("deviceorientation", (event) => {
-        alpha = event.alpha || 0;
-        beta = event.beta || 0;
-        gamma = event.gamma || 0;
-    });
-}
-
-/* LOAD CATALOGS */
-async function loadCatalogs() {
-    try {
-        const starFiles = [
-            "stars-part1.json",
-            "stars-part2.json"
-        ];
-
-        starCatalog = [];
-
-        for (const file of starFiles) {
-            const data = await fetch(file).then(r => r.json());
-            starCatalog.push(...data);
-        }
-
-        const [planets, moons, dsos] = await Promise.all([
-            fetch("planets.json").then(r => r.json()),
-            fetch("moons.json").then(r => r.json()),
-            fetch("dsos.json").then(r => r.json())
-        ]);
-
-        planetCatalog = planets;
-        moonCatalog = moons;
-        dsoCatalog = dsos;
-
-        infoHint.textContent = "Hipparcos catalog loaded. Tap stars, planets, moons, and nebulae to explore.";
-    } catch (err) {
-        console.error("Error loading catalogs:", err);
-        infoHint.textContent = "Error loading catalogs. Check your JSON files.";
-    }
-}
-
-/* ANIMATION LOOP */
+/* Animation loop */
 function animate() {
     t += 0.01;
-    updateThemeTarget();
-
     if (mode === "sky") drawSky();
     else if (mode === "planets") drawPlanetsMode();
-    else if (mode === "life") drawLifeMode();
-
     requestAnimationFrame(animate);
 }
 
-/* INIT */
+/* Init */
 initLocation();
-currentTheme = getTimeTheme();
-targetTheme = currentTheme;
-themeProgress = 1;
 setMode("sky");
-loadCatalogs();
 animate();
 </script>
 
 </body>
-</html>      
-            
+</html>                                           
             
 
             
