@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stars & Phenomena</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    background: #050316;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+
+  .overlay {
+    min-height: 100vh;
+    padding-bottom: 60px;
+
+    background: linear-gradient(
+        135deg,
+        rgba(216, 191, 255, 0.55) 0%,
+        rgba(189, 255, 214, 0.55) 50%,
+        rgba(216, 191, 255, 0.55) 100%
+      ),
+      radial-gradient(circle at top, rgba(150, 90, 255, 0.35), transparent 55%),
+      radial-gradient(circle at bottom, rgba(40, 10, 80, 0.6), #050316);
+
+    background-blend-mode: overlay;
+  }
+
+  .moon-home {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    width: 60px;
+    height: 60px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 10px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+    transition: 0.3s;
+    z-index: 10;
+  }
+
+  .moon-home:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255,255,255,0.6);
+  }
+
+  .hero {
+    text-align: center;
+    padding: 80px 20px 20px;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .hero p {
+    font-size: 18px;
+    opacity: 0.9;
+    margin-top: 10px;
+  }
+
+  .grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    transition: 0.3s;
+    cursor: pointer;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    background: rgba(150, 90, 255, 0.30);
+  }
+
+  .card img {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 12px;
+  }
+
+  .card h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .card p {
+    margin-top: 8px;
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  .info {
+    margin-top: 12px;
+    font-size: 14px;
+    opacity: 0.95;
+    text-align: left;
+    line-height: 1.45;
+  }
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<a class="moon-home" href="explore.html">Back</a>
+
+<div class="hero">
+  <h1>✨ Stars & Phenomena</h1>
+  <p>A museum of constellations, bright stars, galaxies, nebulae, and cosmic wonders.</p>
+</div>
+
+<div class="grid">
+
+  <!-- CONSTELLATIONS -->
+  <div class="card">
+    <img src="NGWF500561-large.webp">
+    <h3>Constellations</h3>
+    <p>Explore the 88 official constellations that map our night sky.</p>
+    <div class="info">
+      Constellations are star patterns humans connected into shapes for navigation, mythology, and sky mapping.  
+      There are 88 official constellations defined by the International Astronomical Union.  
+      <br><br>
+      ⭐ **Key Facts**  
+      • Used for navigation for thousands of years  
+      • Many come from Greek mythology  
+      • Some contain star clusters, nebulae, and galaxies  
+      • Zodiac constellations lie along the ecliptic  
+      • Orion is the most recognizable constellation  
+      <br><br>
+      ⭐ **Why They Matter**  
+      Constellations help astronomers map the sky and preserve ancient cultural stories.
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="88-constellations-brightest-stars-3-scaled.jpg">
+    <h3>Constellation Guide</h3>
+    <p>Mythology, brightest stars, and celestial patterns.</p>
+    <div class="info">
+      This chart shows constellations with their symbolic figures, brightest stars, and discovery dates.  
+      It includes both ancient and modern constellations, from Orion to Microscopium.  
+      <br><br>
+      ⭐ **Highlights**  
+      • Orion: Betelgeuse & Rigel  
+      • Scorpius: Antares  
+      • Lyra: Vega  
+      • Ursa Major: Big Dipper  
+      • Taurus: Aldebaran & the Pleiades  
+    </div>
+  </div>
+
+  <!-- BRIGHT STARS -->
+  <div class="card">
+    <img src="these-are-the-16-brightest-stars-in-night-sky-v0-bopp27bgpkr31.jpg">
+    <h3>Brightest Stars</h3>
+    <p>The most luminous stars visible from Earth.</p>
+    <div class="info">
+      Bright stars vary in color, temperature, and distance — showing the diversity of stellar evolution.  
+      <br><br>
+      ⭐ **Key Stars**  
+      • Sirius — brightest star  
+      • Canopus — extremely luminous  
+      • Arcturus — orange giant  
+      • Vega — blue‑white star  
+      • Rigel — blue supergiant  
+      • Betelgeuse — red supergiant  
+      • Antares — red supergiant  
+      • Spica — blue giant  
+      <br><br>
+      ⭐ **Why They Matter**  
+      Bright stars define constellations and help measure cosmic distances.
+    </div>
+  </div>
+
+  <!-- NEBULA / STAR CLUSTER -->
+  <div class="card">
+    <img src="M44_47x300s-10°C_O30_G0_PM_RGB_03032022.jpg">
+    <h3>Star Clusters & Nebulae</h3>
+    <p>Birthplaces of stars and cosmic clouds of gas and dust.</p>
+    <div class="info">
+      Nebulae are clouds of gas and dust — the birthplaces of stars.  
+      Star clusters are groups of stars formed together.  
+      <br><br>
+      ⭐ **Types of Nebulae**  
+      • Emission nebulae  
+      • Reflection nebulae  
+      • Planetary nebulae  
+      • Supernova remnants  
+      <br><br>
+      ⭐ **Why They Matter**  
+      Nebulae reveal how stars form, live, and die.
+    </div>
+  </div>
+
+  <!-- GALAXIES -->
+  <div class="card">
+    <img src="potw1035a.jpg">
+    <h3>Galaxies</h3>
+    <p>Massive islands of stars, gas, dust, and dark matter.</p>
+    <div class="info">
+      Galaxies are enormous systems containing billions of stars.  
+      <br><br>
+      ⭐ **Key Facts**  
+      • Milky Way: 100–400 billion stars  
+      • Andromeda: nearest large galaxy  
+      • Spiral galaxies: young stars  
+      • Elliptical galaxies: older stars  
+      • Galaxy mergers trigger star formation  
+      <br><br>
+      ⭐ **Why They Matter**  
+      Galaxies show how the universe evolves over billions of years.
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="1140x641.jpg">
+    <h3>Galaxy Mergers</h3>
+    <p>Cosmic collisions that reshape the universe.</p>
+    <div class="info">
+      Galaxy mergers occur when two galaxies collide and combine.  
+      <br><br>
+      ⭐ **Key Facts**  
+      • Trigger massive star formation  
+      • Create tidal streams  
+      • Can form elliptical galaxies  
+      • Milky Way & Andromeda will merge in ~4 billion years  
+    </div>
+  </div>
+
+  <!-- BLACK HOLES -->
+  <div class="card">
+    <img src="gravitationswellen-spur-100~_v-HintergrundL.jpg">
+    <h3>Black Holes</h3>
+    <p>Gravity so strong that not even light escapes.</p>
+    <div class="info">
+      Black holes form when massive stars collapse.  
+      <br><br>
+      ⭐ **Key Facts**  
+      • Stellar‑mass black holes  
+      • Supermassive black holes  
+      • Accretion disks glow brightly  
+      • Jets can extend thousands of light‑years  
+      • First image: M87* (2019)  
+      <br><br>
+      ⭐ **Why They Matter**  
+      Black holes test the limits of physics and Einstein’s relativity.
+    </div>
+  </div>
+
+</div>
+
+</div>
+</body>
+</html>
