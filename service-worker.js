@@ -4,7 +4,7 @@ self.addEventListener("install", event => {
       return cache.addAll([
         "index.html",
         "explore.html",
-        "icon_1784302849882.png"
+        "icon_1784303433207.png"
       ]);
     })
   );
