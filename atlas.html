@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Atlas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  background: #4a003f; /* Dark cosmic pink */
+  font-family: Arial, sans-serif;
+  color: white;
+}
+
+/* Moon button (same as your other pages) */
+.moon-home {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    width: 60px;
+    height: 60px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 10px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+    transition: 0.3s;
+    z-index: 10;
+}
+
+.moon-home:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255,255,255,0.6);
+}
+
+/* Atlas header */
+.atlas-header {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  max-width: 900px;
+  margin: auto;
+}
+
+.atlas-title {
+  font-size: 2.8rem;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.atlas-subtitle {
+  font-size: 1.3rem;
+  color: #ffd6f7; /* Soft light pink */
+}
+
+/* Video styling */
+.atlas-video {
+  max-width: 900px;
+  margin: 2rem auto;
+  display: block;
+  border-radius: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<a class="moon-home" href="explore.html">Home</a>
+
+<section class="atlas-header">
+  <h1 class="atlas-title">Atlas: Tour of Stellar Lab 🧪</h1>
+  <p class="atlas-subtitle">Start your space exploration journey here!!🌌🚀</p>
+</section>
+
+<!-- ⭐ PLACE YOUR VIDEO HERE ⭐ -->
+<!-- After you upload your video to GitHub, replace VIDEOFILE.mp4 with the real filename -->
+
+<video class="atlas-video" controls>
+  <source src="VIDEOFILE.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+</body>
+</html>
