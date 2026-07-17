@@ -1,6 +1,6 @@
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open("stellar lab-cache").then(cache => {
+    caches.open("stellarlab-cache").then(cache => {
       return cache.addAll([
         "index.html",
         "explore.html",
