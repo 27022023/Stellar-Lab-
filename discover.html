@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Discover Life</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+/* PAGE BACKGROUND */
+body {
+  margin: 0;
+  background: linear-gradient(180deg, #0b0d26, #1a1440);
+  font-family: Arial, sans-serif;
+  color: white;
+}
+
+/* MOON BUTTON */
+.moon-home {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    width: 60px;
+    height: 60px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 10px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+    transition: 0.3s;
+    z-index: 10;
+}
+
+.moon-home:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255,255,255,0.6);
+}
+
+/* SECTION */
+.discover-life {
+  padding: 3rem 1.5rem;
+  max-width: 900px;
+  margin: auto;
+}
+
+.dl-title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.dl-subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  color: #cfcff5;
+}
+
+/* PLANET BLOCKS */
+.dl-planet {
+  margin-bottom: 3rem;
+  padding: 1.5rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease;
+}
+
+.dl-planet h3 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+.dl-surface, .dl-core {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.dl-text {
+  font-size: 1rem;
+  color: #e0e0ff;
+}
+
+/* BIOLOGY SECTION */
+.dl-biology {
+  margin-top: 3rem;
+}
+
+.dl-bio-item {
+  margin-bottom: 2rem;
+  background: rgba(255,255,255,0.05);
+  padding: 1rem;
+  border-radius: 10px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease;
+}
+
+.dl-bio-item img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- MOON BUTTON -->
+<a class="moon-home" href="explore.html">Home</a>
+
+<section class="discover-life">
+
+  <h2 class="dl-title">Discover Life</h2>
+  <p class="dl-subtitle">Where life might exist — and what it needs to begin.</p>
+
+  <!-- MARS -->
+  <div class="dl-planet">
+    <h3>Mars</h3>
+    <img src="tempxwfmarsgjpg100~_v-HintergrundL.jpg" class="dl-surface">
+    <img src="_119542793_mars_640-2x-nc.png.webp" class="dl-core">
+
+    <p class="dl-text">
+      Mars once had rivers, lakes, and possibly oceans. Today, most water is locked as ice
+      beneath the surface. Its core is cooling, but ancient conditions may have supported
+      microbial life. Scientists search for organic molecules and signs of past habitability.
+    </p>
+  </div>
+
+  <!-- EUROPA -->
+  <div class="dl-planet">
+    <h3>Europa</h3>
+    <img src="Europa_-_Perijove_45_(cropped).png" class="dl-surface">
+    <img src="europa_interior_ocean1x_black_1_.jpg" class="dl-core">
+
+    <p class="dl-text">
+      Europa has a global subsurface ocean beneath its icy crust. Tidal heating from Jupiter
+      keeps the ocean warm enough for liquid water. This makes Europa one of the strongest
+      candidates for extraterrestrial life in our solar system.
+    </p>
+  </div>
+
+  <!-- ENCELADUS -->
+  <div class="dl-planet">
+    <h3>Enceladus</h3>
+    <img src="PIA17202_-_Approaching_Enceladus.jpg" class="dl-surface">
+    <img src="Interior_of_Saturn_s_moon_Enceladus.jpg" class="dl-core">
+    <img src="IMG004468.jpg" class="dl-core">
+
+    <p class="dl-text">
+      Enceladus has a subsurface ocean and active hydrothermal vents. Water jets erupt from
+      cracks in the ice, carrying organic molecules from the ocean below. This moon is one of
+      the most promising places to search for life today.
+    </p>
+  </div>
+
+  <!-- TITAN -->
+  <div class="dl-planet">
+    <h3>Titan</h3>
+    <img src="Titan_in_true_color_by_Kevin_M._Gill.jpg" class="dl-surface">
+    <img src="Z8rbwr9xHqY7nuVTMyUQCe-1200-80.jpg" class="dl-core">
+
+    <p class="dl-text">
+      Titan has a thick atmosphere, methane lakes, and a subsurface ocean. Its chemistry is
+      complex and resembles early Earth. Life here might be very different from life on Earth,
+      possibly using methane instead of water.
+    </p>
+  </div>
+
+  <!-- EXOPLANETS -->
+  <div class="dl-planet">
+    <h3>Exoplanets</h3>
+    <img src="f1large_-1.jpg__1240x510_q85_subject_location-617,640_subsampling-2.jpg" class="dl-surface">
+    <img src="1440_cell_explainer_feat.jpg" class="dl-core">
+
+    <p class="dl-text">
+      Thousands of exoplanets have been discovered. Some orbit in the habitable zone, where
+      temperatures allow liquid water. Scientists study their atmospheres, magnetic fields,
+      and geology to determine whether they could support life.
+    </p>
+  </div>
+
+  <!-- BIOLOGY SECTION -->
+  <div class="dl-biology">
+    <h3>Building Blocks of Life</h3>
+
+    <div class="dl-bio-item">
+      <img src="20230630-dna-Alexander_Supertramp-iStock-GettyImages-1385977337.jpg">
+      <p><strong>DNA</strong> stores genetic information. On other worlds, life may use
+      different molecules, but scientists search for anything that can store and transmit
+      information.</p>
+    </div>
+
+    <div class="dl-bio-item">
+      <img src="Biomolecules.png">
+      <p><strong>Biomolecules</strong> such as proteins, lipids, and carbohydrates are essential
+      for structure and energy. We search for organic molecules on planets and moons.</p>
+    </div>
+
+    <div class="dl-bio-item">
+      <img src="330px-Plasma_globe_60th.jpg">
+      <p><strong>Energy</strong> is required for life. Planets with sunlight, chemical reactions,
+      or hydrothermal vents are strong candidates for habitability.</p>
+    </div>
+  </div>
+
+</section>
+
+<script>
+const items = document.querySelectorAll('.dl-planet, .dl-bio-item');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = 1;
+      entry.target.style.transform = "translateY(0)";
+    }
+  });
+}, { threshold: 0.2 });
+
+items.forEach(item => {
+  observer.observe(item);
+});
+</script>
+
+</body>
+</html>
