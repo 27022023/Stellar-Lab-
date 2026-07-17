@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-
 /* PAGE BACKGROUND */
 body {
   margin: 0;
@@ -15,7 +14,7 @@ body {
   color: white;
 }
 
-/* MOON BUTTON */
+/* MOON BUTTON – YOUR ORIGINAL STYLE */
 .moon-home {
     position: fixed;
     right: 20px;
@@ -31,15 +30,15 @@ body {
     font-size: 10px;
     color: white;
     text-decoration: none;
-    border: 2px solid rgba(0,255,0,0.5);
-    box-shadow: 0 0 15px rgba(0,255,0,0.5);
+    border: 2px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
     transition: 0.3s;
     z-index: 10;
 }
 
 .moon-home:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 25px rgba(0,255,0,0.7);
+    box-shadow: 0 0 25px rgba(255,255,255,0.6);
 }
 
 /* SECTION */
@@ -78,12 +77,20 @@ body {
   margin-bottom: 1rem;
 }
 
-.dl-surface, .dl-core {
-  width: 100%;
-  border-radius: 10px;
+/* SIDE-BY-SIDE IMAGES FOR SURFACE + INTERIOR */
+.dl-planet-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
   margin-bottom: 1rem;
 }
 
+.dl-planet-images img {
+  flex: 1 1 45%;
+  border-radius: 10px;
+}
+
+/* TEXT */
 .dl-text {
   font-size: 1rem;
   color: #e0e0ff;
@@ -109,7 +116,6 @@ body {
   border-radius: 10px;
   margin-bottom: 1rem;
 }
-
 </style>
 </head>
 
@@ -123,12 +129,13 @@ body {
   <h2 class="dl-title">Discover Life</h2>
   <p class="dl-subtitle">Where life might exist — and what it needs to begin.</p>
 
-  <!-- MARS -->
+  <!-- 1. MARS -->
   <div class="dl-planet">
     <h3>Mars</h3>
-    <img src="tempxwfmarsgjpg100~_v-HintergrundL.jpg" class="dl-surface">
-    <img src="_119542793_mars_640-2x-nc.png.webp" class="dl-core">
-
+    <div class="dl-planet-images">
+      <img src="tempxwfmarsgjpg100~_v-HintergrundL.jpg" alt="Mars surface">
+      <img src="_119542793_mars_640-2x-nc.png.webp" alt="Mars interior">
+    </div>
     <p class="dl-text">
       Mars once had rivers, lakes, and possibly oceans. Today, most water is locked as ice
       beneath the surface. Its core is cooling, but ancient conditions may have supported
@@ -136,12 +143,13 @@ body {
     </p>
   </div>
 
-  <!-- EUROPA -->
+  <!-- 2. EUROPA -->
   <div class="dl-planet">
     <h3>Europa</h3>
-    <img src="Europa_-_Perijove_45_(cropped).png" class="dl-surface">
-    <img src="europa_interior_ocean1x_black_1_.jpg" class="dl-core">
-
+    <div class="dl-planet-images">
+      <img src="Europa_-_Perijove_45_(cropped).png" alt="Europa surface">
+      <img src="europa_interior_ocean1x_black_1_.jpg" alt="Europa interior">
+    </div>
     <p class="dl-text">
       Europa has a global subsurface ocean beneath its icy crust. Tidal heating from Jupiter
       keeps the ocean warm enough for liquid water. This makes Europa one of the strongest
@@ -149,13 +157,16 @@ body {
     </p>
   </div>
 
-  <!-- ENCELADUS -->
+  <!-- 3. ENCELADUS -->
   <div class="dl-planet">
     <h3>Enceladus</h3>
-    <img src="PIA17202_-_Approaching_Enceladus.jpg" class="dl-surface">
-    <img src="Interior_of_Saturn_s_moon_Enceladus.jpg" class="dl-core">
-    <img src="IMG004468.jpg" class="dl-core">
-
+    <div class="dl-planet-images">
+      <img src="PIA17202_-_Approaching_Enceladus.jpg" alt="Enceladus surface">
+      <img src="Interior_of_Saturn_s_moon_Enceladus.jpg" alt="Enceladus interior">
+    </div>
+    <div class="dl-planet-images">
+      <img src="IMG004468.jpg" alt="Enceladus hydrothermal vents">
+    </div>
     <p class="dl-text">
       Enceladus has a subsurface ocean and active hydrothermal vents. Water jets erupt from
       cracks in the ice, carrying organic molecules from the ocean below. This moon is one of
@@ -163,12 +174,13 @@ body {
     </p>
   </div>
 
-  <!-- TITAN -->
+  <!-- 4. TITAN -->
   <div class="dl-planet">
     <h3>Titan</h3>
-    <img src="Titan_in_true_color_by_Kevin_M._Gill.jpg" class="dl-surface">
-    <img src="Z8rbwr9xHqY7nuVTMyUQCe-1200-80.jpg" class="dl-core">
-
+    <div class="dl-planet-images">
+      <img src="Titan_in_true_color_by_Kevin_M._Gill.jpg" alt="Titan surface">
+      <img src="Z8rbwr9xHqY7nuVTMyUQCe-1200-80.jpg" alt="Titan interior">
+    </div>
     <p class="dl-text">
       Titan has a thick atmosphere, methane lakes, and a subsurface ocean. Its chemistry is
       complex and resembles early Earth. Life here might be very different from life on Earth,
@@ -176,12 +188,12 @@ body {
     </p>
   </div>
 
-  <!-- EXOPLANETS -->
+  <!-- 5. EXOPLANETS -->
   <div class="dl-planet">
     <h3>Exoplanets</h3>
-    <img src="f1large_-1.jpg__1240x510_q85_subject_location-617,640_subsampling-2.jpg" class="dl-surface">
-    <img src="1440_cell_explainer_feat.jpg" class="dl-core">
-
+    <div class="dl-planet-images">
+      <img src="f1large_-1.jpg__1240x510_q85_subject_location-617,640_subsampling-2.jpg" alt="Potential habitable exoplanets">
+    </div>
     <p class="dl-text">
       Thousands of exoplanets have been discovered. Some orbit in the habitable zone, where
       temperatures allow liquid water. Scientists study their atmospheres, magnetic fields,
@@ -189,25 +201,30 @@ body {
     </p>
   </div>
 
-  <!-- BIOLOGY SECTION -->
+  <!-- 6. BIOLOGY – SEPARATE FROM EXOPLANETS -->
   <div class="dl-biology">
     <h3>Building Blocks of Life</h3>
 
     <div class="dl-bio-item">
-      <img src="20230630-dna-Alexander_Supertramp-iStock-GettyImages-1385977337.jpg">
-      <p><strong>DNA</strong> stores genetic information. On other worlds, life may use
-      different molecules, but scientists search for anything that can store and transmit
-      information.</p>
+      <img src="1440_cell_explainer_feat.jpg" alt="Cell">
+      <p><strong>Cells</strong> are the basic units of life. On other worlds, scientists look
+      for structures that can grow, reproduce, and use energy.</p>
     </div>
 
     <div class="dl-bio-item">
-      <img src="Biomolecules.png">
+      <img src="20230630-dna-Alexander_Supertramp-iStock-GettyImages-1385977337.jpg" alt="DNA">
+      <p><strong>DNA</strong> stores genetic information. Life elsewhere might use different
+      molecules, but we search for any system that can store and pass on information.</p>
+    </div>
+
+    <div class="dl-bio-item">
+      <img src="Biomolecules.png" alt="Biomolecules">
       <p><strong>Biomolecules</strong> such as proteins, lipids, and carbohydrates are essential
       for structure and energy. We search for organic molecules on planets and moons.</p>
     </div>
 
     <div class="dl-bio-item">
-      <img src="330px-Plasma_globe_60th.jpg">
+      <img src="330px-Plasma_globe_60th.jpg" alt="Energy">
       <p><strong>Energy</strong> is required for life. Planets with sunlight, chemical reactions,
       or hydrothermal vents are strong candidates for habitability.</p>
     </div>
@@ -234,4 +251,3 @@ items.forEach(item => {
 
 </body>
 </html>
-      
